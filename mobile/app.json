@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Tangle",
+    "slug": "tangle-adhd",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "tangle",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tangle.adhd",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Tangle needs access to your microphone to transcribe ADHD brain dumps."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0a0a"
+      },
+      "package": "com.tangle.adhd",
+      "permissions": ["RECORD_AUDIO"]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow Tangle to record your voice to transcribe brain dumps into micro-tasks."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "tangle-adhd-applet"
+      },
+      "apiBaseUrl": "https://ais-dev-hlh4jxillgrxmqnwolrxfw-124269995328.us-east1.run.app"
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth user ID" },
+        "email": { "type": "string", "format": "email", "description": "User email" },
+        "displayName": { "type": "string", "description": "Display name" },
+        "photoURL": { "type": "string", "description": "Avatar URL" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["userId", "email", "createdAt"]
+    },
+    "MicroTask": {
+      "title": "MicroTask",
+      "description": "ADHD micro-action item with physical first step and category",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique task identifier" },
+        "userId": { "type": "string", "description": "Owner user ID" },
+        "title": { "type": "string", "description": "Short action title", "maxLength": 300 },
+        "firstPhysicalStep": { "type": "string", "description": "Immediate physical trigger action", "maxLength": 500 },
+        "estimatedMinutes": { "type": "number", "description": "Estimated minutes duration" },
+        "energyLevel": { "type": "string", "enum": ["low", "medium", "high"], "description": "Energy level needed" },
+        "category": { "type": "string", "description": "Category name such as Work, Personal, Health", "maxLength": 50 },
+        "priority": { "type": "string", "enum": ["high", "medium", "low"], "description": "Priority tier" },
+        "whyItMatters": { "type": "string", "description": "Rationale or dopamine motivator", "maxLength": 500 },
+        "substeps": { "type": "array", "description": "List of micro substeps" },
+        "completed": { "type": "boolean", "description": "Completion state" },
+        "completedAt": { "type": "string", "format": "date-time", "description": "Completion timestamp" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["id", "userId", "title", "firstPhysicalStep", "category", "completed", "createdAt"]
+    },
+    "ParkingLotItem": {
+      "title": "ParkingLotItem",
+      "description": "Parked fleeting thought during focus sessions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique parking lot item id" },
+        "userId": { "type": "string", "description": "Owner user ID" },
+        "text": { "type": "string", "description": "Parked thought content", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["id", "userId", "text", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document"
+    },
+    "/users/{userId}/tasks/{taskId}": {
+      "schema": "MicroTask",
+      "description": "User micro-tasks with categories"
+    },
+    "/users/{userId}/parkingLot/{itemId}": {
+      "schema": "ParkingLotItem",
+      "description": "Parked focus distractions"
+    }
+  }
+}

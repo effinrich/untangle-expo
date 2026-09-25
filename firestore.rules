@@ -1,0 +1,128 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['userId', 'email', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'email', 'displayName', 'photoURL', 'createdAt'])
+        && data.userId is string
+        && data.userId.size() <= 128
+        && data.email is string
+        && data.email.size() <= 256
+        && data.createdAt is string
+        && data.createdAt.size() <= 64;
+    }
+
+    function isValidMicroTask(data) {
+      return data.keys().hasAll(['id', 'userId', 'title', 'firstPhysicalStep', 'category', 'completed', 'createdAt'])
+        && data.id is string
+        && data.id.size() <= 128
+        && data.userId is string
+        && data.userId.size() <= 128
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() <= 300
+        && data.firstPhysicalStep is string
+        && data.firstPhysicalStep.size() > 0
+        && data.firstPhysicalStep.size() <= 500
+        && data.category is string
+        && data.category.size() > 0
+        && data.category.size() <= 50
+        && data.completed is bool
+        && data.createdAt is string
+        && data.createdAt.size() <= 64
+        && (!('estimatedMinutes' in data) || (data.estimatedMinutes is number && data.estimatedMinutes >= 0 && data.estimatedMinutes <= 1440))
+        && (!('energyLevel' in data) || (data.energyLevel in ['low', 'medium', 'high']))
+        && (!('priority' in data) || (data.priority in ['high', 'medium', 'low']))
+        && (!('whyItMatters' in data) || (data.whyItMatters is string && data.whyItMatters.size() <= 500))
+        && (!('completedAt' in data) || (data.completedAt is string && data.completedAt.size() <= 64))
+        && (!('substeps' in data) || (data.substeps is list && data.substeps.size() <= 50));
+    }
+
+    function isValidParkingItem(data) {
+      return data.keys().hasAll(['id', 'userId', 'text', 'createdAt'])
+        && data.keys().hasOnly(['id', 'userId', 'text', 'createdAt'])
+        && data.id is string
+        && data.id.size() <= 128
+        && data.userId is string
+        && data.userId.size() <= 128
+        && data.text is string
+        && data.text.size() > 0
+        && data.text.size() <= 500
+        && data.createdAt is string
+        && data.createdAt.size() <= 64;
+    }
+
+    // User profile documents
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false; // Blanket user queries forbidden
+      allow create: if isOwner(userId) && isValidId(userId) && incoming().userId == userId && isValidUserProfile(incoming());
+      allow update: if isOwner(userId) && isValidId(userId) && incoming().userId == userId && isValidUserProfile(incoming()) && incoming().createdAt == existing().createdAt;
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // Micro-tasks subcollection
+      match /tasks/{taskId} {
+        allow get, list: if isOwner(userId) && isValidId(userId);
+        allow create: if isOwner(userId)
+          && isValidId(userId)
+          && isValidId(taskId)
+          && incoming().userId == userId
+          && incoming().id == taskId
+          && isValidMicroTask(incoming());
+        allow update: if isOwner(userId)
+          && isValidId(userId)
+          && isValidId(taskId)
+          && incoming().userId == userId
+          && incoming().id == taskId
+          && isValidMicroTask(incoming())
+          && incoming().createdAt == existing().createdAt;
+        allow delete: if isOwner(userId) && isValidId(userId) && isValidId(taskId);
+      }
+
+      // Parking lot subcollection
+      match /parkingLot/{itemId} {
+        allow get, list: if isOwner(userId) && isValidId(userId);
+        allow create: if isOwner(userId)
+          && isValidId(userId)
+          && isValidId(itemId)
+          && incoming().userId == userId
+          && incoming().id == itemId
+          && isValidParkingItem(incoming());
+        allow update: if isOwner(userId)
+          && isValidId(userId)
+          && isValidId(itemId)
+          && incoming().userId == userId
+          && incoming().id == itemId
+          && isValidParkingItem(incoming())
+          && incoming().createdAt == existing().createdAt;
+        allow delete: if isOwner(userId) && isValidId(userId) && isValidId(itemId);
+      }
+    }
+  }
+}

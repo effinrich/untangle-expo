@@ -1,0 +1,8 @@
+{
+  "name": "Remix Tangle - ADHD Brain Dump \u0026 Micro-Task Planner",
+  "description": "Turn chaotic thoughts and ADHD brain dumps into short, bite-sized micro-tasks with energy levels, dopamine rewards, and single-task focus radar.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
