@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Tangle",
-    "slug": "tangle-adhd",
+    "name": "Untangle",
+    "slug": "untangle-adhd",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "tangle",
+    "scheme": "untangle",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
@@ -15,9 +15,9 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.tangle.adhd",
+      "bundleIdentifier": "com.untangle.adhd",
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Tangle needs access to your microphone to transcribe ADHD brain dumps."
+        "NSMicrophoneUsageDescription": "Untangle needs access to your microphone to transcribe ADHD brain dumps."
       }
     },
     "android": {
@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a0a0a"
       },
-      "package": "com.tangle.adhd",
+      "package": "com.untangle.adhd",
       "permissions": ["RECORD_AUDIO"]
     },
     "web": {
@@ -38,7 +38,7 @@
       [
         "expo-av",
         {
-          "microphonePermission": "Allow Tangle to record your voice to transcribe brain dumps into micro-tasks."
+          "microphonePermission": "Allow Untangle to record your voice to transcribe brain dumps into micro-tasks."
         }
       ]
     ],
@@ -47,7 +47,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "tangle-adhd-applet"
+        "projectId": "untangle-adhd-applet"
       },
       "apiBaseUrl": "https://ais-dev-hlh4jxillgrxmqnwolrxfw-124269995328.us-east1.run.app"
     }

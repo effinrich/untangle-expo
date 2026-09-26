@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
+import React, { useState, useEffect } from "react"
+import { QueryClient, QueryClientProvider, useMutation } from "@tanstack/react-query"
 import {
   Sparkles,
   Zap,
@@ -16,17 +16,17 @@ import {
   CloudCheck,
   Tag,
   ShieldCheck,
-} from 'lucide-react';
-import { User } from 'firebase/auth';
-import { BrainDumpInput } from './features/braindump/BrainDumpInput';
-import { TaskList } from './features/tasks/TaskList';
-import { FocusRadarModal } from './features/focus/FocusRadarModal';
-import { UnstickMeModal } from './features/unstick/UnstickMeModal';
-import { DopamineTracker } from './features/stats/DopamineTracker';
-import { INITIAL_SEED_TASKS } from './data/seedData';
-import { DEFAULT_CATEGORIES } from './data/categories';
-import { MicroTask, ParkingLotItem } from './types';
-import { apiUntangleBrainDump } from './services/api';
+} from "lucide-react"
+import { User } from "firebase/auth"
+import { BrainDumpInput } from "./features/braindump/BrainDumpInput"
+import { TaskList } from "./features/tasks/TaskList"
+import { FocusRadarModal } from "./features/focus/FocusRadarModal"
+import { UnstickMeModal } from "./features/unstick/UnstickMeModal"
+import { DopamineTracker } from "./features/stats/DopamineTracker"
+import { INITIAL_SEED_TASKS } from "./data/seedData"
+import { DEFAULT_CATEGORIES } from "./data/categories"
+import { MicroTask, ParkingLotItem } from "./types"
+import { apiUntangleBrainDump } from "./services/api"
 import {
   auth,
   signInWithGoogle,
@@ -38,72 +38,75 @@ import {
   subscribeToParkingLot,
   saveParkingItemToFirestore,
   deleteParkingItemFromFirestore,
-} from './services/firebase';
-import calmAmbientImg from './assets/images/calm_focus_ambient_1790313003505.jpg';
+} from "./services/firebase"
+import calmAmbientImg from "./assets/images/calm_focus_ambient_1790313003505.jpg"
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 function TangleApp() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
-  const [firestoreConnected, setFirestoreConnected] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const [firestoreConnected, setFirestoreConnected] = useState(false)
 
   // Tasks state
   const [tasks, setTasks] = useState<MicroTask[]>(() => {
     try {
-      const saved = localStorage.getItem('tangle_tasks_v1');
-      if (saved) return JSON.parse(saved);
+      const saved = localStorage.getItem("tangle_tasks_v1")
+      if (saved) return JSON.parse(saved)
     } catch (e) {
-      console.warn('Failed to parse saved tasks', e);
+      console.warn("Failed to parse saved tasks", e)
     }
-    return INITIAL_SEED_TASKS;
-  });
+    return INITIAL_SEED_TASKS
+  })
 
   // Parking lot state
   const [parkingLot, setParkingLot] = useState<ParkingLotItem[]>(() => {
     try {
-      const saved = localStorage.getItem('tangle_parking_lot_v1');
-      if (saved) return JSON.parse(saved);
+      const saved = localStorage.getItem("tangle_parking_lot_v1")
+      if (saved) return JSON.parse(saved)
     } catch (e) {
-      console.warn('Failed to parse saved parking lot', e);
+      console.warn("Failed to parse saved parking lot", e)
     }
-    return [];
-  });
+    return []
+  })
 
-  const [focusTask, setFocusTask] = useState<MicroTask | null>(null);
-  const [isUnstickOpen, setIsUnstickOpen] = useState(false);
-  const [activeView, setActiveView] = useState<'all' | 'dump' | 'tasks' | 'momentum'>('all');
-  const [aiSummary, setAiSummary] = useState<string | null>(null);
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [focusTask, setFocusTask] = useState<MicroTask | null>(null)
+  const [isUnstickOpen, setIsUnstickOpen] = useState(false)
+  const [activeView, setActiveView] = useState<"all" | "dump" | "tasks" | "momentum">("all")
+  const [aiSummary, setAiSummary] = useState<string | null>(null)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   // Test Firestore connection on boot (required by Firebase integration skill)
   useEffect(() => {
     testFirestoreConnection().then((connected) => {
-      setFirestoreConnected(connected);
-    });
-  }, []);
+      setFirestoreConnected(connected)
+    })
+  }, [])
 
   // Firebase Auth listener
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
-      setAuthLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+      setCurrentUser(user)
+      setAuthLoading(false)
+    })
+    return () => unsubscribe()
+  }, [])
 
   // When user is authenticated, listen to real-time Firestore collections
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) return
 
     // Migrate any local tasks to Firestore if user just logged in
-    const localTasksJson = localStorage.getItem('tangle_tasks_v1');
+    const localTasksJson = localStorage.getItem("tangle_tasks_v1")
     if (localTasksJson) {
       try {
-        const localTasks: MicroTask[] = JSON.parse(localTasksJson);
+        const localTasks: MicroTask[] = JSON.parse(localTasksJson)
         localTasks.forEach((t) => {
-          saveTaskToFirestore(currentUser.uid, { ...t, userId: currentUser.uid });
-        });
+          saveTaskToFirestore(currentUser.uid, {
+            ...t,
+            userId: currentUser.uid,
+          })
+        })
       } catch (e) {
         // ignore
       }
@@ -114,87 +117,87 @@ function TangleApp() {
       currentUser.uid,
       (remoteTasks) => {
         if (remoteTasks.length > 0) {
-          setTasks(remoteTasks);
+          setTasks(remoteTasks)
         }
       },
-      (err) => console.error('Tasks sync error:', err)
-    );
+      (err) => console.error("Tasks sync error:", err),
+    )
 
     // Subscribe to Firestore parking lot
     const unsubParking = subscribeToParkingLot(currentUser.uid, (remoteItems) => {
       if (remoteItems.length > 0) {
-        setParkingLot(remoteItems);
+        setParkingLot(remoteItems)
       }
-    });
+    })
 
     return () => {
-      unsubTasks();
-      unsubParking();
-    };
-  }, [currentUser]);
+      unsubTasks()
+      unsubParking()
+    }
+  }, [currentUser])
 
   // Sync tasks to localStorage for offline / guest access
   useEffect(() => {
     try {
-      localStorage.setItem('tangle_tasks_v1', JSON.stringify(tasks));
+      localStorage.setItem("tangle_tasks_v1", JSON.stringify(tasks))
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  }, [tasks]);
+  }, [tasks])
 
   // Sync parking lot to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('tangle_parking_lot_v1', JSON.stringify(parkingLot));
+      localStorage.setItem("tangle_parking_lot_v1", JSON.stringify(parkingLot))
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  }, [parkingLot]);
+  }, [parkingLot])
 
   // Google Sign-In handler
   const handleGoogleSignIn = async () => {
-    setAuthError(null);
+    setAuthError(null)
     try {
-      await signInWithGoogle();
+      await signInWithGoogle()
     } catch (err: any) {
-      console.error('Google sign in error:', err);
-      setAuthError(err?.message || 'Google sign-in was cancelled or failed.');
+      console.error("Google sign in error:", err)
+      setAuthError(err?.message || "Google sign-in was cancelled or failed.")
     }
-  };
+  }
 
   const handleSignOut = async () => {
     try {
-      await signOutUser();
+      await signOutUser()
     } catch (err) {
-      console.error('Sign out error:', err);
+      console.error("Sign out error:", err)
     }
-  };
+  }
 
   // Untangle Mutation via TanStack Query
   const untangleMutation = useMutation({
     mutationFn: ({ rawDump, energy }: { rawDump: string; energy: string }) =>
       apiUntangleBrainDump(rawDump, energy),
     onSuccess: (data) => {
-      setAiSummary(data.summary);
+      setAiSummary(data.summary)
       const newTasks = data.tasks.map((t) => ({
         ...t,
         userId: currentUser?.uid,
-      }));
-      setTasks((prev) => [...newTasks, ...prev]);
+      }))
+      setTasks((prev) => [...newTasks, ...prev])
 
       // If signed in, persist to Firestore
       if (currentUser) {
-        newTasks.forEach((t) => saveTaskToFirestore(currentUser.uid, t));
+        newTasks.forEach((t) => saveTaskToFirestore(currentUser.uid, t))
       }
     },
     onError: (error: any) => {
-      console.error('Untangle failed:', error);
+      console.error("Untangle failed:", error)
     },
-  });
+  })
 
   const handleUntangle = async (rawDump: string, energyPreference: string) => {
-    await untangleMutation.mutateAsync({ rawDump, energy: energyPreference });
-  };
+    await untangleMutation.mutateAsync({ rawDump, energy: energyPreference })
+  }
 
   const handleToggleComplete = (id: string) => {
     setTasks((prev) =>
@@ -204,73 +207,73 @@ function TangleApp() {
             ...t,
             completed: !t.completed,
             completedAt: !t.completed ? new Date().toISOString() : undefined,
-          };
-          if (currentUser) {
-            saveTaskToFirestore(currentUser.uid, updated);
           }
-          return updated;
+          if (currentUser) {
+            saveTaskToFirestore(currentUser.uid, updated)
+          }
+          return updated
         }
-        return t;
-      })
-    );
-  };
+        return t
+      }),
+    )
+  }
 
   const handleToggleSubstep = (taskId: string, substepId: string) => {
     setTasks((prev) =>
       prev.map((t) => {
-        if (t.id !== taskId) return t;
+        if (t.id !== taskId) return t
         const updatedSubsteps = t.substeps.map((sub) =>
-          sub.id === substepId ? { ...sub, completed: !sub.completed } : sub
-        );
-        const allCompleted = updatedSubsteps.every((s) => s.completed);
+          sub.id === substepId ? { ...sub, completed: !sub.completed } : sub,
+        )
+        const allCompleted = updatedSubsteps.every((s) => s.completed)
         const updatedTask: MicroTask = {
           ...t,
           substeps: updatedSubsteps,
           completed: allCompleted ? true : t.completed,
-        };
-        if (currentUser) {
-          saveTaskToFirestore(currentUser.uid, updatedTask);
         }
-        return updatedTask;
-      })
-    );
-  };
+        if (currentUser) {
+          saveTaskToFirestore(currentUser.uid, updatedTask)
+        }
+        return updatedTask
+      }),
+    )
+  }
 
   const handleDeleteTask = (id: string) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
+    setTasks((prev) => prev.filter((t) => t.id !== id))
     if (currentUser) {
-      deleteTaskFromFirestore(currentUser.uid, id);
+      deleteTaskFromFirestore(currentUser.uid, id)
     }
-  };
+  }
 
   const handleUpdateTask = (updated: MicroTask) => {
-    setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+    setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)))
     if (currentUser) {
-      saveTaskToFirestore(currentUser.uid, updated);
+      saveTaskToFirestore(currentUser.uid, updated)
     }
-  };
+  }
 
-  const handleAddTask = (newTask: Omit<MicroTask, 'id' | 'createdAt' | 'completed'>) => {
+  const handleAddTask = (newTask: Omit<MicroTask, "id" | "createdAt" | "completed">) => {
     const created: MicroTask = {
       ...newTask,
       id: `task_${Date.now()}`,
       userId: currentUser?.uid,
       createdAt: new Date().toISOString(),
       completed: false,
-    };
-    setTasks((prev) => [created, ...prev]);
-    if (currentUser) {
-      saveTaskToFirestore(currentUser.uid, created);
     }
-  };
+    setTasks((prev) => [created, ...prev])
+    if (currentUser) {
+      saveTaskToFirestore(currentUser.uid, created)
+    }
+  }
 
   const handleClearCompleted = () => {
-    const completedTasks = tasks.filter((t) => t.completed);
-    setTasks((prev) => prev.filter((t) => !t.completed));
+    const completedTasks = tasks.filter((t) => t.completed)
+    setTasks((prev) => prev.filter((t) => !t.completed))
     if (currentUser) {
-      completedTasks.forEach((t) => deleteTaskFromFirestore(currentUser.uid, t.id));
+      completedTasks.forEach((t) => deleteTaskFromFirestore(currentUser.uid, t.id))
     }
-  };
+  }
 
   const handleAddParkingLotItem = (text: string) => {
     const item: ParkingLotItem = {
@@ -278,31 +281,34 @@ function TangleApp() {
       userId: currentUser?.uid,
       text,
       createdAt: new Date().toISOString(),
-    };
-    setParkingLot((prev) => [item, ...prev]);
-    if (currentUser) {
-      saveParkingItemToFirestore(currentUser.uid, item);
     }
-  };
+    setParkingLot((prev) => [item, ...prev])
+    if (currentUser) {
+      saveParkingItemToFirestore(currentUser.uid, item)
+    }
+  }
 
   const handleDeleteParkingLotItem = (id: string) => {
-    setParkingLot((prev) => prev.filter((p) => p.id !== id));
+    setParkingLot((prev) => prev.filter((p) => p.id !== id))
     if (currentUser) {
-      deleteParkingItemFromFirestore(currentUser.uid, id);
+      deleteParkingItemFromFirestore(currentUser.uid, id)
     }
-  };
+  }
 
   const handleResetToSeed = () => {
-    if (confirm('Load fresh sample ADHD tasks with priority categories?')) {
-      setTasks(INITIAL_SEED_TASKS);
-      setAiSummary(null);
+    if (confirm("Load fresh sample ADHD tasks with priority categories?")) {
+      setTasks(INITIAL_SEED_TASKS)
+      setAiSummary(null)
       if (currentUser) {
         INITIAL_SEED_TASKS.forEach((t) =>
-          saveTaskToFirestore(currentUser.uid, { ...t, userId: currentUser.uid })
-        );
+          saveTaskToFirestore(currentUser.uid, {
+            ...t,
+            userId: currentUser.uid,
+          }),
+        )
       }
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-amber-400 selection:text-neutral-950">
@@ -312,7 +318,7 @@ function TangleApp() {
           {/* Zone 1: Single text element wordmark */}
           <div className="flex items-center gap-2">
             <span className="text-base sm:text-lg font-bold tracking-tight text-neutral-100 select-none">
-              Tangle
+              Untangle
             </span>
             <span className="text-xs text-neutral-500 font-normal hidden sm:inline">
               · ADHD Brain Dump & Priority Areas
@@ -322,33 +328,33 @@ function TangleApp() {
           {/* Zone 2: 4-6 clean text navigation links */}
           <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-neutral-400">
             <button
-              onClick={() => setActiveView('all')}
+              onClick={() => setActiveView("all")}
               className={`hover:text-neutral-100 transition-colors ${
-                activeView === 'all' ? 'text-amber-400 underline underline-offset-4' : ''
+                activeView === "all" ? "text-amber-400 underline underline-offset-4" : ""
               }`}
             >
               Workspace
             </button>
             <button
-              onClick={() => setActiveView('dump')}
+              onClick={() => setActiveView("dump")}
               className={`hover:text-neutral-100 transition-colors ${
-                activeView === 'dump' ? 'text-amber-400 underline underline-offset-4' : ''
+                activeView === "dump" ? "text-amber-400 underline underline-offset-4" : ""
               }`}
             >
               Brain Dump
             </button>
             <button
-              onClick={() => setActiveView('tasks')}
+              onClick={() => setActiveView("tasks")}
               className={`hover:text-neutral-100 transition-colors ${
-                activeView === 'tasks' ? 'text-amber-400 underline underline-offset-4' : ''
+                activeView === "tasks" ? "text-amber-400 underline underline-offset-4" : ""
               }`}
             >
               Micro-Tasks
             </button>
             <button
-              onClick={() => setActiveView('momentum')}
+              onClick={() => setActiveView("momentum")}
               className={`hover:text-neutral-100 transition-colors ${
-                activeView === 'momentum' ? 'text-amber-400 underline underline-offset-4' : ''
+                activeView === "momentum" ? "text-amber-400 underline underline-offset-4" : ""
               }`}
             >
               Momentum Ledger
@@ -363,13 +369,13 @@ function TangleApp() {
                 {currentUser.photoURL ? (
                   <img
                     src={currentUser.photoURL}
-                    alt={currentUser.displayName || 'User'}
+                    alt={currentUser.displayName || "User"}
                     className="w-5 h-5 rounded-full object-cover"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
                   <div className="w-5 h-5 rounded-full bg-amber-400/20 text-amber-300 flex items-center justify-center text-[10px] font-bold">
-                    {currentUser.displayName ? currentUser.displayName[0] : 'U'}
+                    {currentUser.displayName ? currentUser.displayName[0] : "U"}
                   </div>
                 )}
                 <span className="text-neutral-300 font-medium hidden sm:inline max-w-[100px] truncate">
@@ -443,7 +449,7 @@ function TangleApp() {
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
               onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
+                ;(e.target as HTMLElement).style.display = "none"
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/80 to-transparent" />
@@ -477,17 +483,27 @@ function TangleApp() {
               </span>
               <span className="text-[10px] text-neutral-500 font-sans">Active Tasks</span>
             </div>
-            <span aria-hidden="true" className="text-neutral-700">|</span>
+            <span aria-hidden="true" className="text-neutral-700">
+              |
+            </span>
             <div className="text-center px-2">
               <span className="block text-lg font-bold text-amber-400">
-                {tasks.filter((t) => t.category.toLowerCase().includes('work') && !t.completed).length}
+                {
+                  tasks.filter((t) => t.category.toLowerCase().includes("work") && !t.completed)
+                    .length
+                }
               </span>
               <span className="text-[10px] text-neutral-500 font-sans">Work</span>
             </div>
-            <span aria-hidden="true" className="text-neutral-700">|</span>
+            <span aria-hidden="true" className="text-neutral-700">
+              |
+            </span>
             <div className="text-center px-2">
               <span className="block text-lg font-bold text-emerald-400">
-                {tasks.filter((t) => t.category.toLowerCase().includes('health') && !t.completed).length}
+                {
+                  tasks.filter((t) => t.category.toLowerCase().includes("health") && !t.completed)
+                    .length
+                }
               </span>
               <span className="text-[10px] text-neutral-500 font-sans">Health</span>
             </div>
@@ -513,16 +529,13 @@ function TangleApp() {
         )}
 
         {/* Dynamic Section Layout based on active view */}
-        {(activeView === 'all' || activeView === 'dump') && (
+        {(activeView === "all" || activeView === "dump") && (
           <section id="braindump-section">
-            <BrainDumpInput
-              onUntangle={handleUntangle}
-              isLoading={untangleMutation.isPending}
-            />
+            <BrainDumpInput onUntangle={handleUntangle} isLoading={untangleMutation.isPending} />
           </section>
         )}
 
-        {(activeView === 'all' || activeView === 'tasks') && (
+        {(activeView === "all" || activeView === "tasks") && (
           <section id="tasks-section" className="space-y-4">
             <TaskList
               tasks={tasks}
@@ -538,7 +551,7 @@ function TangleApp() {
           </section>
         )}
 
-        {(activeView === 'all' || activeView === 'momentum') && (
+        {(activeView === "all" || activeView === "momentum") && (
           <section id="momentum-section">
             <DopamineTracker tasks={tasks} />
           </section>
@@ -552,8 +565,8 @@ function TangleApp() {
           isOpen={!!focusTask}
           onClose={() => setFocusTask(null)}
           onCompleteTask={(taskId) => {
-            handleToggleComplete(taskId);
-            setFocusTask(null);
+            handleToggleComplete(taskId)
+            setFocusTask(null)
           }}
           parkingLot={parkingLot}
           onAddParkingLotItem={handleAddParkingLotItem}
@@ -567,8 +580,8 @@ function TangleApp() {
         onClose={() => setIsUnstickOpen(false)}
         tasks={tasks}
         onStartFocus={(task) => {
-          setFocusTask(task);
-          setIsUnstickOpen(false);
+          setFocusTask(task)
+          setIsUnstickOpen(false)
         }}
       />
 
@@ -576,7 +589,7 @@ function TangleApp() {
       <footer className="border-t border-neutral-900 py-6 text-xs text-neutral-500">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span>Tangle · Powered by Gemini 3.8 Flash & Gemini 3.5 Transcribe</span>
+            <span>Untangle · Powered by Gemini 3.8 Flash & Gemini 3.5 Transcribe</span>
             <span aria-hidden="true">·</span>
             <span className="text-neutral-400">Firebase Firestore Cloud Sync</span>
           </div>
@@ -593,7 +606,7 @@ function TangleApp() {
         </div>
       </footer>
     </div>
-  );
+  )
 }
 
 export default function App() {
@@ -601,5 +614,5 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <TangleApp />
     </QueryClientProvider>
-  );
+  )
 }

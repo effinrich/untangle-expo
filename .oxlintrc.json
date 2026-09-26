@@ -1,0 +1,79 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "unicorn", "oxc", "import", "jsx-a11y"],
+  "categories": {
+    "correctness": "error",
+    "perf": "warn",
+    "suspicious": "warn",
+    "pedantic": "off",
+    "style": "off"
+  },
+  "env": {
+    "builtin": true
+  },
+  "rules": {
+    "no-underscore-dangle": ["warn", { "allow": ["_splat"] }],
+    "no-console": "warn",
+    "no-self-compare": "warn",
+    "prefer-spread": "warn",
+    "no-unused-vars": "warn",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-empty-interface": "error",
+    "typescript/ban-ts-comment": "off",
+    "react/jsx-key": "error",
+    "react/no-array-index-key": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/no-children-prop": "warn",
+    "react/no-multi-comp": "off",
+    "react/no-unescaped-entities": "error",
+    "react/jsx-no-constructed-context-values": "warn",
+    "react/jsx-no-target-blank": "error",
+    "react/no-danger": "warn",
+    "react/jsx-curly-brace-presence": "warn",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "sort-imports": ["error", { "allowSeparatedGroups": true }],
+    "import/default": "off",
+    "import/no-named-as-default-member": "off",
+    "import/no-named-as-default": "off",
+    "import/no-unassigned-import": "off",
+    "unicorn/no-useless-spread": "warn",
+    "unicorn/filename-case": [
+      "warn",
+      {
+        "cases": {
+          "kebabCase": true
+        },
+        "ignore": [
+          "AGENTS\\.md$",
+          "README\\.md$",
+          "CHANGELOG\\.md$",
+          "^LICENSE$",
+          "^__root\\.tsx$",
+          "^routeTree\\.gen\\.ts$",
+          "^\\d{14}_[a-f0-9-]+\\.sql$"
+        ]
+      }
+    ]
+  },
+  "options": {
+    "typeAware": true
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    ".output",
+    ".tanstack/**",
+    ".nitro",
+    "storybook-static/**",
+    "**/routeTree.gen.ts",
+    "**/integrations/supabase/types.ts",
+    "eslint.config.migrate.mjs",
+    ".opencode/**",
+    ".agents/**",
+    ".github/skills/**",
+    ".claude/**",
+    "tools/**",
+    ".expo/**"
+  ]
+}

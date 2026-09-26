@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react"
 import {
   Mic,
   MicOff,
@@ -13,58 +13,53 @@ import {
   Home,
   Heart,
   Landmark,
-} from 'lucide-react';
-import { BRAIN_DUMP_TEMPLATES } from '../../data/seedData';
-import { DEFAULT_CATEGORIES } from '../../data/categories';
-import { EnergyLevel } from '../../types';
-import { useAudioRecorder } from '../audio/useAudioRecorder';
+} from "lucide-react"
+import { BRAIN_DUMP_TEMPLATES } from "../../data/seedData"
+import { DEFAULT_CATEGORIES } from "../../data/categories"
+import { EnergyLevel } from "../../types"
+import { useAudioRecorder } from "../audio/useAudioRecorder"
 
 interface BrainDumpInputProps {
-  onUntangle: (rawDump: string, energyPreference: string) => Promise<void>;
-  isLoading: boolean;
+  onUntangle: (rawDump: string, energyPreference: string) => Promise<void>
+  isLoading: boolean
 }
 
 export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLoading }) => {
-  const [text, setText] = useState('');
-  const [energyPreference, setEnergyPreference] = useState<EnergyLevel>('medium');
-  const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
-  const [selectedFocusCategory, setSelectedFocusCategory] = useState<string>('all');
-  const [audioError, setAudioError] = useState<string | null>(null);
+  const [text, setText] = useState("")
+  const [energyPreference, setEnergyPreference] = useState<EnergyLevel>("medium")
+  const [activeTemplate, setActiveTemplate] = useState<string | null>(null)
+  const [selectedFocusCategory, setSelectedFocusCategory] = useState<string>("all")
+  const [audioError, setAudioError] = useState<string | null>(null)
 
   // Gemini 3.5 Transcribe Audio Recorder Hook
-  const {
-    isRecording,
-    isTranscribing,
-    recordingSeconds,
-    startRecording,
-    stopRecording,
-  } = useAudioRecorder({
-    onTranscription: (transcribedText) => {
-      setText((prev) => (prev ? `${prev} ${transcribedText}` : transcribedText));
-      setAudioError(null);
-    },
-    onError: (err) => {
-      setAudioError(err);
-    },
-  });
+  const { isRecording, isTranscribing, recordingSeconds, startRecording, stopRecording } =
+    useAudioRecorder({
+      onTranscription: (transcribedText) => {
+        setText((prev) => (prev ? `${prev} ${transcribedText}` : transcribedText))
+        setAudioError(null)
+      },
+      onError: (err) => {
+        setAudioError(err)
+      },
+    })
 
-  const handleApplyTemplate = (tpl: typeof BRAIN_DUMP_TEMPLATES[0]) => {
-    setActiveTemplate(tpl.id);
-    setText(tpl.prompt);
-  };
+  const handleApplyTemplate = (tpl: (typeof BRAIN_DUMP_TEMPLATES)[0]) => {
+    setActiveTemplate(tpl.id)
+    setText(tpl.prompt)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!text.trim() || isLoading) return;
+    e.preventDefault()
+    if (!text.trim() || isLoading) return
 
-    let payloadText = text;
-    if (selectedFocusCategory !== 'all') {
-      payloadText = `[Priority Area: ${selectedFocusCategory}] ${text}`;
+    let payloadText = text
+    if (selectedFocusCategory !== "all") {
+      payloadText = `[Priority Area: ${selectedFocusCategory}] ${text}`
     }
-    onUntangle(payloadText, energyPreference);
-  };
+    onUntangle(payloadText, energyPreference)
+  }
 
-  const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0
 
   return (
     <div className="w-full bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 md:p-6 backdrop-blur-sm shadow-xl">
@@ -77,20 +72,21 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
             </span>
           </h2>
           <p className="text-xs text-neutral-400 mt-0.5">
-            Do not organize yet. Dump every thought, chore, worry, or half-baked idea. AI will categorize and slice it into micro-steps.
+            Do not organize yet. Dump every thought, chore, worry, or half-baked idea. AI will
+            categorize and slice it into micro-steps.
           </p>
         </div>
 
         {/* Energy Preference Segmented Control */}
         <div className="flex items-center gap-1.5 p-1 bg-neutral-950 border border-neutral-800 rounded-lg text-xs self-start md:self-auto">
           <span className="text-neutral-500 px-2 py-1 select-none">Battery:</span>
-          {(['low', 'medium', 'high'] as EnergyLevel[]).map((level) => {
+          {(["low", "medium", "high"] as EnergyLevel[]).map((level) => {
             const labels = {
-              low: 'Low 🔋',
-              medium: 'Medium ⚡',
-              high: 'Hyperfocus 🚀',
-            };
-            const isSelected = energyPreference === level;
+              low: "Low 🔋",
+              medium: "Medium ⚡",
+              high: "Hyperfocus 🚀",
+            }
+            const isSelected = energyPreference === level
             return (
               <button
                 key={level}
@@ -98,13 +94,13 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
                 onClick={() => setEnergyPreference(level)}
                 className={`px-2.5 py-1 font-medium rounded-md transition-colors whitespace-nowrap ${
                   isSelected
-                    ? 'bg-neutral-800 text-amber-300 shadow-sm border border-neutral-700/60'
-                    : 'text-neutral-400 hover:text-neutral-200'
+                    ? "bg-neutral-800 text-amber-300 shadow-sm border border-neutral-700/60"
+                    : "text-neutral-400 hover:text-neutral-200"
                 }`}
               >
                 {labels[level]}
               </button>
-            );
+            )
           })}
         </div>
       </div>
@@ -119,11 +115,11 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
           </span>
           <button
             type="button"
-            onClick={() => setSelectedFocusCategory('all')}
+            onClick={() => setSelectedFocusCategory("all")}
             className={`px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap transition-colors ${
-              selectedFocusCategory === 'all'
-                ? 'bg-neutral-800 border-neutral-600 text-amber-300 font-medium'
-                : 'bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200'
+              selectedFocusCategory === "all"
+                ? "bg-neutral-800 border-neutral-600 text-amber-300 font-medium"
+                : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200"
             }`}
           >
             Auto-Detect All
@@ -136,7 +132,7 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
               className={`px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap transition-colors flex items-center gap-1 ${
                 selectedFocusCategory === cat.name
                   ? `${cat.bgLight} ${cat.borderColor} ${cat.textColor} font-semibold`
-                  : 'bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200'
+                  : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200"
               }`}
             >
               <span>{cat.name}</span>
@@ -149,8 +145,8 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
           <button
             type="button"
             onClick={() => {
-              setText('');
-              setActiveTemplate(null);
+              setText("")
+              setActiveTemplate(null)
             }}
             className="text-neutral-500 hover:text-neutral-300 text-xs flex items-center gap-1 transition-colors self-end sm:self-auto"
             title="Clear text"
@@ -171,8 +167,8 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
             onClick={() => handleApplyTemplate(tpl)}
             className={`px-2.5 py-1 rounded-md border whitespace-nowrap transition-colors flex items-center gap-1.5 ${
               activeTemplate === tpl.id
-                ? 'border-amber-500/40 bg-amber-500/10 text-amber-300'
-                : 'border-neutral-800 bg-neutral-950/80 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200'
+                ? "border-amber-500/40 bg-amber-500/10 text-amber-300"
+                : "border-neutral-800 bg-neutral-950/80 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200"
             }`}
           >
             <span>{tpl.title}</span>
@@ -186,8 +182,8 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
           <textarea
             value={text}
             onChange={(e) => {
-              setText(e.target.value);
-              setActiveTemplate(null);
+              setText(e.target.value)
+              setActiveTemplate(null)
             }}
             placeholder="What's floating in your head right now? e.g. Need to pay the electric bill before Friday, cat needs medication, finish the budget report for Sarah, clean the laundry mountain off the chair..."
             rows={4}
@@ -207,15 +203,15 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
               disabled={isTranscribing}
               className={`p-2.5 rounded-lg border transition-all ${
                 isRecording
-                  ? 'bg-rose-500 text-white border-rose-400 animate-pulse shadow-lg shadow-rose-500/30 ring-2 ring-rose-400/40'
+                  ? "bg-rose-500 text-white border-rose-400 animate-pulse shadow-lg shadow-rose-500/30 ring-2 ring-rose-400/40"
                   : isTranscribing
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                  : 'bg-neutral-900 border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800'
+                    ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                    : "bg-neutral-900 border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800"
               }`}
               title={
                 isRecording
-                  ? 'Click to stop and transcribe with gemini-3.5-transcribe'
-                  : 'Record voice with gemini-3.5-transcribe audio'
+                  ? "Click to stop and transcribe with gemini-3.5-transcribe"
+                  : "Record voice with gemini-3.5-transcribe audio"
               }
             >
               {isTranscribing ? (
@@ -234,7 +230,9 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
           <div className="mt-2 p-2 bg-rose-500/10 border border-rose-500/30 rounded-lg flex items-center justify-between text-xs text-rose-300">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-              <span>Recording audio... Speak naturally. Tap microphone when done to transcribe.</span>
+              <span>
+                Recording audio... Speak naturally. Tap microphone when done to transcribe.
+              </span>
             </div>
             <button
               type="button"
@@ -268,7 +266,7 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
               {isRecording ? (
                 <span className="text-rose-400 font-medium">Recording audio input...</span>
               ) : (
-                'Micro-step & category decomposition engine ready'
+                "Micro-step & category decomposition engine ready"
               )}
             </span>
           </div>
@@ -295,5 +293,5 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
         </div>
       </form>
     </div>
-  );
-};
+  )
+}

@@ -1,6 +1,7 @@
 # Security Specification
 
 ## Data Invariants
+
 1. Each user's data is strictly scoped under `/users/{userId}` where `userId == request.auth.uid`.
 2. Tasks and Parking Lot items can only be read, written, updated, or deleted by their respective authenticated owner.
 3. User profile data cannot be read by any user other than the owner (prevents PII exposure).
@@ -8,6 +9,7 @@
 5. Tasks require immutable `userId`, `id`, and `createdAt` timestamps.
 
 ## Dirty Dozen Payloads & Attack Scenarios
+
 1. **Unauthenticated Read**: Attempting to read another user's tasks without authentication -> DENIED.
 2. **Cross-Tenant Read**: Authenticated user A attempting to list or read user B's tasks -> DENIED.
 3. **Cross-Tenant Write**: User A attempting to insert or edit a task in user B's subcollection -> DENIED.

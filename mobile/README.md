@@ -1,4 +1,4 @@
-# Tangle Mobile (Expo React Native)
+# Untangle Mobile (Expo React Native)
 
 ADHD Brain Dump & Micro-Task Planner native app built with **Expo SDK 52**, **Expo Router**, and **NativeWind v4**.
 
@@ -16,12 +16,14 @@ ADHD Brain Dump & Micro-Task Planner native app built with **Expo SDK 52**, **Ex
 ## How to Run Locally
 
 ### 1. Install Dependencies
+
 ```bash
 cd mobile
 npm install
 ```
 
 ### 2. Start Expo Development Server
+
 ```bash
 npx expo start
 ```

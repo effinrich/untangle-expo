@@ -1,41 +1,41 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import React, { useState } from "react"
+import { View, Text, Pressable, ScrollView, ActivityIndicator } from "react-native"
+import { useRouter } from "expo-router"
+import * as Haptics from "../utils/haptics"
 
 export default function UnstickScreen() {
-  const router = useRouter();
-  const [selectedMood, setSelectedMood] = useState('Paralyzed / cannot pick where to start');
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
+  const [selectedMood, setSelectedMood] = useState("Paralyzed / cannot pick where to start")
+  const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<{
-    chosenTask: string;
-    reasoning: string;
-    sparkChallenge: string;
-  } | null>(null);
+    chosenTask: string
+    reasoning: string
+    sparkChallenge: string
+  } | null>(null)
 
   const moods = [
-    'Paralyzed / cannot pick where to start',
-    'Brain is completely fried (0% battery)',
-    'Restless, distracted, opening 15 tabs',
-    'Dreading a high-stakes thing',
-  ];
+    "Paralyzed / cannot pick where to start",
+    "Brain is completely fried (0% battery)",
+    "Restless, distracted, opening 15 tabs",
+    "Dreading a high-stakes thing",
+  ]
 
   const handlePickForMe = () => {
-    setIsLoading(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setIsLoading(true)
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
 
     setTimeout(() => {
       setResult({
-        chosenTask: 'Clear 3 empty coffee mugs off desk',
+        chosenTask: "Clear 3 empty coffee mugs off desk",
         reasoning:
-          'This has zero cognitive resistance and immediately clears visual noise in your physical field.',
+          "This has zero cognitive resistance and immediately clears visual noise in your physical field.",
         sparkChallenge:
-          'Pick up the blue mug by your monitor for literally 60 seconds. If you still hate it after 60s, you have 100% permission to quit.',
-      });
-      setIsLoading(false);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    }, 900);
-  };
+          "Pick up the blue mug by your monitor for literally 60 seconds. If you still hate it after 60s, you have 100% permission to quit.",
+      })
+      setIsLoading(false)
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+    }, 900)
+  }
 
   return (
     <ScrollView className="flex-1 bg-neutral-950 px-6 pt-12 pb-10">
@@ -53,9 +53,7 @@ export default function UnstickScreen() {
 
       {!result ? (
         <View>
-          <Text className="text-2xl font-bold text-neutral-100 mb-2">
-            Remove Decision Fatigue
-          </Text>
+          <Text className="text-2xl font-bold text-neutral-100 mb-2">Remove Decision Fatigue</Text>
           <Text className="text-xs text-neutral-400 mb-6 leading-relaxed">
             When executive paralysis hits, deciding burns all your dopamine. Let AI pick the lowest
             barrier entry point.
@@ -69,18 +67,18 @@ export default function UnstickScreen() {
             <Pressable
               key={m}
               onPress={() => {
-                setSelectedMood(m);
-                Haptics.selectionAsync();
+                setSelectedMood(m)
+                Haptics.selectionAsync()
               }}
               className={`p-3.5 rounded-xl border mb-2.5 ${
                 selectedMood === m
-                  ? 'bg-amber-400/15 border-amber-400'
-                  : 'bg-neutral-900 border-neutral-800'
+                  ? "bg-amber-400/15 border-amber-400"
+                  : "bg-neutral-900 border-neutral-800"
               }`}
             >
               <Text
                 className={`text-xs font-medium ${
-                  selectedMood === m ? 'text-amber-300' : 'text-neutral-300'
+                  selectedMood === m ? "text-amber-300" : "text-neutral-300"
                 }`}
               >
                 {m}
@@ -96,9 +94,7 @@ export default function UnstickScreen() {
             {isLoading ? (
               <ActivityIndicator color="#000" />
             ) : (
-              <Text className="text-sm font-bold text-black">
-                ✨ Pick The Single Easiest Spark
-              </Text>
+              <Text className="text-sm font-bold text-black">✨ Pick The Single Easiest Spark</Text>
             )}
           </Pressable>
         </View>
@@ -108,9 +104,7 @@ export default function UnstickScreen() {
             <Text className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
               Selected For You:
             </Text>
-            <Text className="text-lg font-bold text-neutral-100 mt-1">
-              {result.chosenTask}
-            </Text>
+            <Text className="text-lg font-bold text-neutral-100 mt-1">{result.chosenTask}</Text>
             <Text className="text-xs text-neutral-400 mt-1 leading-relaxed">
               {result.reasoning}
             </Text>
@@ -134,5 +128,5 @@ export default function UnstickScreen() {
         </View>
       )}
     </ScrollView>
-  );
+  )
 }

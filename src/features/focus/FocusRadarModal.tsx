@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react"
 import {
   X,
   Play,
@@ -13,20 +13,20 @@ import {
   Zap,
   Sparkles,
   Layers,
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
-import { MicroTask, AmbientSoundType, ParkingLotItem } from '../../types';
-import { ambientEngine } from '../../services/ambient';
-import { soundService } from '../../services/sound';
+} from "lucide-react"
+import confetti from "canvas-confetti"
+import { MicroTask, AmbientSoundType, ParkingLotItem } from "../../types"
+import { ambientEngine } from "../../services/ambient"
+import { soundService } from "../../services/sound"
 
 interface FocusRadarModalProps {
-  task: MicroTask;
-  isOpen: boolean;
-  onClose: () => void;
-  onCompleteTask: (taskId: string) => void;
-  parkingLot: ParkingLotItem[];
-  onAddParkingLotItem: (text: string) => void;
-  onDeleteParkingLotItem: (id: string) => void;
+  task: MicroTask
+  isOpen: boolean
+  onClose: () => void
+  onCompleteTask: (taskId: string) => void
+  parkingLot: ParkingLotItem[]
+  onAddParkingLotItem: (text: string) => void
+  onDeleteParkingLotItem: (id: string) => void
 }
 
 export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
@@ -39,82 +39,82 @@ export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
   onDeleteParkingLotItem,
 }) => {
   // Timer state (seconds)
-  const defaultSeconds = (task.estimatedMinutes || 10) * 60;
-  const [secondsRemaining, setSecondsRemaining] = useState(defaultSeconds);
-  const [isRunning, setIsRunning] = useState(false);
-  const [ambientSound, setAmbientSound] = useState<AmbientSoundType>('none');
-  const [volume, setVolume] = useState(0.4);
-  const [parkingThought, setParkingThought] = useState('');
-  const [showParkingLot, setShowParkingLot] = useState(false);
+  const defaultSeconds = (task.estimatedMinutes || 10) * 60
+  const [secondsRemaining, setSecondsRemaining] = useState(defaultSeconds)
+  const [isRunning, setIsRunning] = useState(false)
+  const [ambientSound, setAmbientSound] = useState<AmbientSoundType>("none")
+  const [volume, setVolume] = useState(0.4)
+  const [parkingThought, setParkingThought] = useState("")
+  const [showParkingLot, setShowParkingLot] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
-      setSecondsRemaining((task.estimatedMinutes || 10) * 60);
-      setIsRunning(true);
-      soundService.playFocusStart();
+      setSecondsRemaining((task.estimatedMinutes || 10) * 60)
+      setIsRunning(true)
+      soundService.playFocusStart()
     } else {
-      setIsRunning(false);
-      ambientEngine.stop();
-      setAmbientSound('none');
+      setIsRunning(false)
+      ambientEngine.stop()
+      setAmbientSound("none")
     }
-  }, [isOpen, task]);
+  }, [isOpen, task])
 
   // Timer countdown tick
   useEffect(() => {
-    let interval: any = null;
+    let interval: any = null
     if (isRunning && secondsRemaining > 0) {
       interval = setInterval(() => {
-        setSecondsRemaining((prev) => prev - 1);
-      }, 1000);
+        setSecondsRemaining((prev) => prev - 1)
+      }, 1000)
     } else if (secondsRemaining === 0 && isRunning) {
-      setIsRunning(false);
-      soundService.playCompletionChime();
+      setIsRunning(false)
+      soundService.playCompletionChime()
     }
-    return () => clearInterval(interval);
-  }, [isRunning, secondsRemaining]);
+    return () => clearInterval(interval)
+  }, [isRunning, secondsRemaining])
 
   // Handle ambient sound changes
   const handleAmbientChange = (type: AmbientSoundType) => {
-    setAmbientSound(type);
-    ambientEngine.play(type);
-  };
+    setAmbientSound(type)
+    ambientEngine.play(type)
+  }
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseFloat(e.target.value);
-    setVolume(val);
-    ambientEngine.setVolume(val);
-  };
+    const val = parseFloat(e.target.value)
+    setVolume(val)
+    ambientEngine.setVolume(val)
+  }
 
   const handleAddMinutes = (mins: number) => {
-    setSecondsRemaining((prev) => prev + mins * 60);
-  };
+    setSecondsRemaining((prev) => prev + mins * 60)
+  }
 
   const handleComplete = () => {
-    soundService.playCompletionChime();
+    soundService.playCompletionChime()
     confetti({
       particleCount: 60,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ['#F59E0B', '#10B981', '#6366F1', '#EC4899'],
-    });
-    onCompleteTask(task.id);
-    ambientEngine.stop();
-    onClose();
-  };
+      colors: ["#F59E0B", "#10B981", "#6366F1", "#EC4899"],
+    })
+    onCompleteTask(task.id)
+    ambientEngine.stop()
+    onClose()
+  }
 
   const handleAddThought = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!parkingThought.trim()) return;
-    onAddParkingLotItem(parkingThought.trim());
-    setParkingThought('');
-    soundService.playTick();
-  };
+    e.preventDefault()
+    if (!parkingThought.trim()) return
+    onAddParkingLotItem(parkingThought.trim())
+    setParkingThought("")
+    soundService.playTick()
+  }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
-  const minutes = Math.floor(secondsRemaining / 60);
-  const seconds = secondsRemaining % 60;
-  const timeFormatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  const minutes = Math.floor(secondsRemaining / 60)
+  const seconds = secondsRemaining % 60
+  const timeFormatted = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-950/95 backdrop-blur-md">
@@ -133,8 +133,8 @@ export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
               onClick={() => setShowParkingLot(!showParkingLot)}
               className={`px-3 py-1 text-xs rounded-lg border transition-colors flex items-center gap-1.5 ${
                 showParkingLot
-                  ? 'bg-amber-400/20 border-amber-400/40 text-amber-300'
-                  : 'bg-neutral-800/80 border-neutral-700 text-neutral-300 hover:text-white'
+                  ? "bg-amber-400/20 border-amber-400/40 text-amber-300"
+                  : "bg-neutral-800/80 border-neutral-700 text-neutral-300 hover:text-white"
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -144,8 +144,8 @@ export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
             <button
               type="button"
               onClick={() => {
-                ambientEngine.stop();
-                onClose();
+                ambientEngine.stop()
+                onClose()
               }}
               className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 transition-colors"
             >
@@ -175,7 +175,9 @@ export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
             {timeFormatted}
           </div>
           <div className="text-xs text-neutral-500 mt-1">
-            {secondsRemaining === 0 ? 'Time is up! Great focus push.' : 'Dedicated single-task sprint'}
+            {secondsRemaining === 0
+              ? "Time is up! Great focus push."
+              : "Dedicated single-task sprint"}
           </div>
         </div>
 
@@ -210,8 +212,8 @@ export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
           <button
             type="button"
             onClick={() => {
-              setIsRunning(false);
-              setSecondsRemaining(defaultSeconds);
+              setIsRunning(false)
+              setSecondsRemaining(defaultSeconds)
             }}
             className="p-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-neutral-200 border border-neutral-700 transition-colors"
             title="Reset timer"
@@ -224,14 +226,14 @@ export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
         <div className="w-full max-w-md bg-neutral-950/70 border border-neutral-800/80 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs mb-6">
           <div className="flex items-center gap-1.5">
             <span className="text-neutral-500 font-medium mr-1">ADHD Noise:</span>
-            {(['none', 'brown', 'rain', 'white'] as AmbientSoundType[]).map((type) => {
+            {(["none", "brown", "rain", "white"] as AmbientSoundType[]).map((type) => {
               const labels: Record<AmbientSoundType, string> = {
-                none: 'Off',
-                brown: 'Brown Noise',
-                rain: 'Rain',
-                white: 'White Noise',
-              };
-              const isSelected = ambientSound === type;
+                none: "Off",
+                brown: "Brown Noise",
+                rain: "Rain",
+                white: "White Noise",
+              }
+              const isSelected = ambientSound === type
               return (
                 <button
                   key={type}
@@ -239,17 +241,17 @@ export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
                   onClick={() => handleAmbientChange(type)}
                   className={`px-2 py-1 rounded-md transition-colors ${
                     isSelected
-                      ? 'bg-neutral-800 text-amber-300 font-semibold border border-neutral-700'
-                      : 'text-neutral-400 hover:text-neutral-200'
+                      ? "bg-neutral-800 text-amber-300 font-semibold border border-neutral-700"
+                      : "text-neutral-400 hover:text-neutral-200"
                   }`}
                 >
                   {labels[type]}
                 </button>
-              );
+              )
             })}
           </div>
 
-          {ambientSound !== 'none' && (
+          {ambientSound !== "none" && (
             <div className="flex items-center gap-2 shrink-0">
               <Volume2 className="w-3.5 h-3.5 text-neutral-400" />
               <input
@@ -279,9 +281,7 @@ export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
         {showParkingLot && (
           <div className="w-full mt-6 pt-5 border-t border-neutral-800 text-left">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-semibold text-neutral-300">
-                Mental Parking Lot
-              </div>
+              <div className="text-xs font-semibold text-neutral-300">Mental Parking Lot</div>
               <span className="text-[11px] text-neutral-500">
                 Dump random thoughts here so you don’t derail
               </span>
@@ -331,5 +331,5 @@ export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}

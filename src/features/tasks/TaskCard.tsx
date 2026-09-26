@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react"
 import {
   Check,
   Play,
@@ -16,20 +16,20 @@ import {
   Landmark,
   ShoppingBag,
   Palette,
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
-import { MicroTask, EnergyLevel, PriorityLevel } from '../../types';
-import { soundService } from '../../services/sound';
-import { apiBreakdownTask } from '../../services/api';
-import { DEFAULT_CATEGORIES, getCategoryStyle } from '../../data/categories';
+} from "lucide-react"
+import confetti from "canvas-confetti"
+import { MicroTask, EnergyLevel, PriorityLevel } from "../../types"
+import { soundService } from "../../services/sound"
+import { apiBreakdownTask } from "../../services/api"
+import { DEFAULT_CATEGORIES, getCategoryStyle } from "../../data/categories"
 
 interface TaskCardProps {
-  task: MicroTask;
-  onToggleComplete: (id: string) => void;
-  onToggleSubstep: (taskId: string, substepId: string) => void;
-  onDelete: (id: string) => void;
-  onStartFocus: (task: MicroTask) => void;
-  onUpdateTask: (task: MicroTask) => void;
+  task: MicroTask
+  onToggleComplete: (id: string) => void
+  onToggleSubstep: (taskId: string, substepId: string) => void
+  onDelete: (id: string) => void
+  onStartFocus: (task: MicroTask) => void
+  onUpdateTask: (task: MicroTask) => void
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({
@@ -40,100 +40,100 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   onStartFocus,
   onUpdateTask,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isBreakingDown, setIsBreakingDown] = useState(false);
-  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isBreakingDown, setIsBreakingDown] = useState(false)
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
 
   const handleComplete = () => {
     if (!task.completed) {
-      soundService.playCompletionChime();
+      soundService.playCompletionChime()
       confetti({
         particleCount: 45,
         spread: 55,
         origin: { y: 0.75 },
-        colors: ['#F59E0B', '#10B981', '#6366F1', '#EC4899'],
+        colors: ["#F59E0B", "#10B981", "#6366F1", "#EC4899"],
         disableForReducedMotion: true,
-      });
+      })
     }
-    onToggleComplete(task.id);
-  };
+    onToggleComplete(task.id)
+  }
 
   const handleSubstepCheck = (subId: string, currentCompleted: boolean) => {
     if (!currentCompleted) {
-      soundService.playTick();
+      soundService.playTick()
     }
-    onToggleSubstep(task.id, subId);
-  };
+    onToggleSubstep(task.id, subId)
+  }
 
   const handleBreakdownFurther = async () => {
-    setIsBreakingDown(true);
+    setIsBreakingDown(true)
     try {
-      const result = await apiBreakdownTask(task.title, task.firstPhysicalStep);
+      const result = await apiBreakdownTask(task.title, task.firstPhysicalStep)
       const newSubsteps = result.microSteps.map((stepText, idx) => ({
         id: `micro_${Date.now()}_${idx}`,
         text: stepText,
         completed: false,
-      }));
+      }))
 
       onUpdateTask({
         ...task,
         firstPhysicalStep: result.easierFirstStep || task.firstPhysicalStep,
         substeps: [...task.substeps, ...newSubsteps],
-      });
-      setIsExpanded(true);
+      })
+      setIsExpanded(true)
     } catch (err) {
-      console.error(err);
+      console.error(err)
     } finally {
-      setIsBreakingDown(false);
+      setIsBreakingDown(false)
     }
-  };
+  }
 
   const handleSelectCategory = (categoryName: string) => {
     onUpdateTask({
       ...task,
       category: categoryName,
-    });
-    setIsCategoryMenuOpen(false);
-  };
+    })
+    setIsCategoryMenuOpen(false)
+  }
 
   const handleTogglePriority = () => {
     const cycle: Record<PriorityLevel, PriorityLevel> = {
-      high: 'medium',
-      medium: 'low',
-      low: 'high',
-    };
-    const current = task.priority || 'medium';
+      high: "medium",
+      medium: "low",
+      low: "high",
+    }
+    const current = task.priority || "medium"
     onUpdateTask({
       ...task,
       priority: cycle[current],
-    });
-  };
+    })
+  }
 
-  const completedSubstepsCount = task.substeps.filter((s) => s.completed).length;
-  const totalSubsteps = task.substeps.length;
+  const completedSubstepsCount = task.substeps.filter((s) => s.completed).length
+  const totalSubsteps = task.substeps.length
 
   const energyColors: Record<EnergyLevel, string> = {
-    low: 'text-emerald-400',
-    medium: 'text-amber-400',
-    high: 'text-rose-400',
-  };
+    low: "text-emerald-400",
+    medium: "text-amber-400",
+    high: "text-rose-400",
+  }
 
-  const categoryStyle = getCategoryStyle(task.category);
+  const categoryStyle = getCategoryStyle(task.category)
 
   const priorityStyles: Record<PriorityLevel, { text: string; label: string }> = {
-    high: { text: 'text-rose-400', label: 'High Priority' },
-    medium: { text: 'text-amber-400', label: 'Med Priority' },
-    low: { text: 'text-neutral-500', label: 'Low Priority' },
-  };
+    high: { text: "text-rose-400", label: "High Priority" },
+    medium: { text: "text-amber-400", label: "Med Priority" },
+    low: { text: "text-neutral-500", label: "Low Priority" },
+  }
 
-  const currentPriority = task.priority || 'medium';
+  const currentPriority = task.priority || "medium"
 
   return (
     <div
       className={`group border rounded-xl transition-all duration-200 ${
         task.completed
-          ? 'bg-neutral-900/30 border-neutral-900/80 opacity-60'
-          : 'bg-neutral-900/70 border-neutral-800 hover:border-neutral-700/80 shadow-sm'
+          ? "bg-neutral-900/30 border-neutral-900/80 opacity-60"
+          : "bg-neutral-900/70 border-neutral-800 hover:border-neutral-700/80 shadow-sm"
       }`}
     >
       <div className="p-4 md:p-5">
@@ -144,10 +144,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             onClick={handleComplete}
             className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
               task.completed
-                ? 'bg-emerald-500 border-emerald-400 text-neutral-950'
-                : 'border-neutral-700 hover:border-amber-400 bg-neutral-950 text-transparent'
+                ? "bg-emerald-500 border-emerald-400 text-neutral-950"
+                : "border-neutral-700 hover:border-amber-400 bg-neutral-950 text-transparent"
             }`}
-            title={task.completed ? 'Mark uncompleted' : 'Mark completed'}
+            title={task.completed ? "Mark uncompleted" : "Mark completed"}
           >
             <Check className="w-3.5 h-3.5 stroke-[3]" />
           </button>
@@ -157,7 +157,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 mb-1.5">
               <h3
                 className={`text-sm md:text-base font-semibold leading-snug break-words ${
-                  task.completed ? 'line-through text-neutral-500' : 'text-neutral-100'
+                  task.completed ? "line-through text-neutral-500" : "text-neutral-100"
                 }`}
               >
                 {task.title}
@@ -192,8 +192,8 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                           onClick={() => handleSelectCategory(cat.name)}
                           className={`w-full text-left px-2 py-1.5 rounded flex items-center gap-2 transition-colors ${
                             task.category === cat.name
-                              ? 'bg-neutral-800 text-white font-medium'
-                              : 'text-neutral-300 hover:bg-neutral-800/60'
+                              ? "bg-neutral-800 text-white font-medium"
+                              : "text-neutral-300 hover:bg-neutral-800/60"
                           }`}
                         >
                           <span
@@ -207,7 +207,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                   )}
                 </div>
 
-                <span aria-hidden="true" className="text-neutral-700">·</span>
+                <span aria-hidden="true" className="text-neutral-700">
+                  ·
+                </span>
 
                 {/* Priority Toggle */}
                 {!task.completed && (
@@ -221,14 +223,18 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                   </button>
                 )}
 
-                <span aria-hidden="true" className="text-neutral-700">·</span>
+                <span aria-hidden="true" className="text-neutral-700">
+                  ·
+                </span>
 
                 <span className="flex items-center gap-1">
                   <Clock className="w-3 h-3 text-neutral-500" />
                   <span>{task.estimatedMinutes}m</span>
                 </span>
 
-                <span aria-hidden="true" className="text-neutral-700">·</span>
+                <span aria-hidden="true" className="text-neutral-700">
+                  ·
+                </span>
                 <span className={`capitalize ${energyColors[task.energyLevel]}`}>
                   {task.energyLevel} energy
                 </span>
@@ -254,9 +260,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
             {/* Why It Matters Rationale */}
             {task.whyItMatters && !task.completed && (
-              <p className="text-xs text-neutral-500 mt-1 italic">
-                {task.whyItMatters}
-              </p>
+              <p className="text-xs text-neutral-500 mt-1 italic">{task.whyItMatters}</p>
             )}
 
             {/* Action Bar */}
@@ -282,7 +286,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                     title="Feeling paralyzed? Split into smaller micro-steps"
                   >
                     <Scissors className="w-3 h-3" />
-                    <span>{isBreakingDown ? 'Slicing...' : 'Break down further'}</span>
+                    <span>{isBreakingDown ? "Slicing..." : "Break down further"}</span>
                   </button>
                 )}
 
@@ -328,16 +332,16 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                     onClick={() => handleSubstepCheck(sub.id, sub.completed)}
                     className={`flex items-start gap-2.5 p-2 rounded-lg cursor-pointer transition-colors ${
                       sub.completed
-                        ? 'bg-neutral-950/40 text-neutral-500 line-through'
-                        : 'bg-neutral-950/80 text-neutral-300 hover:bg-neutral-950'
+                        ? "bg-neutral-950/40 text-neutral-500 line-through"
+                        : "bg-neutral-950/80 text-neutral-300 hover:bg-neutral-950"
                     }`}
                   >
                     <button
                       type="button"
                       className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
                         sub.completed
-                          ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
-                          : 'border-neutral-700 bg-neutral-900 text-transparent'
+                          ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
+                          : "border-neutral-700 bg-neutral-900 text-transparent"
                       }`}
                     >
                       <Check className="w-2.5 h-2.5 stroke-[3]" />
@@ -351,5 +355,5 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

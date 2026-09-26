@@ -1,34 +1,34 @@
-import React from 'react';
-import { Flame, CheckCircle, Clock, BatteryCharging, Layers, Tag } from 'lucide-react';
-import { MicroTask } from '../../types';
-import { DEFAULT_CATEGORIES, getCategoryStyle } from '../../data/categories';
+import React from "react"
+import { Flame, CheckCircle, Clock, BatteryCharging, Layers, Tag } from "lucide-react"
+import { MicroTask } from "../../types"
+import { DEFAULT_CATEGORIES, getCategoryStyle } from "../../data/categories"
 
 interface DopamineTrackerProps {
-  tasks: MicroTask[];
+  tasks: MicroTask[]
 }
 
 export const DopamineTracker: React.FC<DopamineTrackerProps> = ({ tasks }) => {
-  const completedTasks = tasks.filter((t) => t.completed);
-  const totalMinutesSaved = completedTasks.reduce((acc, t) => acc + (t.estimatedMinutes || 5), 0);
-  const quickWinsCompleted = completedTasks.filter((t) => t.estimatedMinutes <= 5).length;
+  const completedTasks = tasks.filter((t) => t.completed)
+  const totalMinutesSaved = completedTasks.reduce((acc, t) => acc + (t.estimatedMinutes || 5), 0)
+  const quickWinsCompleted = completedTasks.filter((t) => t.estimatedMinutes <= 5).length
 
   // Group by category
   const categoryStats = React.useMemo(() => {
-    const stats: Record<string, { total: number; completed: number }> = {};
+    const stats: Record<string, { total: number; completed: number }> = {}
 
     tasks.forEach((t) => {
-      const cat = t.category || 'Personal';
+      const cat = t.category || "Personal"
       if (!stats[cat]) {
-        stats[cat] = { total: 0, completed: 0 };
+        stats[cat] = { total: 0, completed: 0 }
       }
-      stats[cat].total += 1;
+      stats[cat].total += 1
       if (t.completed) {
-        stats[cat].completed += 1;
+        stats[cat].completed += 1
       }
-    });
+    })
 
-    return Object.entries(stats).sort((a, b) => b[1].total - a[1].total);
-  }, [tasks]);
+    return Object.entries(stats).sort((a, b) => b[1].total - a[1].total)
+  }, [tasks])
 
   return (
     <div className="w-full bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 md:p-6 backdrop-blur-sm space-y-5">
@@ -36,9 +36,7 @@ export const DopamineTracker: React.FC<DopamineTrackerProps> = ({ tasks }) => {
         <div>
           <h3 className="text-sm md:text-base font-semibold text-neutral-200 flex items-center gap-2">
             <span>Dopamine & Priority Area Momentum</span>
-            <span className="text-[11px] text-neutral-500 font-normal">
-              No guilt tracking
-            </span>
+            <span className="text-[11px] text-neutral-500 font-normal">No guilt tracking</span>
           </h3>
           <p className="text-xs text-neutral-500 mt-0.5">
             Every micro-action counts. Even 3 minutes unblocks executive inertia.
@@ -97,8 +95,8 @@ export const DopamineTracker: React.FC<DopamineTrackerProps> = ({ tasks }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {categoryStats.map(([category, { total, completed }]) => {
-              const style = getCategoryStyle(category);
-              const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+              const style = getCategoryStyle(category)
+              const percentage = total > 0 ? Math.round((completed / total) * 100) : 0
 
               return (
                 <div
@@ -129,11 +127,11 @@ export const DopamineTracker: React.FC<DopamineTrackerProps> = ({ tasks }) => {
                     />
                   </div>
                 </div>
-              );
+              )
             })}
           </div>
         </div>
       )}
     </div>
-  );
-};
+  )
+}

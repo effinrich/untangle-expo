@@ -1,51 +1,110 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, TextInput, ScrollView } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import React, { useState, useEffect } from "react"
+import { Platform, View, Text, Pressable, TextInput, ScrollView } from "react-native"
+import { useLocalSearchParams, useRouter } from "expo-router"
+import * as Haptics from "../utils/haptics"
+import * as Notifications from "expo-notifications"
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+})
 
 export default function FocusScreen() {
-  const router = useRouter();
-  const { title, firstStep, minutes } = useLocalSearchParams<{
-    id: string;
-    title: string;
-    firstStep: string;
-    minutes: string;
-  }>();
-
-  const totalSeconds = (parseInt(minutes || '10', 10) || 10) * 60;
-  const [secondsRemaining, setSecondsRemaining] = useState(totalSeconds);
-  const [isRunning, setIsRunning] = useState(true);
-  const [parkingThought, setParkingThought] = useState('');
-  const [parkingLot, setParkingLot] = useState<string[]>([]);
+  const notificationIdRef = React.useRef<string | null>(null)
 
   useEffect(() => {
-    let interval: any = null;
+    ;(async () => {
+      if (Platform.OS !== "web") {
+        const { status } = await Notifications.getPermissionsAsync()
+        if (status !== "granted") {
+          await Notifications.requestPermissionsAsync()
+        }
+      }
+    })()
+    return () => {
+      // Cleanup notification on unmount
+      if (notificationIdRef.current) {
+        Notifications.cancelScheduledNotificationAsync(notificationIdRef.current)
+      }
+    }
+  }, [])
+  const router = useRouter()
+  const { title, firstStep, minutes } = useLocalSearchParams<{
+    id: string
+    title: string
+    firstStep: string
+    minutes: string
+  }>()
+
+  const totalSeconds = (parseInt(minutes || "10", 10) || 10) * 60
+  const [secondsRemaining, setSecondsRemaining] = useState(totalSeconds)
+  const [isRunning, setIsRunning] = useState(true)
+  const [parkingThought, setParkingThought] = useState("")
+  const [parkingLot, setParkingLot] = useState<string[]>([])
+
+  useEffect(() => {
+    // Handle local push notification scheduling
+    const scheduleNotification = async () => {
+      if (Platform.OS === "web") return
+      if (isRunning && secondsRemaining > 0) {
+        if (notificationIdRef.current) {
+          await Notifications.cancelScheduledNotificationAsync(notificationIdRef.current)
+        }
+        const id = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Time is up! ⚡",
+            body: `Your focus sprint "${title}" is complete. Claim your dopamine!`,
+            sound: true,
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            seconds: secondsRemaining,
+          },
+        })
+        notificationIdRef.current = id
+      } else {
+        if (notificationIdRef.current) {
+          await Notifications.cancelScheduledNotificationAsync(notificationIdRef.current)
+          notificationIdRef.current = null
+        }
+      }
+    }
+    scheduleNotification()
+  }, [isRunning, secondsRemaining, title])
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null
     if (isRunning && secondsRemaining > 0) {
       interval = setInterval(() => {
-        setSecondsRemaining((prev) => prev - 1);
-      }, 1000);
+        setSecondsRemaining((prev) => prev - 1)
+      }, 1000)
     } else if (secondsRemaining === 0) {
-      setIsRunning(false);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setIsRunning(false)
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     }
-    return () => clearInterval(interval);
-  }, [isRunning, secondsRemaining]);
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [isRunning, secondsRemaining])
 
-  const mins = Math.floor(secondsRemaining / 60);
-  const secs = secondsRemaining % 60;
-  const timeFormatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  const mins = Math.floor(secondsRemaining / 60)
+  const secs = secondsRemaining % 60
+  const timeFormatted = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`
 
   const handleDone = () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    router.back();
-  };
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+    router.back()
+  }
 
   const handleParkThought = () => {
-    if (!parkingThought.trim()) return;
-    setParkingLot((prev) => [parkingThought.trim(), ...prev]);
-    setParkingThought('');
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  };
+    if (!parkingThought.trim()) return
+    setParkingLot((prev) => [parkingThought.trim(), ...prev])
+    setParkingThought("")
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+  }
 
   return (
     <ScrollView className="flex-1 bg-neutral-950 px-6 pt-12 pb-8">
@@ -64,7 +123,7 @@ export default function FocusScreen() {
 
       {/* Task Heading */}
       <Text className="text-2xl font-extrabold text-neutral-100 text-center leading-tight mb-4">
-        {title || 'Current Micro-Action'}
+        {title || "Current Micro-Action"}
       </Text>
 
       {/* The Physical Trigger Spark */}
@@ -73,7 +132,7 @@ export default function FocusScreen() {
           First Physical Action:
         </Text>
         <Text className="text-sm font-medium text-neutral-200 leading-relaxed">
-          {firstStep || 'Open the app or document'}
+          {firstStep || "Open the app or document"}
         </Text>
       </View>
 
@@ -89,13 +148,13 @@ export default function FocusScreen() {
       <View className="flex-row justify-center gap-4 mb-8">
         <Pressable
           onPress={() => {
-            setIsRunning(!isRunning);
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            setIsRunning(!isRunning)
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
           }}
           className="bg-neutral-900 border border-neutral-700 px-6 py-3 rounded-2xl"
         >
           <Text className="text-sm font-semibold text-neutral-200">
-            {isRunning ? 'Pause' : 'Resume'}
+            {isRunning ? "Pause" : "Resume"}
           </Text>
         </Pressable>
 
@@ -140,5 +199,5 @@ export default function FocusScreen() {
         ))}
       </View>
     </ScrollView>
-  );
+  )
 }

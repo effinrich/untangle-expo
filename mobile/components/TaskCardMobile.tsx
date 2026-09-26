@@ -1,12 +1,12 @@
-import React from 'react';
-import { View, Text, Pressable } from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { MicroTask } from '../services/api';
+import React from "react"
+import { View, Text, Pressable } from "react-native"
+import * as Haptics from "../utils/haptics"
+import { MicroTask } from "../services/api"
 
 interface TaskCardMobileProps {
-  task: MicroTask;
-  onToggleComplete: (id: string) => void;
-  onStartFocus: (task: MicroTask) => void;
+  task: MicroTask
+  onToggleComplete: (id: string) => void
+  onStartFocus: (task: MicroTask) => void
 }
 
 export const TaskCardMobile: React.FC<TaskCardMobileProps> = ({
@@ -15,27 +15,27 @@ export const TaskCardMobile: React.FC<TaskCardMobileProps> = ({
   onStartFocus,
 }) => {
   const handleCheck = () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    onToggleComplete(task.id);
-  };
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+    onToggleComplete(task.id)
+  }
 
   const handleFocus = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onStartFocus(task);
-  };
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    onStartFocus(task)
+  }
 
   const energyColors = {
-    low: 'text-emerald-400',
-    medium: 'text-amber-400',
-    high: 'text-rose-400',
-  };
+    low: "text-emerald-400",
+    medium: "text-amber-400",
+    high: "text-rose-400",
+  }
 
   return (
     <View
       className={`p-4 rounded-2xl mb-3 border ${
         task.completed
-          ? 'bg-neutral-900/30 border-neutral-900 opacity-50'
-          : 'bg-neutral-900/80 border-neutral-800'
+          ? "bg-neutral-900/30 border-neutral-900 opacity-50"
+          : "bg-neutral-900/80 border-neutral-800"
       }`}
     >
       <View className="flex-row items-start gap-3">
@@ -45,8 +45,8 @@ export const TaskCardMobile: React.FC<TaskCardMobileProps> = ({
           hitSlop={12}
           className={`w-6 h-6 rounded-lg border items-center justify-center mt-0.5 ${
             task.completed
-              ? 'bg-emerald-500 border-emerald-400'
-              : 'border-neutral-700 bg-neutral-950'
+              ? "bg-emerald-500 border-emerald-400"
+              : "border-neutral-700 bg-neutral-950"
           }`}
         >
           {task.completed && <Text className="text-black font-bold text-xs">✓</Text>}
@@ -56,7 +56,7 @@ export const TaskCardMobile: React.FC<TaskCardMobileProps> = ({
           {/* Title and metadata */}
           <Text
             className={`text-base font-semibold leading-snug ${
-              task.completed ? 'line-through text-neutral-500' : 'text-neutral-100'
+              task.completed ? "line-through text-neutral-500" : "text-neutral-100"
             }`}
           >
             {task.title}
@@ -68,13 +68,13 @@ export const TaskCardMobile: React.FC<TaskCardMobileProps> = ({
               <Text className="text-[11px] text-neutral-400 font-medium">{task.category}</Text>
             </View>
             <Text className="text-neutral-600">·</Text>
-            <Text className={`text-[11px] capitalize font-medium ${energyColors[task.energyLevel]}`}>
+            <Text
+              className={`text-[11px] capitalize font-medium ${energyColors[task.energyLevel]}`}
+            >
               {task.energyLevel} energy
             </Text>
             <Text className="text-neutral-600">·</Text>
-            <Text className="text-[11px] text-neutral-400 font-mono">
-              {task.estimatedMinutes}m
-            </Text>
+            <Text className="text-[11px] text-neutral-400 font-mono">{task.estimatedMinutes}m</Text>
           </View>
 
           {/* First physical step prompt */}
@@ -105,5 +105,5 @@ export const TaskCardMobile: React.FC<TaskCardMobileProps> = ({
         </View>
       </View>
     </View>
-  );
-};
+  )
+}
