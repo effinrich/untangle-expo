@@ -12,7 +12,8 @@
     "lint": "oxlint        ",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
-    "fmt:fix": "oxfmt --fix"
+    "fmt:fix": "oxfmt --fix",
+    "lint:type-aware": "oxlint --type-aware --fix"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -39,6 +40,7 @@
     "esbuild": "^0.25.0",
     "oxfmt": "^0.70.0",
     "oxlint": "^1.85.0",
+    "oxlint-tsgolint": "^7.0.2003",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
     "typescript": "^7.0.2"
