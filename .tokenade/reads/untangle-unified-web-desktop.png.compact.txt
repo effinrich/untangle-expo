@@ -1,2 +1,0 @@
-[disclose:binary kind=png ext=png bytes=127586 path=/Users/richtillman/.cache/tokenade/stash/d783670f633f.png]
-(Binary content — not shown as text. Inspect with: file <path>, identify <path> (ImageMagick), exiftool <path>)

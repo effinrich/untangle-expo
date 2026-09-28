@@ -57,8 +57,7 @@
     ]
   },
   "options": {
-    "typeAware": true,
-    "typeCheck": true
+    "typeAware": true
   },
   "ignorePatterns": [
     "node_modules",
