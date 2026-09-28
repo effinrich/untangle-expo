@@ -1,30 +1,11 @@
 import Constants from "expo-constants"
+import { MicroTask, UnstickResult } from "../types"
 
 // Resolves backend API URL (local dev or deployed Cloud Run)
 const API_BASE_URL =
   Constants.expoConfig?.extra?.apiBaseUrl ||
   (typeof window !== "undefined" && window.location?.origin) ||
   "https://ais-dev-hlh4jxillgrxmqnwolrxfw-124269995328.us-east1.run.app"
-
-export interface MicroTask {
-  id: string
-  userId?: string
-  title: string
-  firstPhysicalStep: string
-  estimatedMinutes: number
-  energyLevel: "low" | "medium" | "high"
-  category: string
-  priority?: "high" | "medium" | "low"
-  whyItMatters: string
-  substeps: {
-    id: string
-    text: string
-    completed: boolean
-  }[]
-  completed: boolean
-  completedAt?: string
-  createdAt: string
-}
 
 export async function untangleBrainDump(
   rawDump: string,
@@ -79,7 +60,7 @@ export async function transcribeAudio(audioBase64: string, mimeType: string = "a
   return response.json()
 }
 
-export async function unstickMe(tasks: MicroTask[], currentMood: string) {
+export async function unstickMe(tasks: MicroTask[], currentMood: string): Promise<UnstickResult> {
   const response = await fetch(`${API_BASE_URL}/api/unstick-me`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -92,3 +73,26 @@ export async function unstickMe(tasks: MicroTask[], currentMood: string) {
 
   return response.json()
 }
+
+export async function breakdownTask(
+  taskTitle: string,
+  currentFirstStep?: string,
+): Promise<{ easierFirstStep: string; microSteps: string[] }> {
+  const res = await fetch(`${API_BASE_URL}/api/breakdown-task`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ taskTitle, currentFirstStep }),
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to break down task")
+  }
+
+  return res.json()
+}
+
+// Aliases for compatibility with src/ code
+export const apiUntangleBrainDump = untangleBrainDump;
+export const apiBreakdownTask = breakdownTask;
+export const apiUnstickMe = unstickMe;
+export { MicroTask } from '../types'

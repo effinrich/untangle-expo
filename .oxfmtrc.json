@@ -10,5 +10,12 @@
   "bracketSpacing": true,
   "arrowParens": "always",
   "endOfLine": "lf",
-  "ignorePatterns": ["node_modules", "dist", ".output", ".expo/**", ".nitro", "storybook-static/**"]
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    ".output",
+    ".expo/**",
+    ".nitro",
+    "storybook-static/**"
+  ]
 }
