@@ -1,9 +1,9 @@
-import express from 'express'
-import { createServer as createViteServer } from 'vite'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import dotenv from 'dotenv'
-import { GoogleGenAI, Type } from '@google/genai'
+import express from "express"
+import { createServer as createViteServer } from "vite"
+import path from "path"
+import { fileURLToPath } from "url"
+import dotenv from "dotenv"
+import { GoogleGenAI, Type } from "@google/genai"
 
 dotenv.config()
 
@@ -13,17 +13,17 @@ const __dirname = path.dirname(__filename)
 const app = express()
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000
 
-app.use(express.json({ limit: '10mb' }))
+app.use(express.json({ limit: "10mb" }))
 
 // Initialize Google GenAI
-const apiKey = process.env.GEMINI_API_KEY || ''
+const apiKey = process.env.GEMINI_API_KEY || ""
 const ai = new GoogleGenAI({
   apiKey,
   httpOptions: {
     headers: {
-      'User-Agent': 'aistudio-build'
-    }
-  }
+      "User-Agent": "aistudio-build",
+    },
+  },
 })
 
 interface DeconstructedTask {
@@ -31,65 +31,65 @@ interface DeconstructedTask {
   title: string
   firstPhysicalStep: string
   estimatedMinutes: number
-  energyLevel: 'low' | 'medium' | 'high'
+  energyLevel: "low" | "medium" | "high"
   category: string
   whyItMatters: string
   substeps?: string[]
 }
 
 // Audio Transcription endpoint using gemini-3.5-transcribe
-app.post('/api/transcribe-audio', async (req, res) => {
+app.post("/api/transcribe-audio", async (req, res) => {
   try {
     const { audioBase64, mimeType } = req.body
     if (!audioBase64) {
-      res.status(400).json({ error: 'audioBase64 payload is required' })
+      res.status(400).json({ error: "audioBase64 payload is required" })
       return
     }
 
     if (!apiKey) {
       res.json({
-        text: 'I have so many tasks today: need to respond to the dentist appointment, finish the quarterly budget for work, and clear my desk.'
+        text: "I have so many tasks today: need to respond to the dentist appointment, finish the quarterly budget for work, and clear my desk.",
       })
       return
     }
 
-    const cleanMime = mimeType || 'audio/webm'
+    const cleanMime = mimeType || "audio/webm"
     // Clean data if it contains data URI prefix
-    const base64Data = audioBase64.replace(/^data:audio\/\w+;base64,/, '')
+    const base64Data = audioBase64.replace(/^data:audio\/\w+;base64,/, "")
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-transcribe',
+      model: "gemini-3.5-transcribe",
       contents: [
         {
           inlineData: {
             mimeType: cleanMime,
-            data: base64Data
-          }
+            data: base64Data,
+          },
         },
         {
-          text: 'Transcribe this spoken audio accurately. Output only the verbatim transcription text without conversational filler, intros, or summaries.'
-        }
-      ]
+          text: "Transcribe this spoken audio accurately. Output only the verbatim transcription text without conversational filler, intros, or summaries.",
+        },
+      ],
     })
 
-    const transcription = response.text?.trim() || ''
+    const transcription = response.text?.trim() || ""
     res.json({ text: transcription })
   } catch (err: any) {
-    console.error('Error in /api/transcribe-audio:', err)
+    console.error("Error in /api/transcribe-audio:", err)
     res.status(500).json({
-      error: 'Audio transcription failed',
-      details: err?.message || String(err)
+      error: "Audio transcription failed",
+      details: err?.message || String(err),
     })
   }
 })
 
 // 1. Untangle Brain Dump endpoint
-app.post('/api/untangle', async (req, res) => {
+app.post("/api/untangle", async (req, res) => {
   try {
     const { rawDump, userEnergyPreference } = req.body
 
-    if (!rawDump || typeof rawDump !== 'string' || !rawDump.trim()) {
-      res.status(400).json({ error: 'Please provide a brain dump text.' })
+    if (!rawDump || typeof rawDump !== "string" || !rawDump.trim()) {
+      res.status(400).json({ error: "Please provide a brain dump text." })
       return
     }
 
@@ -97,8 +97,8 @@ app.post('/api/untangle', async (req, res) => {
       // Graceful fallback for offline / mock dev mode if API key is not present
       const fallbackTasks = generateFallbackUntangle(rawDump)
       res.json({
-        summary: 'Parsed from your thoughts into quick micro-actions.',
-        tasks: fallbackTasks
+        summary: "Parsed from your thoughts into quick micro-actions.",
+        tasks: fallbackTasks,
       })
       return
     }
@@ -115,26 +115,26 @@ ADHD brains get paralyzed by ambiguous, large tasks. Your job is to:
 7. Give a 1-sentence "whyItMatters" that gives a quick dopamine reason or removes anxiety.
 8. Break down any medium/larger task into 2-3 microscopic sequential substeps.
 
-User's current state/energy preference: ${userEnergyPreference || 'all'}
+User's current state/energy preference: ${userEnergyPreference || "all"}
 User's raw brain dump:
 """
 ${rawDump}
 """`
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: "gemini-3.8-flash",
       contents: prompt,
       config: {
         systemInstruction:
-          'You transform chaotic ADHD thoughts into actionable, non-intimidating, high-clarity micro-steps.',
-        responseMimeType: 'application/json',
+          "You transform chaotic ADHD thoughts into actionable, non-intimidating, high-clarity micro-steps.",
+        responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
             summary: {
               type: Type.STRING,
               description:
-                'A warm, validating 1-2 sentence assessment showing they are heard and everything is manageable.'
+                "A warm, validating 1-2 sentence assessment showing they are heard and everything is manageable.",
             },
             tasks: {
               type: Type.ARRAY,
@@ -144,60 +144,58 @@ ${rawDump}
                   id: { type: Type.STRING },
                   title: {
                     type: Type.STRING,
-                    description: 'Short, punchy action-verb title'
+                    description: "Short, punchy action-verb title",
                   },
                   firstPhysicalStep: {
                     type: Type.STRING,
-                    description:
-                      'The immediate physical micro-movement to start'
+                    description: "The immediate physical micro-movement to start",
                   },
                   estimatedMinutes: {
                     type: Type.INTEGER,
-                    description: 'Estimated time in minutes (3 to 30)'
+                    description: "Estimated time in minutes (3 to 30)",
                   },
                   energyLevel: {
                     type: Type.STRING,
-                    description: "'low', 'medium', or 'high'"
+                    description: "'low', 'medium', or 'high'",
                   },
                   category: {
                     type: Type.STRING,
                     description:
-                      'Category label such as Work, Personal, Health, Finance / Admin, Errands'
+                      "Category label such as Work, Personal, Health, Finance / Admin, Errands",
                   },
                   priority: {
                     type: Type.STRING,
-                    description: "'high', 'medium', or 'low'"
+                    description: "'high', 'medium', or 'low'",
                   },
                   whyItMatters: {
                     type: Type.STRING,
-                    description:
-                      'Quick motivational or anxiety-reducing rationale'
+                    description: "Quick motivational or anxiety-reducing rationale",
                   },
                   substeps: {
                     type: Type.ARRAY,
                     items: { type: Type.STRING },
-                    description: '2-3 micro mini-steps'
-                  }
+                    description: "2-3 micro mini-steps",
+                  },
                 },
                 required: [
-                  'title',
-                  'firstPhysicalStep',
-                  'estimatedMinutes',
-                  'energyLevel',
-                  'category',
-                  'whyItMatters'
-                ]
-              }
-            }
+                  "title",
+                  "firstPhysicalStep",
+                  "estimatedMinutes",
+                  "energyLevel",
+                  "category",
+                  "whyItMatters",
+                ],
+              },
+            },
           },
-          required: ['summary', 'tasks']
-        }
-      }
+          required: ["summary", "tasks"],
+        },
+      },
     })
 
     const text = response.text
     if (!text) {
-      throw new Error('No response generated by model')
+      throw new Error("No response generated by model")
     }
 
     const data = JSON.parse(text)
@@ -206,31 +204,29 @@ ${rawDump}
       data.tasks = data.tasks.map((t: any, idx: number) => ({
         ...t,
         id: t.id || `task_${Date.now()}_${idx}`,
-        energyLevel: ['low', 'medium', 'high'].includes(t.energyLevel)
-          ? t.energyLevel
-          : 'medium',
-        estimatedMinutes: Math.max(1, Number(t.estimatedMinutes) || 10)
+        energyLevel: ["low", "medium", "high"].includes(t.energyLevel) ? t.energyLevel : "medium",
+        estimatedMinutes: Math.max(1, Number(t.estimatedMinutes) || 10),
       }))
     }
 
     res.json(data)
   } catch (err: any) {
-    console.error('Error in /api/untangle:', err)
+    console.error("Error in /api/untangle:", err)
     // Fallback if API call hits quota or fails
-    const fallbackTasks = generateFallbackUntangle(req.body.rawDump || '')
+    const fallbackTasks = generateFallbackUntangle(req.body.rawDump || "")
     res.json({
       summary: "I've structured your brain dump into clean micro-steps.",
-      tasks: fallbackTasks
+      tasks: fallbackTasks,
     })
   }
 })
 
 // 2. Micro-breakdown of a single stuck task
-app.post('/api/breakdown-task', async (req, res) => {
+app.post("/api/breakdown-task", async (req, res) => {
   try {
     const { taskTitle, currentFirstStep } = req.body
     if (!taskTitle) {
-      res.status(400).json({ error: 'Task title is required' })
+      res.status(400).json({ error: "Task title is required" })
       return
     }
 
@@ -238,61 +234,60 @@ app.post('/api/breakdown-task', async (req, res) => {
       res.json({
         microSteps: [
           `Open the exact app/tab for "${taskTitle}"`,
-          'Spend just 60 seconds looking at the first screen',
-          'Do one small 2-minute action and pause'
+          "Spend just 60 seconds looking at the first screen",
+          "Do one small 2-minute action and pause",
         ],
-        easierFirstStep: `Touch your keyboard and open the relevant app for ${taskTitle}`
+        easierFirstStep: `Touch your keyboard and open the relevant app for ${taskTitle}`,
       })
       return
     }
 
     const prompt = `The user with ADHD is stuck on this task: "${taskTitle}".
-Current first step: "${currentFirstStep || ''}".
+Current first step: "${currentFirstStep || ""}".
 The task still feels too intimidating or huge.
 Break it down into 3-4 ridiculously tiny, friction-free micro-steps that require almost zero willpower to start.
 Also provide an even easier physical first step.`
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: "gemini-3.8-flash",
       contents: prompt,
       config: {
-        responseMimeType: 'application/json',
+        responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
             easierFirstStep: { type: Type.STRING },
             microSteps: {
               type: Type.ARRAY,
-              items: { type: Type.STRING }
-            }
+              items: { type: Type.STRING },
+            },
           },
-          required: ['easierFirstStep', 'microSteps']
-        }
-      }
+          required: ["easierFirstStep", "microSteps"],
+        },
+      },
     })
 
-    const parsed = JSON.parse(response.text || '{}')
+    const parsed = JSON.parse(response.text || "{}")
     res.json(parsed)
   } catch (err: any) {
-    console.error('Error in /api/breakdown-task:', err)
+    console.error("Error in /api/breakdown-task:", err)
     res.json({
       microSteps: [
-        `Open the tool or tab for ${req.body.taskTitle || 'this task'}`,
-        'Set a 3-minute timer on your phone just to glance at it',
-        'Type or do one tiny sentence/click'
+        `Open the tool or tab for ${req.body.taskTitle || "this task"}`,
+        "Set a 3-minute timer on your phone just to glance at it",
+        "Type or do one tiny sentence/click",
       ],
-      easierFirstStep:
-        'Just sit down and open the screen, nothing more required'
+      easierFirstStep: "Just sit down and open the screen, nothing more required",
     })
   }
 })
 
 // 3. Unstick Me (Emergency Decision Helper)
-app.post('/api/unstick-me', async (req, res) => {
+app.post("/api/unstick-me", async (req, res) => {
   try {
     const { tasks, currentMood } = req.body
     if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
-      res.status(400).json({ error: 'No tasks provided' })
+      res.status(400).json({ error: "No tasks provided" })
       return
     }
 
@@ -301,8 +296,8 @@ app.post('/api/unstick-me', async (req, res) => {
       res.json({
         chosenTaskId: easiest.id,
         reasoning:
-          'This has the lowest barrier to entry. Just doing 2 minutes of it will kickstart your dopamine loop.',
-        sparkChallenge: `Do "${easiest.title}" for literally 2 minutes. If you still hate it after 2 minutes, you have permission to stop.`
+          "This has the lowest barrier to entry. Just doing 2 minutes of it will kickstart your dopamine loop.",
+        sparkChallenge: `Do "${easiest.title}" for literally 2 minutes. If you still hate it after 2 minutes, you have permission to stop.`,
       })
       return
     }
@@ -310,9 +305,9 @@ app.post('/api/unstick-me', async (req, res) => {
     const prompt = `A user with ADHD is experiencing executive paralysis / overwhelm.
 They cannot decide what to work on.
 Here are their uncompleted tasks:
-${JSON.stringify(tasks.map(t => ({ id: t.id, title: t.title, time: t.estimatedMinutes, energy: t.energyLevel })))}
+${JSON.stringify(tasks.map((t) => ({ id: t.id, title: t.title, time: t.estimatedMinutes, energy: t.energyLevel })))}
 
-User's reported state: "${currentMood || 'feeling stuck / low energy'}".
+User's reported state: "${currentMood || "feeling stuck / low energy"}".
 
 Pick the SINGLE best task for them right now. Bias heavily toward:
 1. Low energy requirement OR shortest duration (a quick 3-5 min win).
@@ -320,36 +315,34 @@ Pick the SINGLE best task for them right now. Bias heavily toward:
 Provide warm, compassionate ADHD-friendly reasoning and a 2-minute "Spark Challenge".`
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: "gemini-3.8-flash",
       contents: prompt,
       config: {
-        responseMimeType: 'application/json',
+        responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
             chosenTaskId: { type: Type.STRING },
             reasoning: { type: Type.STRING },
-            sparkChallenge: { type: Type.STRING }
+            sparkChallenge: { type: Type.STRING },
           },
-          required: ['chosenTaskId', 'reasoning', 'sparkChallenge']
-        }
-      }
+          required: ["chosenTaskId", "reasoning", "sparkChallenge"],
+        },
+      },
     })
 
-    const parsed = JSON.parse(response.text || '{}')
+    const parsed = JSON.parse(response.text || "{}")
     res.json(parsed)
-  } catch (err) {
-    // oxlint-disable no-console
-    console.error('Error in /api/unstick-me:', err)
-    // oxlint-enable no-console
+  } catch (err: any) {
+    console.error("Error in /api/unstick-me:", err)
     const first = req.body.tasks?.[0] || {
-      id: 'fallback',
-      title: 'Start simplest item'
+      id: "fallback",
+      title: "Start simplest item",
     }
     res.json({
       chosenTaskId: first.id,
       reasoning: "Let's build quick momentum with the lowest friction step.",
-      sparkChallenge: `Just do 2 minutes of "${first.title}". Zero pressure to finish.`
+      sparkChallenge: `Just do 2 minutes of "${first.title}". Zero pressure to finish.`,
     })
   }
 })
@@ -358,35 +351,31 @@ Provide warm, compassionate ADHD-friendly reasoning and a 2-minute "Spark Challe
 function generateFallbackUntangle(raw: string): DeconstructedTask[] {
   const lines = raw
     .split(/\n|,|\.|\band\b/i)
-    .map(l => l.trim())
-    .filter(l => l.length > 2)
+    .map((l) => l.trim())
+    .filter((l) => l.length > 2)
 
   if (lines.length === 0) {
     return [
       {
         id: `task_${Date.now()}_1`,
-        title: 'Clear desk of empty cups',
-        firstPhysicalStep: 'Grab the nearest mug and carry it to the sink',
+        title: "Clear desk of empty cups",
+        firstPhysicalStep: "Grab the nearest mug and carry it to the sink",
         estimatedMinutes: 3,
-        energyLevel: 'low',
-        category: 'Home',
-        whyItMatters: 'Clears visual noise so your brain feels lighter',
-        substeps: [
-          'Collect dishes',
-          'Take to kitchen',
-          'Drink a glass of water'
-        ]
+        energyLevel: "low",
+        category: "Home",
+        whyItMatters: "Clears visual noise so your brain feels lighter",
+        substeps: ["Collect dishes", "Take to kitchen", "Drink a glass of water"],
       },
       {
         id: `task_${Date.now()}_2`,
-        title: 'Review unread message from team',
-        firstPhysicalStep: 'Unlock phone and tap the chat icon',
+        title: "Review unread message from team",
+        firstPhysicalStep: "Unlock phone and tap the chat icon",
         estimatedMinutes: 5,
-        energyLevel: 'low',
-        category: 'Work',
-        whyItMatters: 'Removes the background dread of people waiting',
-        substeps: ['Open message', 'Send a quick 1-line acknowledgment']
-      }
+        energyLevel: "low",
+        category: "Work",
+        whyItMatters: "Removes the background dread of people waiting",
+        substeps: ["Open message", "Send a quick 1-line acknowledgment"],
+      },
     ]
   }
 
@@ -395,33 +384,33 @@ function generateFallbackUntangle(raw: string): DeconstructedTask[] {
     title: line.charAt(0).toUpperCase() + line.slice(1),
     firstPhysicalStep: `Open or step toward the first item needed for "${line.slice(0, 20)}..."`,
     estimatedMinutes: idx % 2 === 0 ? 5 : 15,
-    energyLevel: idx === 0 ? 'low' : idx % 2 === 0 ? 'medium' : 'high',
-    category: idx % 2 === 0 ? 'Quick Win' : 'Focus Project',
-    whyItMatters: 'Completing this frees up mental RAM in your working memory',
-    substeps: [`Step 1: Start 2-min timer`, `Step 2: Do the first tiny piece`]
+    energyLevel: idx === 0 ? "low" : idx % 2 === 0 ? "medium" : "high",
+    category: idx % 2 === 0 ? "Quick Win" : "Focus Project",
+    whyItMatters: "Completing this frees up mental RAM in your working memory",
+    substeps: [`Step 1: Start 2-min timer`, `Step 2: Do the first tiny piece`],
   }))
 }
 
 // Dev & Production serving
 async function main() {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'spa'
+      appType: "spa",
     })
     app.use(vite.middlewares)
   } else {
-    app.use(express.static(path.join(__dirname, 'dist')))
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+    app.use(express.static(path.join(__dirname, "dist")))
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(__dirname, "dist", "index.html"))
     })
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  app.listen(PORT, "0.0.0.0", () => {
     console.log(`Untangle server running on http://0.0.0.0:${PORT}`)
   })
 }
 
-main().catch(err => {
-  console.error('Failed to start server:', err)
+main().catch((err) => {
+  console.error("Failed to start server:", err)
 })
