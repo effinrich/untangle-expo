@@ -1,6 +1,6 @@
 import React from "react"
 import { Pressable, Text, View } from "react-native"
-import { CircleAlert, WifiOff } from "lucide-react-native"
+import { CircleAlert, WifiOff } from "../../theme/icons"
 import colors from "../../theme/colors"
 
 interface StatusBannerProps {
