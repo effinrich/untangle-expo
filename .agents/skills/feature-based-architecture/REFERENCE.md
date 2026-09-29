@@ -158,7 +158,7 @@ Put them in the parent component folder's files; that is the default. Give the p
 src/features/tasks/
   task-list/
     task-list.tsx     TaskList: filter/sort/search state, memoized derived lists, composes partials
-    types.ts          NewTaskInput, TaskListProps, TaskCardProps, FilterTab, SortOption, SortOptionConfig
+    types.ts          TaskListProps, TaskCardProps, FilterTab, SortOption, SortOptionConfig
     consts.ts         SORT_OPTIONS, energy/priority weights, card colour maps, priorityCycle, completionConfetti
     hooks.ts          useQuickAddForm (list keeps the form state), useTaskCardActions (card state + handlers)
     utils.ts          getAllCategoryNames, getCategoryCounts, filterTasks, sortTasks, buildQuickAddTask, buildMarkdownPlan
@@ -170,9 +170,9 @@ src/features/tasks/
       task-card-first-step.tsx    task-card-meta.tsx      task-card-substeps.tsx
 ```
 
-`TaskList` is the feature's only screen, so the feature root holds just `task-list/`; root-level `types.ts` etc. appear only when a second component folder shares something. The card's props, colour maps, and hook are small, so they live in `task-list/`'s files and `partials/` stays flat. A test would be `task-list/task-list.test.tsx`. No item is used outside `tasks`, so nothing goes to `src/shared/`.
+`TaskList` is the feature's only screen, so the feature root holds just `task-list/`; root-level `types.ts` etc. appear only when a second component folder shares something. The card's props, colour maps, and hook are small, so they live in `task-list/`'s files and `partials/` stays flat. A test would be `task-list/task-list.test.tsx`. `NewTaskInput` is also used by `src/shared/hooks/use-tasks.ts`, so it lives in `src/shared/types/task.ts`; everything else is used only inside `tasks` and stays there.
 
-The rest of the app follows the same two rules: `src/app/app.tsx`, `src/features/braindump/brain-dump-input/brain-dump-input.tsx`, `src/features/focus/focus-radar-modal/focus-radar-modal.tsx`. A feature-specific hook may be a standalone kebab-case `use-*.ts` file at its feature root; hooks shared across features live in `src/shared/hooks/`, such as `src/shared/hooks/use-audio-recorder.ts`.
+The rest of the app follows the same two rules: `src/app/app.tsx`, `src/features/braindump/brain-dump-input/brain-dump-input.tsx`, `src/features/focus/focus/focus.tsx`. A feature-specific hook may be a standalone kebab-case `use-*.ts` file at its feature root; hooks shared across features live in `src/shared/hooks/`, such as `src/shared/hooks/use-audio-recorder.ts`.
 
 ## When the convention does not apply
 

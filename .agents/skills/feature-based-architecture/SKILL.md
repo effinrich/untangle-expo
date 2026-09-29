@@ -81,12 +81,13 @@ When an importer appears at a wider level, move the item up then, not before.
 7. **Raw `fetch` / `axios` inside a feature lives in `api.ts`.** App-wide clients live outside features.
 8. **Helpers are pure**: no React, dependencies passed as parameters. Types are explicit; `any` only with a lint-disable comment.
 9. **Features import only from themselves and shared code**, never from a sibling feature.
+10. **Docs change with the code they describe.** When a file moves or is renamed, update every doc path that names it (README, handoff notes, agent instructions, this skill's examples) in the same change. No follow-up.
 
 ## Splitting a large component
 
 Move code as-is; renames and logic rewrites belong in a separate change.
 
-1. Component not yet in a like-named folder? Move it to `<name>/<name>.tsx` (kebab-case) and update its importers.
+1. Component not yet in a like-named folder? Move it to `<name>/<name>.tsx` (kebab-case) and update its importers and any docs that name the old path.
 2. Types -> the folder's `types.ts`.
 3. Constants and literal objects declared in the component body -> `consts.ts`.
 4. Pure logic (filters, sorts, counts, formatters, payload builders) -> `utils.ts`, called from the component (inside `useMemo` if it already was).
