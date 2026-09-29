@@ -2,7 +2,7 @@ import React from "react"
 import { View, Text, Pressable } from "react-native"
 import { useRouter } from "expo-router"
 import { MicroTask } from "../../../services/api"
-import { TaskCardMobile } from "../../../components/TaskCardMobile"
+import { TaskCardMobile } from "../../../components/task-card-mobile"
 
 interface MainTaskListProps {
   tasks: MicroTask[]
