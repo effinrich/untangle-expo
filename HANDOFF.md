@@ -41,8 +41,8 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
     - `POST /api/breakdown-task` (`app/api/breakdown-task+api.ts`): Decomposes overwhelming tasks into sub-2-minute micro-steps.
     - `POST /api/unstick-me` (`app/api/unstick-me+api.ts`): Evaluates current emotional friction and chooses the lowest-resistance starter task.
 - **Frontend (**`src/`**)**:
-- `components/web-app.tsx`: `'use dom'` entry that mounts `src/app/app.tsx` with Tailwind v4 (`src/index.css`, `postcss.config.js`).
-  - `src/app/app.tsx`: Central coordinator for the view, Google Auth state, and modal triggers. Task and parking-lot sync (Firestore with guest local storage fallback) lives in `src/shared/hooks/use-tasks.ts` and `src/shared/hooks/use-parking-lot.ts`.
+- `components/web-app.tsx`: `'use dom'` entry that mounts `src/web-app/app.tsx` with Tailwind v4 (`src/index.css`, `postcss.config.js`).
+  - `src/web-app/app.tsx`: Central coordinator for the view, Google Auth state, and modal triggers. Task and parking-lot sync (Firestore with guest local storage fallback) lives in `src/shared/hooks/use-tasks.ts` and `src/shared/hooks/use-parking-lot.ts`.
   - `src/features/braindump/brain-dump-input/brain-dump-input.tsx`: Input pad with voice dictation via `src/shared/hooks/use-audio-recorder.ts` and template sparks.
   - `src/features/tasks/task-list/task-list.tsx`: Micro-task list featuring:
     - **Mental State & Energy Sort Bar**: Sort options (`energy-asc`, `energy-desc`, `time-asc`, `priority-desc`, `newest`).
@@ -62,13 +62,13 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 - **Framework**: Expo SDK 52 with Expo Router (`app/`) and NativeWind v4 (Tailwind).
 - **Core Screens** (route files in `app/` re-export screens from `screens/`):
   - `app/index.tsx` -> `screens/main-screen/main-screen.tsx` (native only; web renders `components/web-app.tsx`): Main dashboard with voice dump, energy-level quick sorting, category pills, and task list.
-  - `app/focus.tsx` -> `screens/focus/focus.tsx`: Fullscreen One Thing sprint with timer and mental parking lot.
+  - `app/focus.tsx` -> `screens/focus/focus.tsx` (native only; on web `/focus`, `/unstick`, and unknown paths render `components/web-app.tsx`, like the old SPA fallback): Fullscreen One Thing sprint with timer and mental parking lot.
   - `app/unstick.tsx`: Native executive dysfunction reset flow (screen code still lives in the route file).
 - **Native APIs**:
   - `expo-av` for microphone recording (`hooks/use-voice-recorder.ts`) and `expo-file-system` for base64 encoding (`utils/audio.ts`).
   - `expo-haptics` for tactile dopamine rewards upon completing tasks or starting focus mode.
   - `expo-notifications` for focus-sprint end notifications (`screens/focus/hooks.ts`).
-- **Shared Backend Client**: `services/api.ts` calls the deployed API at `app.json` `extra.apiBaseUrl`.
+- **Shared Backend Client**: `services/api.ts` calls the Cloud Run deployment at `app.json` `extra.apiBaseUrl`. Native does not use the Expo API routes.
 - **Auth & Sync**: `services/firebase.ts` (Google sign-in via `expo-auth-session`, Firestore task subscription).
 
 ---
@@ -80,12 +80,13 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 │   ├── _layout.tsx         # Web: Head + Slot; native: Stack
 │   ├── +html.tsx           # Web document shell
 │   ├── index.tsx           # Web: components/web-app; native: screens/main-screen
-│   ├── focus.tsx           # Re-exports screens/focus/focus
-│   ├── unstick.tsx         # Native executive dysfunction reset
+│   ├── focus.tsx           # Web: components/web-app; native: screens/focus/focus
+│   ├── unstick.tsx         # Web: components/web-app; native: executive dysfunction reset
+│   ├── +not-found.tsx      # Web: components/web-app; native: link home
 │   └── api/                # untangle, transcribe-audio, breakdown-task, unstick-me (+api.ts)
 ├── server/gemini.ts        # Shared Gemini client for API routes
 ├── components/
-│   ├── web-app.tsx         # 'use dom' entry that mounts src/app/app.tsx
+│   ├── web-app.tsx         # 'use dom' entry that mounts src/web-app/app.tsx
 │   └── task-card-mobile.tsx
 ├── screens/                # Native UI: main-screen/, focus/ (screen + hooks + partials)
 ├── hooks/                  # use-voice-recorder.ts (native)
@@ -99,7 +100,7 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 │   ├── services/           # api, firebase, auth, tasks, parking-lot, ambient, sound
 │   ├── shared/             # Cross-feature hooks, types, consts, utils
 │   └── features/           # braindump/, focus/, stats/, tasks/, unstick/
-├── app.json                # Expo config (router root, web server output, permissions)
+├── app.json                # Expo config (web server output, permissions, Cloud Run apiBaseUrl)
 ├── package.json            # Single dependency manifest (bun.lock)
 ├── metro.config.js         # NativeWind for native; drops global.css on web
 ├── postcss.config.js       # Tailwind v4 for src/index.css

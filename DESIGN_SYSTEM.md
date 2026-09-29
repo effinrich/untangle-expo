@@ -9,7 +9,7 @@
 ### The Logo Concept: _"From Knot to Vector"_
 
 - **Symbolism**: The logo consists of a continuous, fluid ribbon line that begins as a tangled, dense cognitive loop on the left (the overwhelmed mind) and seamlessly resolves and straightens out into a luminous, linear golden trajectory on the right, punctuated by an action spark (`✦`).
-- **Assets**: No logo component or master image is checked in yet. The header (`src/app/partials/app-header.tsx`) renders the text wordmark only.
+- **Assets**: No logo component or master image is checked in yet. The header (`src/web-app/partials/app-header.tsx`) renders the text wordmark only.
 - **Wordmark**: `Untangle` in `font-bold tracking-tight`, accompanied by the neutral subheading `ADHD Brain Dump & Priority Areas`.
 
 ---

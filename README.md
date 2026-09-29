@@ -7,7 +7,7 @@ ADHD Brain Dump & Micro-Task Planner built as one **Expo SDK 52** / **Expo Route
 ## Architecture & Shared Backend
 
 - **One app, two UIs**: On web, `app/index.tsx` renders the React DOM UI in `src/` (Tailwind v4) through an Expo DOM component (`components/web-app.tsx`). On iOS/Android it renders the React Native screens in `screens/` (NativeWind v4).
-- **API routes**: `app/api/*+api.ts` (`/api/untangle`, `/api/breakdown-task`, `/api/unstick-me`, `/api/transcribe-audio`) run on the Expo server; `GEMINI_API_KEY` stays server-side. Native calls the deployed API at `app.json` `extra.apiBaseUrl`.
+- **API routes**: `app/api/*+api.ts` (`/api/untangle`, `/api/breakdown-task`, `/api/unstick-me`, `/api/transcribe-audio`) run on the Expo server; `GEMINI_API_KEY` stays server-side. Native does not use them: it calls the Cloud Run deployment at `app.json` `extra.apiBaseUrl`.
 - **Gemini 3.5 Transcribe**: Audio microphone recordings are transcribed into clean text.
 - **Firebase Firestore**: Web and native use the same Firestore collection (`/users/{userId}/tasks`).
 - **Haptic Feedback**: Uses `expo-haptics` for dopamine rewards when completing micro-tasks.
@@ -44,8 +44,9 @@ bun run start   # iOS/Android
 │   ├── _layout.tsx    # Web: Head + Slot; native: Stack & theme
 │   ├── +html.tsx      # Web document shell
 │   ├── index.tsx      # Web: components/web-app; native: screens/main-screen
-│   ├── focus.tsx      # Re-exports screens/focus/focus
-│   ├── unstick.tsx    # Executive dysfunction reset (2-minute spark contract)
+│   ├── focus.tsx      # Web: components/web-app; native: screens/focus/focus
+│   ├── unstick.tsx    # Web: components/web-app; native: executive dysfunction reset
+│   ├── +not-found.tsx # Web: components/web-app; native: link home
 │   └── api/           # Gemini API routes (+api.ts)
 ├── server/gemini.ts   # Shared Gemini client for API routes
 ├── src/               # Web UI (React DOM, Tailwind v4)
@@ -64,7 +65,7 @@ bun run start   # iOS/Android
 │   ├── api.ts         # Native API client for Gemini and untangling
 │   └── firebase.ts    # Google sign-in & Firestore task sync
 ├── public/            # Static web assets
-├── app.json           # Expo app config (router root, permissions, bundle IDs, icons)
+├── app.json           # Expo app config (permissions, bundle IDs, icons, Cloud Run apiBaseUrl)
 ├── package.json       # Dependencies for web, native, and API routes
 ├── postcss.config.js  # Tailwind v4 for the web UI
 └── tailwind.config.js # NativeWind styles
