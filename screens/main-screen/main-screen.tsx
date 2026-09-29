@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react"
-import { Text } from "react-native"
 import { Redirect, Stack, useRouter } from "expo-router"
 import { Screen } from "../../components/screen/screen"
 import { StatusBanner } from "../../components/status-banner/status-banner"
@@ -11,12 +10,13 @@ import { MainAccountButton } from "./partials/main-account-button"
 import { MainComposer } from "./partials/main-composer"
 import { MainEmptyState } from "./partials/main-empty-state"
 import { MainFilterSheet } from "./partials/main-filter-sheet"
+import { MainGreeting } from "./partials/main-greeting"
 import { MainListHeader } from "./partials/main-list-header"
 import { MainStuckCard } from "./partials/main-stuck-card"
 import { MainTaskList } from "./partials/main-task-list"
 import { MainTaskSkeleton } from "./partials/main-task-skeleton"
 import { focusHref } from "../../utils/focus-href"
-import { viewSummary } from "./utils"
+import { greetingFor, viewSummary } from "./utils"
 
 export default function MainScreen() {
   const router = useRouter()
@@ -55,12 +55,10 @@ export default function MainScreen() {
         }}
       />
       <Screen>
-        {returning && view.openTasks.length > 0 ? (
-          <Text className="text-callout text-text-secondary -mt-2">
-            Welcome back. {view.openTasks.length} {view.openTasks.length === 1 ? "step is" : "steps are"}{" "}
-            waiting when you’re ready.
-          </Text>
-        ) : null}
+        <MainGreeting
+          greeting={greetingFor(app.firstLaunch, returning, view.openTasks)}
+          openCount={view.openTasks.length}
+        />
 
         {app.signInError ? (
           <StatusBanner title="Sign-in didn't work" message={app.signInError} />
