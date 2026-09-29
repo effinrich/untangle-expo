@@ -78,7 +78,6 @@
     ".github/skills/**",
     ".claude/**",
     "tools/**",
-    ".expo/**",
-    "mobile/**"
+    ".expo/**"
   ]
 }
