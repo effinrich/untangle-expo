@@ -1,5 +1,5 @@
 import { FirebaseError } from "firebase/app"
-import { deleteDoc, doc, setDoc, type DocumentData, type Firestore } from "firebase/firestore"
+import { doc, writeBatch, type DocumentData, type Firestore } from "firebase/firestore"
 import { NonRetriableError, type OfflineConfig } from "@tanstack/offline-transactions"
 
 type OfflineMutationFn = OfflineConfig["mutationFns"][string]
@@ -17,19 +17,29 @@ const PERMANENT_CODES = new Set([
   "out-of-range",
 ])
 
-/** Outbox mutation function: writes every mutation in a transaction to Firestore by doc id. */
+// Firestore caps a write batch at 500 operations; only larger transactions span batches.
+const BATCH_LIMIT = 500
+
+/** Outbox mutation function: writes a transaction's mutations to Firestore as one batch. */
 export function firestoreMutationFn(
   firestore: Firestore,
   writers: Record<string, DocWriter>,
 ): OfflineMutationFn {
   return async ({ transaction }) => {
-    for (const mutation of transaction.mutations) {
+    const writes = transaction.mutations.map((mutation) => {
       const writer = writers[mutation.collection.id]
       if (!writer) throw new NonRetriableError(`No Firestore writer for ${mutation.collection.id}`)
-      const ref = doc(firestore, writer.path(String(mutation.key)))
+      return { mutation, writer, ref: doc(firestore, writer.path(String(mutation.key))) }
+    })
+
+    for (let start = 0; start < writes.length; start += BATCH_LIMIT) {
+      const batch = writeBatch(firestore)
+      for (const { mutation, writer, ref } of writes.slice(start, start + BATCH_LIMIT)) {
+        if (mutation.type === "delete") batch.delete(ref)
+        else batch.set(ref, writer.toDoc(mutation.modified))
+      }
       try {
-        if (mutation.type === "delete") await deleteDoc(ref)
-        else await setDoc(ref, writer.toDoc(mutation.modified))
+        await batch.commit()
       } catch (error) {
         if (error instanceof FirebaseError && PERMANENT_CODES.has(error.code)) {
           throw new NonRetriableError(error.message)

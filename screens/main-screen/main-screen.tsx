@@ -66,6 +66,15 @@ export default function MainScreen() {
           <StatusBanner title="Sign-in didn't work" message={app.signInError} />
         ) : null}
 
+        {app.syncError ? (
+          <StatusBanner
+            title="A change didn't save"
+            message={`It may have been undone, so check your tasks and try again. (${app.syncError})`}
+            actionLabel="Dismiss"
+            onAction={app.clearSyncError}
+          />
+        ) : null}
+
         <MainComposer
           inputRef={dump.inputRef}
           text={dump.text}
