@@ -1,5 +1,5 @@
 import { User, signInWithPopup, signOut } from "firebase/auth"
-import { doc, setDoc } from "firebase/firestore"
+import { doc, getDoc, setDoc } from "firebase/firestore"
 import { auth, db, googleProvider } from "./firebase"
 
 export async function signInWithGoogle(): Promise<User> {
@@ -7,8 +7,9 @@ export async function signInWithGoogle(): Promise<User> {
     const result = await signInWithPopup(auth, googleProvider)
     const user = result.user
 
-    // Save or update user profile in Firestore
+    // Save or update user profile in Firestore; createdAt is immutable once written
     const userDocRef = doc(db, "users", user.uid)
+    const existing = await getDoc(userDocRef)
     await setDoc(
       userDocRef,
       {
@@ -16,7 +17,7 @@ export async function signInWithGoogle(): Promise<User> {
         email: user.email || "",
         displayName: user.displayName || "ADHD Planner",
         photoURL: user.photoURL || "",
-        createdAt: new Date().toISOString(),
+        ...(existing.exists() ? {} : { createdAt: new Date().toISOString() }),
       },
       { merge: true },
     )
