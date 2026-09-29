@@ -5,9 +5,9 @@
 - Before creating, moving, or splitting a component or feature file, or extracting types/consts/hooks/helpers, read `.agents/skills/feature-based-architecture/SKILL.md` and follow it.
 - One React component per file, named after the component in kebab-case: `TaskCard` -> `task-card.tsx`. Each component or screen lives in a like-named folder (`task-list/task-list.tsx`); partials stay flat in `partials/`. `bun run lint` enforces one-per-file and kebab-case as errors (`react/no-multi-comp`, `unicorn/filename-case`).
 - Refactors are incremental: bring the files you touch into line; leave untouched files where they are.
-- Existing app-level code lives in `src/services/`, `src/types/`, `src/data/`; new cross-feature code goes in `src/shared/{ui,hooks,types,consts,utils}` per the skill. `mobile/` is a separate Expo app outside these rules.
+- Existing app-level code lives in `src/services/`, `src/types/`, `src/data/`; new cross-feature code goes in `src/shared/{ui,hooks,types,consts,utils}` per the skill. The native UI (`screens/`, root `hooks/`, `utils/`, `services/`, `components/task-card-mobile.tsx`, `app/focus.tsx`, `app/unstick.tsx`) sits outside these rules and outside lint.
 - Verify with `bun run lint` and `bunx tsc --noEmit`.
-- When code moves or is renamed, update every doc that names the old path (`HANDOFF.md`, `mobile/README.md`, `PLAN.md`, this file, the skill) in the same change.
+- When code moves or is renamed, update every doc that names the old path (`HANDOFF.md`, `README.md`, `PLAN.md`, this file, the skill) in the same change.
 
 ## Learned User Preferences
 

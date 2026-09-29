@@ -1,20 +1,17 @@
-import { Router } from "express"
 import { Type } from "@google/genai"
-import { ai, apiKey } from "./gemini"
-
-export const breakdownTaskRouter = Router()
+import { ai, apiKey } from "../../server/gemini"
 
 // 2. Micro-breakdown of a single stuck task
-breakdownTaskRouter.post("/breakdown-task", async (req, res) => {
+export async function POST(request: Request) {
+  const body = await request.json().catch(() => ({}))
   try {
-    const { taskTitle, currentFirstStep } = req.body
+    const { taskTitle, currentFirstStep } = body
     if (!taskTitle) {
-      res.status(400).json({ error: "Task title is required" })
-      return
+      return Response.json({ error: "Task title is required" }, { status: 400 })
     }
 
     if (!apiKey) {
-      res.json({
+      return Response.json({
         microSteps: [
           `Open the exact app/tab for "${taskTitle}"`,
           "Spend just 60 seconds looking at the first screen",
@@ -22,7 +19,6 @@ breakdownTaskRouter.post("/breakdown-task", async (req, res) => {
         ],
         easierFirstStep: `Touch your keyboard and open the relevant app for ${taskTitle}`,
       })
-      return
     }
 
     const prompt = `The user with ADHD is stuck on this task: "${taskTitle}".
@@ -51,16 +47,16 @@ Also provide an even easier physical first step.`
     })
 
     const parsed = JSON.parse(response.text || "{}")
-    res.json(parsed)
+    return Response.json(parsed)
   } catch (err: any) {
     console.error("Error in /api/breakdown-task:", err)
-    res.json({
+    return Response.json({
       microSteps: [
-        `Open the tool or tab for ${req.body.taskTitle || "this task"}`,
+        `Open the tool or tab for ${body.taskTitle || "this task"}`,
         "Set a 3-minute timer on your phone just to glance at it",
         "Type or do one tiny sentence/click",
       ],
       easierFirstStep: "Just sit down and open the screen, nothing more required",
     })
   }
-})
+}

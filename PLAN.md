@@ -7,7 +7,7 @@ The goal is to implement the Phase 1 tasks for the Expo universal app (web, iOS,
 ## Architecture Decisions
 
 1. **File System for Audio**: We will use `expo-file-system` to encode recorded audio into Base64 before sending it to the backend for transcription.
-2. **Firebase Auth & Firestore**: We will port the Firebase configuration from the web app (`src/services/firebase.ts`) to `mobile/services/firebase.ts`. For universal persistence, we will use `@react-native-async-storage/async-storage` combined with Firebase's `getReactNativePersistence` on native platforms, while keeping `browserLocalPersistence` for the web. We will use `expo-auth-session` for Google Sign-In to ensure it works smoothly across Expo Go and web without native custom dev clients.
+2. **Firebase Auth & Firestore**: We will port the Firebase configuration from the web app (`src/services/firebase.ts`) to `services/firebase.ts`. For universal persistence, we will use `@react-native-async-storage/async-storage` combined with Firebase's `getReactNativePersistence` on native platforms, while keeping `browserLocalPersistence` for the web. We will use `expo-auth-session` for Google Sign-In to ensure it works smoothly across Expo Go and web without native custom dev clients.
 3. **Notifications**: We will use `expo-notifications` for local push notifications, scheduled when a user starts a Focus timer, and cancelled if they exit early.
 
 ## Task List
@@ -21,9 +21,9 @@ The goal is to implement the Phase 1 tasks for the Expo universal app (web, iOS,
   - `expo-file-system` is installed and used to read the file.
   - Recording stops, is converted to Base64, and is sent to the backend.
   - Text area updates with the transcribed text.
-- **Verification Commands**: `bunx tsc --noEmit` inside `mobile/`.
+- **Verification Commands**: `bunx tsc --noEmit` at the repo root.
 - **Dependencies**: `expo-file-system`
-- **Files Touched**: `mobile/utils/audio.ts`, `mobile/hooks/use-voice-recorder.ts`, `mobile/package.json`
+- **Files Touched**: `utils/audio.ts`, `hooks/use-voice-recorder.ts`, `package.json`
 - **Size**: S
 - **Status**: Implemented.
 
@@ -31,12 +31,12 @@ The goal is to implement the Phase 1 tasks for the Expo universal app (web, iOS,
 
 - **Description**: Add Firebase RN config so mobile users can authenticate with Google and sync tasks.
 - **Acceptance Criteria**:
-  - `mobile/services/firebase.ts` is created and initializes Firebase with appropriate persistence (AsyncStorage for native, browser for web).
+  - `services/firebase.ts` is created and initializes Firebase with appropriate persistence (AsyncStorage for native, browser for web).
   - Google Sign-In is implemented using `expo-auth-session/providers/google`.
-  - `mobile/screens/main-screen/hooks.ts` syncs tasks using `subscribeToUserTasks` and handles auth state.
-- **Verification Commands**: `bunx tsc --noEmit` inside `mobile/`.
+  - `screens/main-screen/hooks.ts` syncs tasks using `subscribeToUserTasks` and handles auth state.
+- **Verification Commands**: `bunx tsc --noEmit` at the repo root.
 - **Dependencies**: `@react-native-async-storage/async-storage`, `expo-auth-session`, `expo-crypto`, `expo-web-browser`
-- **Files Touched**: `mobile/services/firebase.ts`, `mobile/screens/main-screen/hooks.ts`, `mobile/package.json`
+- **Files Touched**: `services/firebase.ts`, `screens/main-screen/hooks.ts`, `package.json`
 - **Size**: M
 - **Status**: Implemented.
 
@@ -45,11 +45,11 @@ The goal is to implement the Phase 1 tasks for the Expo universal app (web, iOS,
 - **Description**: Integrate `expo-notifications` to alert users when a focus sprint ends if the app is in the background.
 - **Acceptance Criteria**:
   - `expo-notifications` is installed and permissions are requested.
-  - A local notification is scheduled when a timer starts in `mobile/screens/focus/hooks.ts`.
+  - A local notification is scheduled when a timer starts in `screens/focus/hooks.ts`.
   - The notification is cancelled if the timer is stopped manually before finishing.
-- **Verification Commands**: `bunx tsc --noEmit` inside `mobile/`.
+- **Verification Commands**: `bunx tsc --noEmit` at the repo root.
 - **Dependencies**: `expo-notifications`
-- **Files Touched**: `mobile/screens/focus/hooks.ts`, `mobile/package.json`, `mobile/app.json`
+- **Files Touched**: `screens/focus/hooks.ts`, `package.json`, `app.json`
 - **Size**: S
 - **Status**: Implemented.
 

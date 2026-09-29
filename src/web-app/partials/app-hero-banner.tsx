@@ -1,7 +1,6 @@
 import React from "react"
 import { Sparkles } from "lucide-react"
 import { MicroTask } from "../../types"
-import calmAmbientImg from "../../assets/images/calm-focus-ambient-1790313003505.jpg"
 import { countActive, countActiveInCategory } from "../utils"
 
 interface AppHeroBannerProps {
@@ -15,7 +14,7 @@ export const AppHeroBanner: React.FC<AppHeroBannerProps> = ({ tasks, isSynced })
     <div className="relative rounded-2xl overflow-hidden border border-neutral-800/80 bg-neutral-900/50 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <img
-          src={calmAmbientImg}
+          src="/images/calm-focus-ambient.jpg"
           alt="Calm ambient focus art"
           className="w-full h-full object-cover"
           referrerPolicy="no-referrer"

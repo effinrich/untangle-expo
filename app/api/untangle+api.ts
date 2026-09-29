@@ -1,6 +1,5 @@
-import { Router } from "express"
 import { Type } from "@google/genai"
-import { ai, apiKey } from "./gemini"
+import { ai, apiKey } from "../../server/gemini"
 
 interface DeconstructedTask {
   id: string
@@ -13,26 +12,23 @@ interface DeconstructedTask {
   substeps?: string[]
 }
 
-export const untangleRouter = Router()
-
 // 1. Untangle Brain Dump endpoint
-untangleRouter.post("/untangle", async (req, res) => {
+export async function POST(request: Request) {
+  const body = await request.json().catch(() => ({}))
   try {
-    const { rawDump, userEnergyPreference } = req.body
+    const { rawDump, userEnergyPreference } = body
 
     if (!rawDump || typeof rawDump !== "string" || !rawDump.trim()) {
-      res.status(400).json({ error: "Please provide a brain dump text." })
-      return
+      return Response.json({ error: "Please provide a brain dump text." }, { status: 400 })
     }
 
     if (!apiKey) {
       // Graceful fallback for offline / mock dev mode if API key is not present
       const fallbackTasks = generateFallbackUntangle(rawDump)
-      res.json({
+      return Response.json({
         summary: "Parsed from your thoughts into quick micro-actions.",
         tasks: fallbackTasks,
       })
-      return
     }
 
     const prompt = `You are an expert ADHD Executive Function coach and productivity architect.
@@ -141,17 +137,17 @@ ${rawDump}
       }))
     }
 
-    res.json(data)
+    return Response.json(data)
   } catch (err: any) {
     console.error("Error in /api/untangle:", err)
     // Fallback if API call hits quota or fails
-    const fallbackTasks = generateFallbackUntangle(req.body.rawDump || "")
-    res.json({
+    const fallbackTasks = generateFallbackUntangle(body.rawDump || "")
+    return Response.json({
       summary: "I've structured your brain dump into clean micro-steps.",
       tasks: fallbackTasks,
     })
   }
-})
+}
 
 // Helper for offline / fallback untangling
 function generateFallbackUntangle(raw: string): DeconstructedTask[] {

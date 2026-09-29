@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss-v4";
 
 @layer utilities {
   /* Hide scrollbar for Chrome, Safari and Opera */

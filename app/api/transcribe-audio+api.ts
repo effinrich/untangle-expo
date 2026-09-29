@@ -1,22 +1,17 @@
-import { Router } from "express"
-import { ai, apiKey } from "./gemini"
-
-export const transcribeAudioRouter = Router()
+import { ai, apiKey } from "../../server/gemini"
 
 // Audio Transcription endpoint using gemini-3.5-transcribe
-transcribeAudioRouter.post("/transcribe-audio", async (req, res) => {
+export async function POST(request: Request) {
   try {
-    const { audioBase64, mimeType } = req.body
+    const { audioBase64, mimeType } = await request.json().catch(() => ({}))
     if (!audioBase64) {
-      res.status(400).json({ error: "audioBase64 payload is required" })
-      return
+      return Response.json({ error: "audioBase64 payload is required" }, { status: 400 })
     }
 
     if (!apiKey) {
-      res.json({
+      return Response.json({
         text: "I have so many tasks today: need to respond to the dentist appointment, finish the quarterly budget for work, and clear my desk.",
       })
-      return
     }
 
     const cleanMime = mimeType || "audio/webm"
@@ -39,12 +34,15 @@ transcribeAudioRouter.post("/transcribe-audio", async (req, res) => {
     })
 
     const transcription = response.text?.trim() || ""
-    res.json({ text: transcription })
+    return Response.json({ text: transcription })
   } catch (err: any) {
     console.error("Error in /api/transcribe-audio:", err)
-    res.status(500).json({
-      error: "Audio transcription failed",
-      details: err?.message || String(err),
-    })
+    return Response.json(
+      {
+        error: "Audio transcription failed",
+        details: err?.message || String(err),
+      },
+      { status: 500 },
+    )
   }
-})
+}
