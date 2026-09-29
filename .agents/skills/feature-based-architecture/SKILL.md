@@ -101,6 +101,7 @@ Move code as-is; renames and logic rewrites belong in a separate change.
 2. Scaffold each component: `node <skill-dir>/scripts/scaffold.mjs <feature> [component]`, then delete stubs it does not use yet.
 3. Turn on lint rules `react/no-multi-comp` and `unicorn/filename-case` (kebab-case) as errors.
 4. Create `src/shared/<kind>/` folders only when the first cross-feature item appears.
+5. Add the agent files from [Exposing the rules to agents](#exposing-the-rules-to-agents), filled in for this project.
 
 ## Refactoring an existing app
 
@@ -111,9 +112,24 @@ Migrate incrementally: the file you touch moves toward the layout; everything el
 3. Finish one feature before starting the next. Moves across many features need the user's go-ahead.
 4. Validate the features you migrated; report pre-existing violations in untouched files instead of fixing them.
 
+## Exposing the rules to agents
+
+The project states these rules once per tool, with the same meaning everywhere:
+
+```
+AGENTS.md                  Canonical short file: points at this skill, lists durable facts.
+CLAUDE.md                  One line: @AGENTS.md
+.cursor/rules/             .mdc with frontmatter (description, alwaysApply or globs)
+  00-core-principles.mdc   10-project-context.mdc   20-frontend.mdc   30-testing.mdc
+.windsurf/rules/           Same four topics as .md, Windsurf trigger frontmatter
+  00-core-principles.md    10-project-context.md    20-frontend.md    30-testing.md
+```
+
+Rule files hold the actual rules (tools that read them may not load `AGENTS.md`), summarized; this skill stays the long form. Edit a rule in every copy in the same change. Details: [REFERENCE.md](REFERENCE.md#multi-agent-rule-files).
+
 ## Scripts
 
-Run from the repo root. `<skill-dir>` is this skill's folder (for example `.agents/skills/feature-based-architecture`).
+Run from the project root. `<skill-dir>` is this skill's folder: `.agents/skills/feature-based-architecture` when the project vendors it, or `~/.agents/skills/feature-based-architecture` when it is installed for the user.
 
 - `scaffold.mjs <feature | feature-path> [component]`: creates `src/features/<feature>/<component>/` (component defaults to the feature name) with `<component>.tsx`, sibling stubs, and an empty `partials/`. Rejects non-kebab names; refuses to overwrite.
 - `validate.mjs [feature-path...]`: no arguments validates every folder under `src/features/`. Exits non-zero on violations: components at the feature root, component folders without a like-named `.tsx`, second components outside `partials/`, non-kebab folder names, unexpected files, effects or server-state hooks outside `hooks.ts` or a standalone feature hook, network calls outside `api.ts`, inline `any`, sibling-feature imports.
