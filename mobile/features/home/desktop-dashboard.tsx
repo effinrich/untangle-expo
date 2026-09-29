@@ -1,51 +1,45 @@
-import React, { useState, useEffect, useLayoutEffect } from "react"
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
+  Alert,
   Image,
   Platform,
-  Alert,
-} from "react-native"
-import { useNavigation } from "expo-router"
-import { useMutation } from "@tanstack/react-query"
-import {
-  Sparkles,
-  Zap,
-  RotateCcw,
-  LogIn,
-  LogOut,
-} from "lucide-react-native"
-import type { User } from "firebase/auth"
-import { BrainDumpInput } from "../braindump/BrainDumpInput"
-import { TaskList } from "../tasks/TaskList"
-import { FocusRadarModal } from "../focus/FocusRadarModal"
-import { UnstickMeModal } from "../unstick/UnstickMeModal"
-import { DopamineTracker } from "../stats/DopamineTracker"
-import { INITIAL_SEED_TASKS } from "../../data/seedData"
-import type { MicroTask, ParkingLotItem } from "../../types"
-import { untangleBrainDump } from "../../services/api"
+  Pressable,
+  ScrollView,
+  Text,
+  View
+} from 'react-native'
+import { useNavigation } from 'expo-router'
+import { useMutation } from '@tanstack/react-query'
+import { LogIn, LogOut, RotateCcw, Sparkles, Zap } from 'lucide-react-native'
+import type { User } from 'firebase/auth'
+import { BrainDumpInput } from '../braindump/BrainDumpInput'
+import { TaskList } from '../tasks/TaskList'
+import { FocusRadarModal } from '../focus/focus'
+import { UnstickMeModal } from '../unstick/UnstickMeModal'
+import { DopamineTracker } from '../stats/DopamineTracker'
+import { INITIAL_SEED_TASKS } from '../../data/seedData'
+import type { MicroTask, ParkingLotItem } from '../../types'
+import { untangleBrainDump } from '../../services/api'
 import {
   auth,
+  deleteParkingItemFromFirestore,
+  deleteTaskFromFirestore,
+  saveParkingItemToFirestore,
+  saveTaskToFirestore,
   signInWithGoogleCredential,
   signOutUser,
-  testFirestoreConnection,
-  subscribeToUserTasks,
-  saveTaskToFirestore,
-  deleteTaskFromFirestore,
   subscribeToParkingLot,
-  saveParkingItemToFirestore,
-  deleteParkingItemFromFirestore,
-} from "../../services/firebase"
+  subscribeToUserTasks,
+  testFirestoreConnection
+} from '../../services/firebase'
 
-const TASKS_KEY = "tangle_tasks_v1"
-const PARKING_KEY = "tangle_parking_lot_v1"
+const TASKS_KEY = 'tangle_tasks_v1'
+const PARKING_KEY = 'tangle_parking_lot_v1'
 
-const calmAmbientImg = require("../../assets/calm_focus_ambient_1790313003505.jpg")
+const calmAmbientImg = require('../../assets/calm_focus_ambient_1790313003505.jpg')
 
 function loadJson<T>(key: string, fallback: T): T {
-  if (Platform.OS !== "web" || typeof localStorage === "undefined") {
+  if (Platform.OS !== 'web' || typeof localStorage === 'undefined') {
     return fallback
   }
   try {
@@ -60,7 +54,7 @@ function loadJson<T>(key: string, fallback: T): T {
 }
 
 function saveJson(key: string, value: unknown): void {
-  if (Platform.OS !== "web" || typeof localStorage === "undefined") {
+  if (Platform.OS !== 'web' || typeof localStorage === 'undefined') {
     return
   }
   try {
@@ -71,24 +65,24 @@ function saveJson(key: string, value: unknown): void {
 }
 
 async function confirmResetToSeed(): Promise<boolean> {
-  if (Platform.OS === "web" && typeof window !== "undefined") {
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
     return window.confirm(
-      "Load fresh sample ADHD tasks with priority categories?",
+      'Load fresh sample ADHD tasks with priority categories?'
     )
   }
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     Alert.alert(
-      "Reset tasks",
-      "Load fresh sample ADHD tasks with priority categories?",
+      'Reset tasks',
+      'Load fresh sample ADHD tasks with priority categories?',
       [
-        { text: "Cancel", style: "cancel", onPress: () => resolve(false) },
-        { text: "Reset", onPress: () => resolve(true) },
-      ],
+        { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+        { text: 'Reset', onPress: () => resolve(true) }
+      ]
     )
   })
 }
 
-type ActiveView = "all" | "dump" | "tasks" | "momentum"
+type ActiveView = 'all' | 'dump' | 'tasks' | 'momentum'
 
 export function DesktopDashboard() {
   const navigation = useNavigation()
@@ -102,15 +96,15 @@ export function DesktopDashboard() {
   const [firestoreConnected, setFirestoreConnected] = useState(false)
 
   const [tasks, setTasks] = useState<MicroTask[]>(() =>
-    loadJson(TASKS_KEY, INITIAL_SEED_TASKS),
+    loadJson(TASKS_KEY, INITIAL_SEED_TASKS)
   )
   const [parkingLot, setParkingLot] = useState<ParkingLotItem[]>(() =>
-    loadJson(PARKING_KEY, []),
+    loadJson(PARKING_KEY, [])
   )
 
   const [focusTask, setFocusTask] = useState<MicroTask | null>(null)
   const [isUnstickOpen, setIsUnstickOpen] = useState(false)
-  const [activeView, setActiveView] = useState<ActiveView>("all")
+  const [activeView, setActiveView] = useState<ActiveView>('all')
   const [aiSummary, setAiSummary] = useState<string | null>(null)
   const [authError, setAuthError] = useState<string | null>(null)
 
@@ -119,7 +113,7 @@ export function DesktopDashboard() {
   }, [])
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user)
       setAuthLoading(false)
     })
@@ -132,14 +126,14 @@ export function DesktopDashboard() {
     }
 
     const localTasksJson =
-      Platform.OS === "web" ? localStorage.getItem(TASKS_KEY) : null
+      Platform.OS === 'web' ? localStorage.getItem(TASKS_KEY) : null
     if (localTasksJson) {
       try {
         const localTasks: MicroTask[] = JSON.parse(localTasksJson)
-        localTasks.forEach((t) => {
+        localTasks.forEach(t => {
           saveTaskToFirestore(currentUser.uid, {
             ...t,
-            userId: currentUser.uid,
+            userId: currentUser.uid
           })
         })
       } catch {
@@ -149,15 +143,15 @@ export function DesktopDashboard() {
 
     const unsubTasks = subscribeToUserTasks(
       currentUser.uid,
-      (remoteTasks) => {
+      remoteTasks => {
         if (remoteTasks.length > 0) {
           setTasks(remoteTasks)
         }
       },
-      (err) => console.error("Tasks sync error:", err),
+      err => console.error('Tasks sync error:', err)
     )
 
-    const unsubParking = subscribeToParkingLot(currentUser.uid, (remoteItems) => {
+    const unsubParking = subscribeToParkingLot(currentUser.uid, remoteItems => {
       if (remoteItems.length > 0) {
         setParkingLot(remoteItems)
       }
@@ -185,24 +179,22 @@ export function DesktopDashboard() {
       const message =
         err instanceof Error
           ? err.message
-          : "Google sign-in was cancelled or failed."
+          : 'Google sign-in was cancelled or failed.'
       // oxlint-disable no-console
-      console.error("Google sign in error:", err)
+      console.error('Google sign in error:', err)
       // oxlint-enable no-console
       setAuthError(message)
     }
   }
 
-  const handleSignOut = async () => { 
+  const handleSignOut = async () => {
     try {
       await signOutUser()
     } catch (err: unknown) {
-      const message = 
-        err instanceof Error
-          ? err.message
-          : "Sign out was cancelled or failed."
+      const message =
+        err instanceof Error ? err.message : 'Sign out was cancelled or failed.'
       // oxlint-disable no-console
-      console.error("Sign out error:", err)
+      console.error('Sign out error:', err)
       // oxlint-enable no-console
     }
   }
@@ -210,22 +202,22 @@ export function DesktopDashboard() {
   const untangleMutation = useMutation({
     mutationFn: ({ rawDump, energy }: { rawDump: string; energy: string }) =>
       untangleBrainDump(rawDump, energy),
-    onSuccess: (data) => {
+    onSuccess: data => {
       setAiSummary(data.summary)
-      const newTasks = data.tasks.map((t) => ({
+      const newTasks = data.tasks.map(t => ({
         ...t,
-        userId: currentUser?.uid,
+        userId: currentUser?.uid
       }))
-      setTasks((prev) => [...newTasks, ...prev])
+      setTasks(prev => [...newTasks, ...prev])
       if (currentUser) {
-        newTasks.forEach((t) => saveTaskToFirestore(currentUser.uid, t))
+        newTasks.forEach(t => saveTaskToFirestore(currentUser.uid, t))
       }
     },
     onError: (error: unknown) => {
       // oxlint-disable no-console
-      console.error("Untangle failed:", error)
+      console.error('Untangle failed:', error)
       // oxlint-enable no-console
-    },
+    }
   })
 
   const handleUntangle = async (rawDump: string, energyPreference: string) => {
@@ -233,83 +225,83 @@ export function DesktopDashboard() {
   }
 
   const handleToggleComplete = (id: string) => {
-    setTasks((prev) =>
-      prev.map((t) => {
+    setTasks(prev =>
+      prev.map(t => {
         if (t.id !== id) {
           return t
         }
         const updated: MicroTask = {
           ...t,
           completed: !t.completed,
-          completedAt: !t.completed ? new Date().toISOString() : undefined,
+          completedAt: !t.completed ? new Date().toISOString() : undefined
         }
         if (currentUser) {
           saveTaskToFirestore(currentUser.uid, updated)
         }
         return updated
-      }),
+      })
     )
   }
 
   const handleToggleSubstep = (taskId: string, substepId: string) => {
-    setTasks((prev) =>
-      prev.map((t) => {
+    setTasks(prev =>
+      prev.map(t => {
         if (t.id !== taskId) {
           return t
         }
-        const updatedSubsteps = t.substeps.map((sub) =>
-          sub.id === substepId ? { ...sub, completed: !sub.completed } : sub,
+        const updatedSubsteps = t.substeps.map(sub =>
+          sub.id === substepId ? { ...sub, completed: !sub.completed } : sub
         )
-        const allCompleted = updatedSubsteps.every((s) => s.completed)
+        const allCompleted = updatedSubsteps.every(s => s.completed)
         const updatedTask: MicroTask = {
           ...t,
           substeps: updatedSubsteps,
-          completed: allCompleted ? true : t.completed,
+          completed: allCompleted ? true : t.completed
         }
         if (currentUser) {
           saveTaskToFirestore(currentUser.uid, updatedTask)
         }
         return updatedTask
-      }),
+      })
     )
   }
 
   const handleDeleteTask = (id: string) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id))
+    setTasks(prev => prev.filter(t => t.id !== id))
     if (currentUser) {
       deleteTaskFromFirestore(currentUser.uid, id)
     }
   }
 
   const handleUpdateTask = (updated: MicroTask) => {
-    setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)))
+    setTasks(prev => prev.map(t => (t.id === updated.id ? updated : t)))
     if (currentUser) {
       saveTaskToFirestore(currentUser.uid, updated)
     }
   }
 
   const handleAddTask = (
-    newTask: Omit<MicroTask, "id" | "createdAt" | "completed">,
+    newTask: Omit<MicroTask, 'id' | 'createdAt' | 'completed'>
   ) => {
     const created: MicroTask = {
       ...newTask,
       id: `task_${Date.now()}`,
       userId: currentUser?.uid,
       createdAt: new Date().toISOString(),
-      completed: false,
+      completed: false
     }
-    setTasks((prev) => [created, ...prev])
+    setTasks(prev => [created, ...prev])
     if (currentUser) {
       saveTaskToFirestore(currentUser.uid, created)
     }
   }
 
   const handleClearCompleted = () => {
-    const completedTasks = tasks.filter((t) => t.completed)
-    setTasks((prev) => prev.filter((t) => !t.completed))
+    const completedTasks = tasks.filter(t => t.completed)
+    setTasks(prev => prev.filter(t => !t.completed))
     if (currentUser) {
-      completedTasks.forEach((t) =>
-        deleteTaskFromFirestore(currentUser.uid, t.id),
+      completedTasks.forEach(t =>
+        deleteTaskFromFirestore(currentUser.uid, t.id)
       )
     }
   }
@@ -319,16 +311,16 @@ export function DesktopDashboard() {
       id: `parking_${Date.now()}`,
       userId: currentUser?.uid,
       text,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
     }
-    setParkingLot((prev) => [item, ...prev])
+    setParkingLot(prev => [item, ...prev])
     if (currentUser) {
       saveParkingItemToFirestore(currentUser.uid, item)
     }
   }
 
   const handleDeleteParkingLotItem = (id: string) => {
-    setParkingLot((prev) => prev.filter((p) => p.id !== id))
+    setParkingLot(prev => prev.filter(p => p.id !== id))
     if (currentUser) {
       deleteParkingItemFromFirestore(currentUser.uid, id)
     }
@@ -342,30 +334,29 @@ export function DesktopDashboard() {
     setTasks(INITIAL_SEED_TASKS)
     setAiSummary(null)
     if (currentUser) {
-      INITIAL_SEED_TASKS.forEach((t) =>
+      INITIAL_SEED_TASKS.forEach(t =>
         saveTaskToFirestore(currentUser.uid, {
           ...t,
-          userId: currentUser.uid,
-        }),
+          userId: currentUser.uid
+        })
       )
     }
   }
 
-  const activeCount = tasks.filter((t) => !t.completed).length
+  const activeCount = tasks.filter(t => !t.completed).length
   const workCount = tasks.filter(
-    (t) => t.category.toLowerCase().includes("work") && !t.completed,
+    t => t.category.toLowerCase().includes('work') && !t.completed
   ).length
   const healthCount = tasks.filter(
-    (t) => t.category.toLowerCase().includes("health") && !t.completed,
+    t => t.category.toLowerCase().includes('health') && !t.completed
   ).length
 
   const navButton = (view: ActiveView, label: string) => (
     <Pressable key={view} onPress={() => setActiveView(view)}>
       <Text
         className={`text-xs font-medium ${
-          activeView === view ? "text-amber-400 underline" : "text-neutral-400"
-        }`}
-      >
+          activeView === view ? 'text-amber-400 underline' : 'text-neutral-400'
+        }`}>
         {label}
       </Text>
     </Pressable>
@@ -384,10 +375,10 @@ export function DesktopDashboard() {
         </View>
 
         <View className="hidden md:flex flex-row items-center gap-6">
-          {navButton("all", "Workspace")}
-          {navButton("dump", "Brain Dump")}
-          {navButton("tasks", "Micro-Tasks")}
-          {navButton("momentum", "Momentum Ledger")}
+          {navButton('all', 'Workspace')}
+          {navButton('dump', 'Brain Dump')}
+          {navButton('tasks', 'Micro-Tasks')}
+          {navButton('momentum', 'Momentum Ledger')}
         </View>
 
         <View className="flex-row items-center gap-2">
@@ -401,14 +392,13 @@ export function DesktopDashboard() {
               ) : (
                 <View className="w-5 h-5 rounded-full bg-amber-400/20 items-center justify-center">
                   <Text className="text-[10px] font-bold text-amber-300">
-                    {currentUser.displayName?.[0] ?? "U"}
+                    {currentUser.displayName?.[0] ?? 'U'}
                   </Text>
                 </View>
               )}
               <Text
                 className="text-xs text-neutral-300 font-medium max-w-[100px]"
-                numberOfLines={1}
-              >
+                numberOfLines={1}>
                 {currentUser.displayName || currentUser.email}
               </Text>
               <Pressable onPress={handleSignOut} accessibilityLabel="Sign out">
@@ -419,8 +409,7 @@ export function DesktopDashboard() {
             <Pressable
               onPress={handleGoogleSignIn}
               disabled={authLoading}
-              className="px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-neutral-700 flex-row items-center gap-1.5"
-            >
+              className="px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-neutral-700 flex-row items-center gap-1.5">
               <LogIn size={14} color="#fbbf24" />
               <Text className="text-xs text-neutral-200">Google Sign-In</Text>
             </Pressable>
@@ -428,8 +417,7 @@ export function DesktopDashboard() {
 
           <Pressable
             onPress={() => setIsUnstickOpen(true)}
-            className="px-3.5 py-1.5 rounded-lg bg-amber-400 flex-row items-center gap-1.5"
-          >
+            className="px-3.5 py-1.5 rounded-lg bg-amber-400 flex-row items-center gap-1.5">
             <Zap size={14} color="#0a0a0a" />
             <Text className="text-xs font-semibold text-neutral-950">
               Unstick Me
@@ -439,8 +427,7 @@ export function DesktopDashboard() {
           <Pressable
             onPress={handleResetToSeed}
             accessibilityLabel="Reset sample tasks"
-            className="p-1.5 rounded-lg"
-          >
+            className="p-1.5 rounded-lg">
             <RotateCcw size={16} color="#737373" />
           </Pressable>
         </View>
@@ -471,7 +458,7 @@ export function DesktopDashboard() {
                 </Text>
                 {currentUser ? (
                   <Text className="text-[11px] text-emerald-400 font-mono ml-2">
-                    {firestoreConnected ? "Firestore Synced" : "Sync pending"}
+                    {firestoreConnected ? 'Firestore Synced' : 'Sync pending'}
                   </Text>
                 ) : null}
               </View>
@@ -490,7 +477,9 @@ export function DesktopDashboard() {
                 <Text className="text-lg font-bold text-neutral-100 font-mono">
                   {activeCount}
                 </Text>
-                <Text className="text-[10px] text-neutral-500">Active Tasks</Text>
+                <Text className="text-[10px] text-neutral-500">
+                  Active Tasks
+                </Text>
               </View>
               <Text className="text-neutral-700">|</Text>
               <View className="items-center px-2">
@@ -526,20 +515,20 @@ export function DesktopDashboard() {
             </View>
           ) : null}
 
-          {activeView === "all" || activeView === "dump" ? (
+          {activeView === 'all' || activeView === 'dump' ? (
             <BrainDumpInput
               onUntangle={handleUntangle}
               isLoading={untangleMutation.isPending}
             />
           ) : null}
 
-          {activeView === "all" || activeView === "tasks" ? (
+          {activeView === 'all' || activeView === 'tasks' ? (
             <TaskList
               tasks={tasks}
               onToggleComplete={handleToggleComplete}
               onToggleSubstep={handleToggleSubstep}
               onDelete={handleDeleteTask}
-              onStartFocus={(task) => setFocusTask(task)}
+              onStartFocus={task => setFocusTask(task)}
               onUpdateTask={handleUpdateTask}
               onAddTask={handleAddTask}
               onClearCompleted={handleClearCompleted}
@@ -547,7 +536,7 @@ export function DesktopDashboard() {
             />
           ) : null}
 
-          {activeView === "all" || activeView === "momentum" ? (
+          {activeView === 'all' || activeView === 'momentum' ? (
             <DopamineTracker tasks={tasks} />
           ) : null}
         </View>
@@ -558,7 +547,9 @@ export function DesktopDashboard() {
               Untangle · Powered by Gemini · Firebase Firestore Cloud Sync
             </Text>
             <Pressable onPress={() => setIsUnstickOpen(true)}>
-              <Text className="text-xs text-neutral-500">Unstick Assistant</Text>
+              <Text className="text-xs text-neutral-500">
+                Unstick Assistant
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -569,7 +560,7 @@ export function DesktopDashboard() {
           task={focusTask}
           isOpen={Boolean(focusTask)}
           onClose={() => setFocusTask(null)}
-          onCompleteTask={(taskId) => {
+          onCompleteTask={taskId => {
             handleToggleComplete(taskId)
             setFocusTask(null)
           }}
@@ -583,7 +574,7 @@ export function DesktopDashboard() {
         isOpen={isUnstickOpen}
         onClose={() => setIsUnstickOpen(false)}
         tasks={tasks}
-        onStartFocus={(task) => {
+        onStartFocus={task => {
           setFocusTask(task)
           setIsUnstickOpen(false)
         }}
