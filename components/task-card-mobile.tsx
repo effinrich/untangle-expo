@@ -1,108 +1,92 @@
 import React from "react"
-import { View, Text, Pressable } from "react-native"
+import { Pressable, Text, View } from "react-native"
+import { Check, Play } from "../theme/icons"
 import * as Haptics from "../utils/haptics"
 import { MicroTask } from "../services/api"
+import colors from "../theme/colors"
+import { Button } from "./button/button"
 
 interface TaskCardMobileProps {
   task: MicroTask
-  onToggleComplete: (id: string) => void
+  onSetCompleted: (id: string, completed: boolean) => void
   onStartFocus: (task: MicroTask) => void
 }
 
-export const TaskCardMobile: React.FC<TaskCardMobileProps> = ({
-  task,
-  onToggleComplete,
-  onStartFocus,
-}) => {
-  const handleCheck = () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-    onToggleComplete(task.id)
-  }
+const ENERGY_LABEL = { low: "Low energy", medium: "Medium energy", high: "High energy" }
+const ENERGY_DOT = { low: "bg-success", medium: "bg-accent", high: "bg-danger" }
 
-  const handleFocus = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    onStartFocus(task)
-  }
+export function TaskCardMobile({ task, onSetCompleted, onStartFocus }: TaskCardMobileProps) {
+  const meta = `${task.category} · ${ENERGY_LABEL[task.energyLevel]} · ${task.estimatedMinutes} min`
 
-  const energyColors = {
-    low: "text-emerald-400",
-    medium: "text-amber-400",
-    high: "text-rose-400",
+  const toggle = () => {
+    if (!task.completed) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+    else Haptics.selectionAsync()
+    onSetCompleted(task.id, !task.completed)
   }
 
   return (
-    <View
-      className={`p-4 rounded-2xl mb-3 border ${
-        task.completed
-          ? "bg-neutral-900/30 border-neutral-900 opacity-50"
-          : "bg-neutral-900/80 border-neutral-800"
-      }`}
-    >
-      <View className="flex-row items-start gap-3">
-        {/* Checkbox */}
-        <Pressable
-          onPress={handleCheck}
-          hitSlop={12}
-          className={`w-6 h-6 rounded-lg border items-center justify-center mt-0.5 ${
-            task.completed
-              ? "bg-emerald-500 border-emerald-400"
-              : "border-neutral-700 bg-neutral-950"
+    <View className={`flex-row gap-2 p-3 rounded-2xl ${task.completed ? "bg-canvas border border-divider" : "bg-surface"}`}>
+      <Pressable
+        onPress={toggle}
+        accessibilityRole="checkbox"
+        accessibilityLabel={task.title}
+        accessibilityHint={task.completed ? "Marks this step as not done" : "Marks this step as done"}
+        accessibilityState={{ checked: task.completed }}
+        className="w-11 h-11 items-center justify-center"
+      >
+        <View
+          className={`w-7 h-7 rounded-lg items-center justify-center ${
+            task.completed ? "bg-success" : "border-2 border-border-field"
           }`}
         >
-          {task.completed && <Text className="text-black font-bold text-xs">✓</Text>}
-        </Pressable>
+          {task.completed && <Check size={18} color={colors["on-success"]} strokeWidth={3} />}
+        </View>
+      </Pressable>
 
-        <View className="flex-1">
-          {/* Title and metadata */}
+      <View className="flex-1 gap-3 py-2 pr-1">
+        <View
+          accessible
+          accessibilityLabel={
+            task.completed ? `${task.title}, done` : `${meta}. First step: ${task.firstPhysicalStep}`
+          }
+          className="gap-1"
+        >
           <Text
-            className={`text-base font-semibold leading-snug ${
-              task.completed ? "line-through text-neutral-500" : "text-neutral-100"
+            className={`text-body font-semibold ${
+              task.completed ? "text-text-tertiary line-through" : "text-text-primary"
             }`}
           >
             {task.title}
           </Text>
-
-          {/* Metadata chips */}
-          <View className="flex-row items-center gap-2 mt-1.5 flex-wrap">
-            <View className="bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800">
-              <Text className="text-[11px] text-neutral-400 font-medium">{task.category}</Text>
-            </View>
-            <Text className="text-neutral-600">·</Text>
-            <Text
-              className={`text-[11px] capitalize font-medium ${energyColors[task.energyLevel]}`}
-            >
-              {task.energyLevel} energy
-            </Text>
-            <Text className="text-neutral-600">·</Text>
-            <Text className="text-[11px] text-neutral-400 font-mono">{task.estimatedMinutes}m</Text>
-          </View>
-
-          {/* First physical step prompt */}
           {!task.completed && (
-            <View className="mt-2.5 p-2.5 bg-neutral-950 rounded-xl border border-amber-500/20">
-              <Text className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
-                First Physical Action:
-              </Text>
-              <Text className="text-xs text-neutral-300 mt-0.5 leading-relaxed">
-                {task.firstPhysicalStep}
+            <View className="flex-row items-center gap-2">
+              <View className={`w-2 h-2 rounded-full ${ENERGY_DOT[task.energyLevel]}`} />
+              <Text className="text-footnote text-text-secondary shrink" style={{ fontVariant: ["tabular-nums"] }}>
+                {meta}
               </Text>
             </View>
           )}
-
-          {/* Action Row */}
           {!task.completed && (
-            <View className="flex-row items-center justify-between mt-3 pt-2 border-t border-neutral-800/80">
-              <Pressable
-                onPress={handleFocus}
-                className="bg-amber-400/10 border border-amber-400/30 px-3 py-1.5 rounded-lg active:scale-95"
-              >
-                <Text className="text-xs font-semibold text-amber-300">
-                  ▶ Focus Radar (One Thing)
-                </Text>
-              </Pressable>
+            <View className="mt-2 p-3 rounded-xl bg-raised gap-1">
+              <Text className="text-footnote font-semibold text-accent-text">First step</Text>
+              <Text className="text-callout text-text-primary">{task.firstPhysicalStep}</Text>
             </View>
           )}
         </View>
+
+        {!task.completed && (
+          <Button
+            label="Start focus"
+            accessibilityLabel={`Start focus on ${task.title}`}
+            icon={Play}
+            variant="secondary"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+              onStartFocus(task)
+            }}
+            className="self-start"
+          />
+        )}
       </View>
     </View>
   )

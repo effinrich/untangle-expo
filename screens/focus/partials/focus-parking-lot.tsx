@@ -1,49 +1,54 @@
 import React from "react"
-import { View, Text, TextInput, Pressable } from "react-native"
+import { Pressable, Text, View } from "react-native"
+import { X } from "../../../theme/icons"
+import { Button } from "../../../components/button/button"
+import { TextField } from "../../../components/text-field/text-field"
+import { ParkedThought } from "../../../hooks/use-parking-lot-store"
+import colors from "../../../theme/colors"
 
 interface FocusParkingLotProps {
-  parkingThought: string
-  onChangeThought: (text: string) => void
-  parkingLot: string[]
-  onParkThought: () => void
+  draft: string
+  onChangeDraft: (text: string) => void
+  thoughts: ParkedThought[]
+  onPark: () => void
+  onRemove: (id: string) => void
 }
 
-// Thought parking lot
 export function FocusParkingLot({
-  parkingThought,
-  onChangeThought,
-  parkingLot,
-  onParkThought,
+  draft,
+  onChangeDraft,
+  thoughts,
+  onPark,
+  onRemove,
 }: FocusParkingLotProps) {
   return (
-    <View className="bg-neutral-900/60 p-4 rounded-2xl border border-neutral-800 mt-4 mb-10">
-      <Text className="text-xs font-bold text-neutral-300 mb-1">Mental Parking Lot</Text>
-      <Text className="text-[11px] text-neutral-500 mb-3">
-        Dump intrusive thoughts here so you don’t get derailed.
+    <View className="gap-4 p-4 rounded-2xl bg-surface">
+      <Text className="text-title3 font-bold text-text-primary" accessibilityRole="header">
+        Parking lot
       </Text>
+      <TextField
+        label="Park a distracting thought"
+        helper="Get it out of your head and back to your step. It'll be here later."
+        placeholder="Remember to buy eggs…"
+        value={draft}
+        onChangeText={onChangeDraft}
+        onSubmitEditing={onPark}
+        returnKeyType="done"
+        submitBehavior="submit"
+      />
+      <Button label="Park it" variant="secondary" onPress={onPark} disabled={!draft.trim()} />
 
-      <View className="flex-row gap-2 mb-3">
-        <TextInput
-          value={parkingThought}
-          onChangeText={onChangeThought}
-          placeholder="e.g. remember to buy eggs..."
-          placeholderTextColor="#737373"
-          className="flex-1 bg-neutral-950 p-2.5 rounded-xl text-neutral-100 text-xs border border-neutral-800"
-        />
-        <Pressable
-          onPress={onParkThought}
-          className="bg-neutral-800 px-3 py-2 rounded-xl justify-center"
-        >
-          <Text className="text-xs font-semibold text-white">Park</Text>
-        </Pressable>
-      </View>
-
-      {parkingLot.map((item, idx) => (
-        <View
-          key={idx}
-          className="p-2.5 bg-neutral-950 rounded-lg border border-neutral-800/60 mb-1.5"
-        >
-          <Text className="text-xs text-neutral-300">{item}</Text>
+      {thoughts.map((thought) => (
+        <View key={thought.id} className="flex-row items-center gap-2 pl-4 rounded-xl bg-raised">
+          <Text className="flex-1 py-3 text-callout text-text-primary">{thought.text}</Text>
+          <Pressable
+            onPress={() => onRemove(thought.id)}
+            accessibilityRole="button"
+            accessibilityLabel={`Remove "${thought.text}"`}
+            className="w-11 h-11 items-center justify-center active:opacity-70"
+          >
+            <X size={18} color={colors["text-secondary"]} accessible={false} />
+          </Pressable>
         </View>
       ))}
     </View>

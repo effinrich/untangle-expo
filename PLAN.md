@@ -33,7 +33,7 @@ The goal is to implement the Phase 1 tasks for the Expo universal app (web, iOS,
 - **Acceptance Criteria**:
   - `services/firebase.ts` is created and initializes Firebase with appropriate persistence (AsyncStorage for native, browser for web).
   - Google Sign-In is implemented using `expo-auth-session/providers/google`.
-  - `screens/main-screen/hooks.ts` syncs tasks using `subscribeToUserTasks` and handles auth state.
+  - `screens/main-screen/hooks.ts` syncs tasks using `subscribeToUserTasks` and handles auth state. (Since moved to `hooks/use-task-store.ts` and `hooks/use-auth-session.ts`.)
 - **Verification Commands**: `bunx tsc --noEmit` at the repo root.
 - **Dependencies**: `@react-native-async-storage/async-storage`, `expo-auth-session`, `expo-crypto`, `expo-web-browser`
 - **Files Touched**: `services/firebase.ts`, `screens/main-screen/hooks.ts`, `package.json`

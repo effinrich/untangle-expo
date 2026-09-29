@@ -84,3 +84,23 @@ Every category has a dedicated hue with subtle 10% opacity backdrops and crisp b
 - **Sound**: Non-jarring Web Audio clicks and chimes (tick frequency: 784Hz; completion: C5–E5–G5 chord).
 - **Brown Noise**: 400Hz filtered Gaussian pink/brown noise to quiet environmental ADHD distractions.
 - **Haptics (Mobile)**: `Haptics.notificationAsync(Success)` when claiming dopamine.
+
+## 5. Native Tokens (iOS/Android)
+The native app uses semantic tokens from `theme/colors.js` through NativeWind (`bg-surface`, `text-text-secondary`, `border-border-field`, and so on). The web UI keeps the palette above. Ratios are WCAG 2.2 contrast against the surface each token sits on.
+
+| Token | Hex | Role | Contrast |
+| :--- | :--- | :--- | :--- |
+| `canvas` / `surface` / `field` / `raised` | `#0a0a0a` / `#171717` / `#1f1f1f` / `#262626` | Screen, cards, inputs, secondary buttons | — |
+| `text-primary` | `#f5f5f5` | Body and titles | 13.9:1 on raised, 18.2:1 on canvas |
+| `text-secondary` | `#c4c4c4` | Supporting text | 8.7:1 on raised |
+| `text-tertiary` | `#a3a3a3` | Placeholders, done tasks | 6.0:1 on raised |
+| `border-field` | `#8a8a8a` | Input borders | 4.8:1 on field (3:1 needed) |
+| `border-control` | `#737373` | Pill and control borders | 3.2:1 on raised |
+| `accent` + `on-accent` | `#fbbf24` + `#0a0a0a` | The one primary action per screen | 11.9:1 |
+| `accent-text` | `#fcd34d` | Links and highlights | 10.5:1 on raised |
+| `success` + `on-success` | `#34d399` + `#0a0a0a` | Mark done | 10.3:1 |
+| `danger-text` on `danger-muted` | `#fda4af` on `#3b0d14` | Error banners | 8.9:1 |
+
+- **Type ramp** (iOS text styles, scales with Dynamic Type): `text-footnote` 13, `text-subhead` 15, `text-callout` 16, `text-body` 17, `text-title3` 20, `text-title2` 22, `text-title1` 28, `text-display` 72 (Focus timer, capped at 1.5×).
+- **Targets**: `min-h-touch` 44pt, `min-h-control` 48pt, `min-h-cta` 56pt; spacing on the 8pt grid.
+- **Primitives**: `Button` (primary, success, secondary, ghost; loading and disabled states), `TextField` (visible label, helper or error text, focus border), `OptionRow` (radio or checkbox rows), `Screen`, `StatusBanner`.

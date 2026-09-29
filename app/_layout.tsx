@@ -1,11 +1,16 @@
 import React from "react"
 import { Platform } from "react-native"
-import { Slot, Stack } from "expo-router"
+import { Slot } from "expo-router"
 import Head from "expo-router/head"
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import * as SplashScreen from "expo-splash-screen"
+import { AppProvider } from "../components/app-provider/app-provider"
+import { NativeStack } from "../components/native-stack/native-stack"
 import "../global.css"
+
+if (Platform.OS !== "web") SplashScreen.preventAutoHideAsync().catch(() => {})
 
 const queryClient = new QueryClient()
 
@@ -33,39 +38,10 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <StatusBar style="light" backgroundColor="#0a0a0a" />
-        <Stack
-          screenOptions={{
-            headerStyle: { backgroundColor: "#0a0a0a" },
-            headerTintColor: "#f5f5f5",
-            headerTitleStyle: { fontWeight: "700" },
-            contentStyle: { backgroundColor: "#0a0a0a" },
-          }}
-        >
-          <Stack.Screen
-            name="index"
-            options={{
-              title: "Untangle",
-              headerLargeTitle: false,
-            }}
-          />
-          <Stack.Screen
-            name="focus"
-            options={{
-              title: "One Thing Radar",
-              presentation: "modal",
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="unstick"
-            options={{
-              title: "Unstick Assistant",
-              presentation: "modal",
-              headerShown: false,
-            }}
-          />
-        </Stack>
+        <StatusBar style="light" />
+        <AppProvider>
+          <NativeStack />
+        </AppProvider>
       </SafeAreaProvider>
     </QueryClientProvider>
   )

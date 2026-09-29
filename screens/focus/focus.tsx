@@ -1,70 +1,73 @@
-import React from "react"
-import { View, Text, Pressable, ScrollView } from "react-native"
-import { useLocalSearchParams, useRouter } from "expo-router"
+import React, { useState } from "react"
+import { Text, View } from "react-native"
+import { Stack, useLocalSearchParams, useRouter } from "expo-router"
+import { Button } from "../../components/button/button"
+import { Screen } from "../../components/screen/screen"
+import { useAppState } from "../../hooks/app-context"
 import * as Haptics from "../../utils/haptics"
-import { useFocusTimer, useParkingLot } from "./hooks"
+import { useFocusTimer } from "./hooks"
 import { FocusParkingLot } from "./partials/focus-parking-lot"
 import { FocusTimer } from "./partials/focus-timer"
+import { parseFocusSeconds } from "./utils"
 
 export default function Focus() {
   const router = useRouter()
-  const { title, firstStep, minutes } = useLocalSearchParams<{
-    id: string
-    title: string
-    firstStep: string
-    minutes: string
-  }>()
-  const { secondsRemaining, isRunning, toggleRunning } = useFocusTimer(title, minutes)
-  const { parkingThought, setParkingThought, parkingLot, parkThought } = useParkingLot()
+  const { id, minutes } = useLocalSearchParams<{ id: string; minutes?: string }>()
+  const { tasks, setCompleted, thoughts, parkThought, removeThought } = useAppState()
+  const task = tasks.find((t) => t.id === id)
+  const sprintMinutes = minutes ?? String(task?.estimatedMinutes ?? 10)
+  const { secondsRemaining, isRunning, toggleRunning } = useFocusTimer(task?.title, sprintMinutes)
+  const [draft, setDraft] = useState("")
 
-  const handleDone = () => {
+  const complete = () => {
+    if (task) setCompleted(task.id, true)
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     router.back()
   }
 
+  const park = () => {
+    if (!draft.trim()) return
+    parkThought(draft)
+    setDraft("")
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+  }
+
   return (
-    <ScrollView className="flex-1 bg-neutral-950 px-6 pt-12 pb-8">
-      {/* Top Header */}
-      <View className="flex-row items-center justify-between mb-8">
-        <Text className="text-amber-400 font-bold text-xs uppercase tracking-wider">
-          ⚡ ONE THING RADAR
-        </Text>
-        <Pressable
-          onPress={() => router.back()}
-          className="bg-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-800"
-        >
-          <Text className="text-xs text-neutral-300">Exit</Text>
-        </Pressable>
-      </View>
-
-      {/* Task Heading */}
-      <Text className="text-2xl font-extrabold text-neutral-100 text-center leading-tight mb-4">
-        {title || "Current Micro-Action"}
-      </Text>
-
-      {/* The Physical Trigger Spark */}
-      <View className="bg-neutral-900/90 p-4 rounded-2xl border border-amber-500/30 mb-8">
-        <Text className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">
-          First Physical Action:
-        </Text>
-        <Text className="text-sm font-medium text-neutral-200 leading-relaxed">
-          {firstStep || "Open the app or document"}
-        </Text>
-      </View>
-
-      <FocusTimer
-        secondsRemaining={secondsRemaining}
-        isRunning={isRunning}
-        onToggleRunning={toggleRunning}
-        onDone={handleDone}
+    <>
+      <Stack.Screen
+        options={{
+          headerRight: () => <Button label="Close" variant="ghost" onPress={() => router.back()} />,
+        }}
       />
+      <Screen>
+        <View className="gap-3">
+          <Text className="text-title2 font-bold text-text-primary" accessibilityRole="header">
+            {task?.title ?? "Your next step"}
+          </Text>
+          {task ? (
+            <View className="p-4 rounded-2xl bg-raised gap-1">
+              <Text className="text-footnote font-semibold text-accent-text">First step</Text>
+              <Text className="text-body text-text-primary">{task.firstPhysicalStep}</Text>
+            </View>
+          ) : null}
+        </View>
 
-      <FocusParkingLot
-        parkingThought={parkingThought}
-        onChangeThought={setParkingThought}
-        parkingLot={parkingLot}
-        onParkThought={parkThought}
-      />
-    </ScrollView>
+        <FocusTimer
+          secondsRemaining={secondsRemaining}
+          totalSeconds={parseFocusSeconds(sprintMinutes)}
+          isRunning={isRunning}
+          onToggleRunning={toggleRunning}
+          onComplete={complete}
+        />
+
+        <FocusParkingLot
+          draft={draft}
+          onChangeDraft={setDraft}
+          thoughts={thoughts}
+          onPark={park}
+          onRemove={removeThought}
+        />
+      </Screen>
+    </>
   )
 }
