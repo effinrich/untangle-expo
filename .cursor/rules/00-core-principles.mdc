@@ -24,6 +24,7 @@ Follow the feature-based-architecture skill for new projects and structural refa
 ## Changes
 
 - Refactors move code; they do not change behavior. A behavior change is its own change, called what it is.
-- Refactor incrementally: bring the files you touch into line and leave untouched files where they are.
+- Structural refactors are incremental: bring the files you touch into line and leave untouched files where they are.
+- UI, look-and-feel, and aesthetic work is exempt: refactor it in broad strokes, repo-wide when warranted. Surface work is loosely coupled and swappable, like a VS Code theme. The incremental rule and the over-engineering guard cover logic and architecture, not visual design.
 - When a file moves or is renamed, update every doc that names the old path in the same change (`AGENTS.md`, `HANDOFF.md`, `PLAN.md`, `mobile/README.md`, these rules, the skill). No follow-up.
-- Do not commit or push unless the user asks.
+- Commit at will; never ask before committing. Pushing is a separate, shared-state action and still needs the user's go-ahead.

@@ -9,12 +9,13 @@ Canonical instructions for any agent.
 ## React structure (`src/`)
 
 - One React component per file, named after the component in kebab-case: `TaskCard` -> `task-card.tsx`. Each component or screen lives in a like-named folder (`task-list/task-list.tsx`); partials stay flat in `partials/`. `bun run lint` enforces one-per-file and kebab-case as errors (`react/no-multi-comp`, `unicorn/filename-case`).
-- Keep files under ~200 lines. Refactors move code without changing behavior, and are incremental: bring the files you touch into line; leave untouched files where they are.
+- Keep files under ~200 lines. Structural refactors move code without changing behavior and stay incremental: bring the files you touch into line; leave untouched files where they are.
+- UI, look-and-feel, and aesthetic work is exempt from that rule: refactor it in broad strokes, repo-wide when warranted. Surface work is loosely coupled and cheaply swappable (a VS Code theme, not a routing layer), so the incremental rule and the over-engineering guard cover logic and architecture, not visual design.
 - Existing app-level code lives in `src/services/`, `src/types/`, `src/data/`; new cross-feature code goes in `src/shared/{ui,hooks,types,consts,utils}` per the skill.
 - `mobile/` is a separate Expo app: oxlint ignores it and the root tsconfig excludes it. Its screens live in `mobile/screens/<screen>/<screen>.tsx`, re-exported by one-line route files in `mobile/app/`.
 - Verify with `bun run lint` and `bunx tsc --noEmit`; for mobile, `mobile/node_modules/.bin/tsc --noEmit -p mobile/tsconfig.json`.
 - When code moves or is renamed, update every doc that names the old path (`HANDOFF.md`, `mobile/README.md`, `PLAN.md`, this file, the rule folders, the skill) in the same change.
-- Do not commit or push unless asked.
+- Commit at will; never ask before committing. Pushing is a separate, shared-state action and still needs the user's go-ahead.
 
 ## Learned User Preferences
 
@@ -22,6 +23,7 @@ Canonical instructions for any agent.
 - Sibling files beside a component are unprefixed (`types.ts`, `consts.ts`, `hooks.ts`, `utils.ts`), never `task-list.types.ts`.
 - Keep the feature-based-architecture skill agent-agnostic and self-contained (no Claude-only paths, tool names, or plugin wrappers); the user reuses it across models and keeps a portable copy outside the repo, which must stay identical to the repo copy.
 - Name a screen's folder and file after its feature (`focus/focus.tsx`), not a descriptive variant like `focus-radar-modal`.
+- Carve UI and design work out of the incremental-refactor and minimal-change rules. Refactoring UI, look and feel, and aesthetics should be done in broad strokes, repo-wide when warranted, especially when the current state is bad. The "only touch files you're already changing" rule exists for low-level coupled logic (routing, backend integration), not for surface work, which is interchangeable like a VS Code theme. Over-engineering concerns apply to functionality, the how and by what means, not to visual design.
 
 ## Learned Workspace Facts
 
