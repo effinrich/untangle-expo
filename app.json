@@ -40,6 +40,15 @@
         {
           "microphonePermission": "Allow Untangle to record your voice to transcribe brain dumps into micro-tasks."
         }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 240,
+          "resizeMode": "contain",
+          "backgroundColor": "#0a0a0a"
+        }
       ]
     ],
     "experiments": {
