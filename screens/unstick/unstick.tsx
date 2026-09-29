@@ -1,132 +1,104 @@
-import React, { useState } from "react"
-import { View, Text, Pressable, ScrollView, ActivityIndicator } from "react-native"
-import { useRouter } from "expo-router"
-import * as Haptics from "../../utils/haptics"
+import React from "react"
+import { Text, View } from "react-native"
+import { Stack, useRouter } from "expo-router"
+import { Play, RotateCcw, Sparkles } from "../../theme/icons"
+import { Button } from "../../components/button/button"
+import { OptionRow } from "../../components/option-row/option-row"
+import { Screen } from "../../components/screen/screen"
+import { StatusBanner } from "../../components/status-banner/status-banner"
+import { useAppState } from "../../hooks/app-context"
+import { focusHref } from "../../utils/focus-href"
+import { MOODS, SPARK_MINUTES } from "./consts"
+import { useUnstick } from "./hooks"
+import { UnstickResultCard } from "./partials/unstick-result-card"
 
 export default function UnstickScreen() {
   const router = useRouter()
-  const [selectedMood, setSelectedMood] = useState("Paralyzed / cannot pick where to start")
-  const [isLoading, setIsLoading] = useState(false)
-  const [result, setResult] = useState<{
-    chosenTask: string
-    reasoning: string
-    sparkChallenge: string
-  } | null>(null)
+  const { tasks } = useAppState()
+  const openTasks = tasks.filter((t) => !t.completed)
+  const unstick = useUnstick(openTasks)
 
-  const moods = [
-    "Paralyzed / cannot pick where to start",
-    "Brain is completely fried (0% battery)",
-    "Restless, distracted, opening 15 tabs",
-    "Dreading a high-stakes thing",
-  ]
+  const closeButton = () => <Button label="Close" variant="ghost" onPress={() => router.back()} />
 
-  const handlePickForMe = () => {
-    setIsLoading(true)
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-
-    setTimeout(() => {
-      setResult({
-        chosenTask: "Clear 3 empty coffee mugs off desk",
-        reasoning:
-          "This has zero cognitive resistance and immediately clears visual noise in your physical field.",
-        sparkChallenge:
-          "Pick up the blue mug by your monitor for literally 60 seconds. If you still hate it after 60s, you have 100% permission to quit.",
-      })
-      setIsLoading(false)
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-    }, 900)
+  if (openTasks.length === 0) {
+    return (
+      <>
+        <Stack.Screen options={{ headerRight: closeButton }} />
+        <Screen>
+          <Text className="text-title2 font-bold text-text-primary">Nothing to pick from yet</Text>
+          <Text className="text-body text-text-secondary">
+            Do a quick brain dump first. Then Untangle can pick the easiest step for you.
+          </Text>
+          <Button label="Back to brain dump" size="lg" onPress={() => router.back()} />
+        </Screen>
+      </>
+    )
   }
 
+  const footer = unstick.result ? (
+    <>
+      <Button
+        label="Start 2-minute spark"
+        icon={Play}
+        size="lg"
+        disabled={!unstick.chosenTask}
+        onPress={() =>
+          unstick.chosenTask &&
+          router.replace(focusHref(unstick.chosenTask.id, SPARK_MINUTES))
+        }
+      />
+      <Button label="Pick again" icon={RotateCcw} variant="ghost" onPress={unstick.reset} />
+    </>
+  ) : (
+    <Button
+      label="Pick my easiest step"
+      loadingLabel="Picking…"
+      icon={Sparkles}
+      size="lg"
+      loading={unstick.loading}
+      onPress={unstick.pick}
+    />
+  )
+
   return (
-    <ScrollView className="flex-1 bg-neutral-950 px-6 pt-12 pb-10">
-      <View className="flex-row items-center justify-between mb-6">
-        <Text className="text-amber-400 font-bold text-xs uppercase tracking-wider">
-          ⚡ EXECUTIVE DYSFUNCTION RESET
-        </Text>
-        <Pressable
-          onPress={() => router.back()}
-          className="bg-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-800"
-        >
-          <Text className="text-xs text-neutral-300">Close</Text>
-        </Pressable>
-      </View>
-
-      {!result ? (
-        <View>
-          <Text className="text-2xl font-bold text-neutral-100 mb-2">Remove Decision Fatigue</Text>
-          <Text className="text-xs text-neutral-400 mb-6 leading-relaxed">
-            When executive paralysis hits, deciding burns all your dopamine. Let AI pick the lowest
-            barrier entry point.
-          </Text>
-
-          <Text className="text-xs font-semibold text-neutral-300 mb-2">
-            How does your brain feel right now?
-          </Text>
-
-          {moods.map((m) => (
-            <Pressable
-              key={m}
-              onPress={() => {
-                setSelectedMood(m)
-                Haptics.selectionAsync()
-              }}
-              className={`p-3.5 rounded-xl border mb-2.5 ${
-                selectedMood === m
-                  ? "bg-amber-400/15 border-amber-400"
-                  : "bg-neutral-900 border-neutral-800"
-              }`}
-            >
-              <Text
-                className={`text-xs font-medium ${
-                  selectedMood === m ? "text-amber-300" : "text-neutral-300"
-                }`}
-              >
-                {m}
+    <>
+      <Stack.Screen options={{ headerRight: closeButton }} />
+      <Screen footer={footer}>
+        {unstick.result ? (
+          <UnstickResultCard result={unstick.result} task={unstick.chosenTask} />
+        ) : (
+          <>
+            <View className="gap-2">
+              <Text className="text-title2 font-bold text-text-primary" accessibilityRole="header">
+                Let Untangle decide
               </Text>
-            </Pressable>
-          ))}
+              <Text className="text-body text-text-secondary">
+                Deciding burns energy you don’t have right now. Tell us how your brain feels and
+                we’ll pick the lowest-effort way in.
+              </Text>
+            </View>
 
-          <Pressable
-            onPress={handlePickForMe}
-            disabled={isLoading}
-            className="bg-amber-400 py-3.5 rounded-2xl items-center mt-6 active:scale-95"
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#000" />
-            ) : (
-              <Text className="text-sm font-bold text-black">✨ Pick The Single Easiest Spark</Text>
-            )}
-          </Pressable>
-        </View>
-      ) : (
-        <View className="space-y-4">
-          <View className="bg-neutral-900 p-4 rounded-2xl border border-neutral-800">
-            <Text className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
-              Selected For You:
-            </Text>
-            <Text className="text-lg font-bold text-neutral-100 mt-1">{result.chosenTask}</Text>
-            <Text className="text-xs text-neutral-400 mt-1 leading-relaxed">
-              {result.reasoning}
-            </Text>
-          </View>
+            <View className="gap-3" accessibilityRole="radiogroup" accessibilityLabel="How does your brain feel right now?">
+              <Text className="text-callout font-semibold text-text-primary">
+                How does your brain feel right now?
+              </Text>
+              {MOODS.map((mood) => (
+                <OptionRow
+                  key={mood.id}
+                  label={mood.label}
+                  description={mood.description}
+                  selected={unstick.moodId === mood.id}
+                  onSelect={() => unstick.selectMood(mood.id)}
+                />
+              ))}
+            </View>
 
-          <View className="bg-amber-400/10 p-4 rounded-2xl border border-amber-400/30">
-            <Text className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
-              The 2-Minute Spark Contract:
-            </Text>
-            <Text className="text-xs font-medium text-neutral-200 mt-1 leading-relaxed">
-              &quot;{result.sparkChallenge}&quot;
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() => router.back()}
-            className="bg-amber-400 py-3.5 rounded-2xl items-center mt-4 active:scale-95"
-          >
-            <Text className="text-sm font-bold text-black">Accept & Start Spark</Text>
-          </Pressable>
-        </View>
-      )}
-    </ScrollView>
+            {unstick.error ? (
+              <StatusBanner title="Couldn't pick a step" message={unstick.error} />
+            ) : null}
+          </>
+        )}
+      </Screen>
+    </>
   )
 }
