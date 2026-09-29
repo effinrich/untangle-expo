@@ -65,7 +65,9 @@ bun run start   # iOS/Android
 │   └── button/, text-field/, option-row/, screen/, status-banner/ # Native UI primitives
 ├── hooks/
 │   ├── use-voice-recorder.ts # Record, base64-encode, and transcribe audio
-│   └── use-*-store.ts, use-auth-session.ts, use-onboarding-flag.ts # Native state (AsyncStorage + Firestore)
+│   ├── use-app-data.ts # Picks guest or signed-in collections; writes, guest migration, sign-out cleanup
+│   ├── use-live-data.ts # useLiveQuery reads (tasks, one task, parked thoughts)
+│   └── use-auth-session.ts, use-onboarding-flag.ts # Google session; onboarding flag (AsyncStorage)
 ├── theme/
 │   ├── colors.js      # Native semantic color tokens (used by tailwind.config.js)
 │   └── icons.ts       # Per-icon lucide imports (keeps the bundle small)
@@ -76,8 +78,9 @@ bun run start   # iOS/Android
 ├── services/
 │   ├── api.ts         # Native API calls (untangle, transcribe, unstick)
 │   ├── api-client.ts  # Base URL resolution, JSON checks, friendly ApiError
-│   ├── firebase.ts    # Google sign-in & Firestore task sync
-│   └── storage.ts     # AsyncStorage keys and JSON helpers
+│   ├── firebase.ts    # Firebase app, Firestore, Google sign-in
+│   ├── storage.ts     # AsyncStorage onboarding flag
+│   └── db/            # TanStack DB collections (guest SQLite-backed, signed-in Firestore mirror), offline outbox, guest migration
 ├── public/            # Static web assets
 ├── app.json           # Expo app config (permissions, bundle IDs, icons)
 ├── package.json       # Dependencies for web, native, and API routes

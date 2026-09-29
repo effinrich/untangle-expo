@@ -7,9 +7,16 @@ interface MainAccountButtonProps {
   canSignIn: boolean
   onSignIn: () => void
   onSignOut: () => Promise<void>
+  hasUnsyncedChanges: () => boolean
 }
 
-export function MainAccountButton({ user, canSignIn, onSignIn, onSignOut }: MainAccountButtonProps) {
+export function MainAccountButton({
+  user,
+  canSignIn,
+  onSignIn,
+  onSignOut,
+  hasUnsyncedChanges,
+}: MainAccountButtonProps) {
   if (!user) {
     return (
       <Pressable
@@ -29,10 +36,16 @@ export function MainAccountButton({ user, canSignIn, onSignIn, onSignOut }: Main
 
   const name = user.displayName || user.email || "your account"
   const confirmSignOut = () =>
-    Alert.alert(`Signed in as ${name}`, "Your steps sync to this Google account.", [
-      { text: "Cancel", style: "cancel" },
-      { text: "Sign out", style: "destructive", onPress: () => void onSignOut() },
-    ])
+    Alert.alert(
+      `Signed in as ${name}`,
+      hasUnsyncedChanges()
+        ? "Some changes haven’t synced yet. Signing out removes them from this device."
+        : "Your steps sync to this Google account.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Sign out", style: "destructive", onPress: () => void onSignOut() },
+      ],
+    )
 
   return (
     <Pressable

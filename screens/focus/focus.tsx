@@ -4,6 +4,7 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router"
 import { Button } from "../../components/button/button"
 import { Screen } from "../../components/screen/screen"
 import { useAppState } from "../../hooks/app-context"
+import { useParkedThoughts, useTask } from "../../hooks/use-live-data"
 import * as Haptics from "../../utils/haptics"
 import { useFocusTimer } from "./hooks"
 import { FocusParkingLot } from "./partials/focus-parking-lot"
@@ -13,8 +14,9 @@ import { parseFocusSeconds } from "./utils"
 export default function Focus() {
   const router = useRouter()
   const { id, minutes } = useLocalSearchParams<{ id: string; minutes?: string }>()
-  const { tasks, setCompleted, thoughts, parkThought, removeThought } = useAppState()
-  const task = tasks.find((t) => t.id === id)
+  const { setCompleted, parkThought, removeThought } = useAppState()
+  const task = useTask(id)
+  const thoughts = useParkedThoughts()
   const sprintMinutes = minutes ?? String(task?.estimatedMinutes ?? 10)
   const { secondsRemaining, isRunning, toggleRunning } = useFocusTimer(task?.title, sprintMinutes)
   const [draft, setDraft] = useState("")

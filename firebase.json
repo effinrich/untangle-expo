@@ -1,0 +1,13 @@
+{
+  "firestore": [
+    {
+      "database": "ai-studio-remixtangleadhdb-0e6f0f3e-28a1-4517-8b78-5d76b556f7c7",
+      "rules": "firestore.rules"
+    }
+  ],
+  "emulators": {
+    "auth": { "port": 9099 },
+    "firestore": { "port": 8080 },
+    "ui": { "enabled": false }
+  }
+}

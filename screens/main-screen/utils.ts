@@ -1,25 +1,18 @@
+import { caseWhen, eq, type lower } from "@tanstack/db"
 import { MicroTask } from "../../services/api"
 import { ALL_AREAS, ENERGY_ORDER, SORT_OPTIONS } from "./consts"
 import { SortType } from "./types"
 
-export function sortOpenTasks(tasks: MicroTask[], area: string, sortBy: SortType): MicroTask[] {
-  const open = tasks.filter(
-    (t) => !t.completed && (area === ALL_AREAS || t.category.toLowerCase() === area.toLowerCase()),
+type QueryExpression = Parameters<typeof lower>[0]
+
+export function energyRank(energyLevel: QueryExpression) {
+  return caseWhen(
+    eq(energyLevel, "low"),
+    ENERGY_ORDER.low,
+    eq(energyLevel, "medium"),
+    ENERGY_ORDER.medium,
+    ENERGY_ORDER.high,
   )
-  return open.sort((a, b) => {
-    switch (sortBy) {
-      case "energy-asc":
-        return ENERGY_ORDER[a.energyLevel] - ENERGY_ORDER[b.energyLevel]
-      case "energy-desc":
-        return ENERGY_ORDER[b.energyLevel] - ENERGY_ORDER[a.energyLevel]
-      case "time-asc":
-        return a.estimatedMinutes - b.estimatedMinutes
-      default: {
-        const unhandled: never = sortBy
-        return unhandled
-      }
-    }
-  })
 }
 
 export function areasFor(tasks: MicroTask[]): string[] {

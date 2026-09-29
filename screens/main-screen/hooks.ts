@@ -1,12 +1,15 @@
 import { useMemo, useRef, useState } from "react"
 import { AccessibilityInfo, TextInput } from "react-native"
+import { and, eq, lower } from "@tanstack/db"
+import { useLiveQuery } from "@tanstack/react-db"
+import { useAppState } from "../../hooks/app-context"
 import { useVoiceRecorder } from "../../hooks/use-voice-recorder"
 import * as Haptics from "../../utils/haptics"
 import { MicroTask, untangleBrainDump } from "../../services/api"
 import { ApiError, friendlyErrorMessage } from "../../services/api-client"
 import { ALL_AREAS } from "./consts"
 import { SortType, UntangleStatus } from "./types"
-import { areasFor, sortOpenTasks } from "./utils"
+import { areasFor, energyRank } from "./utils"
 
 export function useBrainDump(onUntangled: (tasks: MicroTask[]) => void) {
   const [text, setText] = useState("")
@@ -66,6 +69,7 @@ export function useBrainDump(onUntangled: (tasks: MicroTask[]) => void) {
 }
 
 export function useTaskView(tasks: MicroTask[]) {
+  const { collections } = useAppState()
   const [sortBy, setSortBy] = useState<SortType>("energy-asc")
   const [area, setArea] = useState(ALL_AREAS)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -73,10 +77,35 @@ export function useTaskView(tasks: MicroTask[]) {
 
   const areas = useMemo(() => areasFor(tasks), [tasks])
   const activeArea = areas.includes(area) ? area : ALL_AREAS
-  const openTasks = useMemo(
-    () => sortOpenTasks(tasks, activeArea, sortBy),
-    [tasks, activeArea, sortBy],
-  )
+  const { data: openTasks } = useLiveQuery({
+    queryKey: ["main-open-tasks", collections.tasks.id, activeArea, sortBy],
+    query: (q) => {
+      const open = q
+        .from({ task: collections.tasks })
+        .where(({ task }) =>
+          activeArea === ALL_AREAS
+            ? eq(task.completed, false)
+            : and(eq(task.completed, false), eq(lower(task.category), activeArea.toLowerCase())),
+        )
+      const sorted = (() => {
+        switch (sortBy) {
+          case "energy-asc":
+            return open.orderBy(({ task }) => energyRank(task.energyLevel), "asc")
+          case "energy-desc":
+            return open.orderBy(({ task }) => energyRank(task.energyLevel), "desc")
+          case "time-asc":
+            return open.orderBy(({ task }) => task.estimatedMinutes, "asc")
+          default: {
+            const unhandled: never = sortBy
+            return unhandled
+          }
+        }
+      })()
+      return sorted
+        .orderBy(({ task }) => task.createdAt, "desc")
+        .orderBy(({ task }) => task.id)
+    },
+  })
   const doneTasks = useMemo(() => tasks.filter((t) => t.completed), [tasks])
 
   return {
