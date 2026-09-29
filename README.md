@@ -41,31 +41,43 @@ bun run start   # iOS/Android
 
 ```text
 ├── app/                # Expo Router routes
-│   ├── _layout.tsx    # Web: Head + Slot; native: Stack & theme
+│   ├── _layout.tsx    # Web: Head + Slot; native: splash hold, AppProvider, NativeStack
 │   ├── +html.tsx      # Web document shell
 │   ├── index.tsx      # Web: components/web-app; native: screens/main-screen
 │   ├── focus.tsx      # Web: components/web-app; native: screens/focus/focus
 │   ├── unstick.tsx    # Web: components/web-app; native: screens/unstick/unstick
+│   ├── onboarding.tsx # Web: components/web-app; native: screens/onboarding/onboarding
 │   ├── [...rest].tsx  # Unknown paths. Web: components/web-app (HTTP 200); native: link home
 │   ├── _sitemap.tsx   # Replaces Expo's sitemap with [...rest]
 │   └── api/           # Gemini API routes (+api.ts)
 ├── server/gemini.ts   # Shared Gemini client for API routes
 ├── src/               # Web UI (React DOM, Tailwind v4)
 ├── screens/
-│   ├── main-screen/   # Voice brain dump, energy sort, category pills, task list (+ hooks, partials)
-│   ├── focus/         # Fullscreen "One Thing Radar" with timer & parking lot (+ hooks, partials)
-│   └── unstick/       # Executive dysfunction reset (2-minute spark contract)
+│   ├── main-screen/   # Brain-dump composer, task list, sort & filter sheet (+ hooks, partials)
+│   ├── focus/         # Focus modal: large timer & persistent parking lot (+ hooks, partials)
+│   ├── unstick/       # Mood picker; the API picks the easiest step for a 2-minute spark
+│   └── onboarding/    # Three-page intro, then guest or Google sign-in
 ├── components/
 │   ├── web-app.tsx    # 'use dom' entry for the web UI
-│   └── task-card-mobile.tsx # Native task item with physical first action & haptics
+│   ├── task-card-mobile.tsx # Native task item with physical first action & haptics
+│   ├── app-provider/  # Native app state + splash hold
+│   ├── native-stack/  # Native Stack options (Focus/Unstick as modals)
+│   └── button/, text-field/, option-row/, screen/, status-banner/ # Native UI primitives
 ├── hooks/
-│   └── use-voice-recorder.ts # Record, base64-encode, and transcribe audio
+│   ├── use-voice-recorder.ts # Record, base64-encode, and transcribe audio
+│   └── use-*-store.ts, use-auth-session.ts, use-onboarding-flag.ts # Native state (AsyncStorage + Firestore)
+├── theme/
+│   ├── colors.js      # Native semantic color tokens (used by tailwind.config.js)
+│   └── icons.ts       # Per-icon lucide imports (keeps the bundle small)
 ├── utils/
 │   ├── audio.ts       # Base64 file reading for recordings
-│   └── haptics.ts     # Haptics wrapper
+│   ├── haptics.ts     # Haptics wrapper
+│   └── focus-href.ts  # Typed link to the Focus modal
 ├── services/
-│   ├── api.ts         # Native API client for Gemini and untangling
-│   └── firebase.ts    # Google sign-in & Firestore task sync
+│   ├── api.ts         # Native API calls (untangle, transcribe, unstick)
+│   ├── api-client.ts  # Base URL resolution, JSON checks, friendly ApiError
+│   ├── firebase.ts    # Google sign-in & Firestore task sync
+│   └── storage.ts     # AsyncStorage keys and JSON helpers
 ├── public/            # Static web assets
 ├── app.json           # Expo app config (permissions, bundle IDs, icons, Cloud Run apiBaseUrl)
 ├── package.json       # Dependencies for web, native, and API routes

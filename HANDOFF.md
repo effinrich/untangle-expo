@@ -61,15 +61,19 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 
 - **Framework**: Expo SDK 52 with Expo Router (`app/`) and NativeWind v4 (Tailwind).
 - **Core Screens** (route files in `app/` re-export screens from `screens/`):
-  - `app/index.tsx` -> `screens/main-screen/main-screen.tsx` (native only; web renders `components/web-app.tsx`): Main dashboard with voice dump, energy-level quick sorting, category pills, and task list.
+  - `app/index.tsx` -> `screens/main-screen/main-screen.tsx` (native only; web renders `components/web-app.tsx`): Brain-dump composer (type or speak), task list, and one Sort and filter sheet for energy order and life area. Redirects to onboarding until it is completed.
   - `app/focus.tsx` -> `screens/focus/focus.tsx` (native only; on web `/focus`, `/unstick`, and unknown paths render `components/web-app.tsx`, like the old SPA fallback): Fullscreen One Thing sprint with timer and mental parking lot.
-  - `app/unstick.tsx` -> `screens/unstick/unstick.tsx`: Native executive dysfunction reset flow.
+  - `app/unstick.tsx` -> `screens/unstick/unstick.tsx`: Pick a mood, and `/api/unstick-me` chooses the easiest open step, then starts a 2-minute Focus.
+  - `app/onboarding.tsx` -> `screens/onboarding/onboarding.tsx` (native only; web renders `components/web-app.tsx`): Three swipeable pages with Skip, ending in Start as guest or Sign in with Google.
+  - Focus and Unstick open as native modals (swipe down or Close). `components/native-stack/native-stack.tsx` holds the Stack options.
 - **Native APIs**:
   - `expo-av` for microphone recording (`hooks/use-voice-recorder.ts`) and `expo-file-system` for base64 encoding (`utils/audio.ts`).
   - `expo-haptics` for tactile dopamine rewards upon completing tasks or starting focus mode.
   - `expo-notifications` for focus-sprint end notifications (`screens/focus/hooks.ts`).
 - **Shared Backend Client**: `services/api.ts` posts through `services/api-client.ts`. Dev builds call the Expo dev server API routes (`app/api/*`) on the Metro host (from `expo-constants` `hostUri`); release builds use `EXPO_PUBLIC_API_BASE_URL` or `app.json` `extra.apiBaseUrl`. Non-JSON or failed responses throw a typed `ApiError` with a user-facing message. The current `extra.apiBaseUrl` is an AI Studio dev preview that redirects API calls to a cookie-check HTML page, so release builds need a real deployment URL.
 - **Auth & Sync**: `services/firebase.ts` (Google sign-in via `expo-auth-session`, Firestore task subscription).
+- **App state**: `components/app-provider/app-provider.tsx` composes `hooks/use-auth-session.ts`, `hooks/use-task-store.ts`, `hooks/use-parking-lot-store.ts`, and `hooks/use-onboarding-flag.ts`, and exposes them through `useAppState()` (`hooks/app-context.ts`). Guest tasks, parked thoughts, and the onboarding flag persist in AsyncStorage (`services/storage.ts`); guest tasks move to Firestore on sign-in. The provider holds the splash (`expo-splash-screen`) until these load, with a 4s cap.
+- **Design system**: semantic color tokens in `theme/colors.js` feed `tailwind.config.js` (with an iOS type ramp and 44/48/56pt control heights). Shared primitives: `components/button/`, `components/text-field/`, `components/option-row/`, `components/screen/`, `components/status-banner/`. Import icons from `theme/icons.ts`, not the `lucide-react-native` barrel, which bundles every icon.
 
 ---
 
@@ -77,22 +81,26 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 
 ```text
 ├── app/                    # Expo Router routes
-│   ├── _layout.tsx         # Web: Head + Slot; native: Stack
+│   ├── _layout.tsx         # Web: Head + Slot; native: splash hold, AppProvider, NativeStack
 │   ├── +html.tsx           # Web document shell
 │   ├── index.tsx           # Web: components/web-app; native: screens/main-screen
 │   ├── focus.tsx           # Web: components/web-app; native: screens/focus/focus
 │   ├── unstick.tsx         # Web: components/web-app; native: screens/unstick/unstick
+│   ├── onboarding.tsx      # Web: components/web-app; native: screens/onboarding/onboarding
 │   ├── [...rest].tsx       # Unknown paths. Web: components/web-app (HTTP 200); native: link home
 │   ├── _sitemap.tsx        # Replaces Expo's sitemap with [...rest]
 │   └── api/                # untangle, transcribe-audio, breakdown-task, unstick-me (+api.ts)
 ├── server/gemini.ts        # Shared Gemini client for API routes
 ├── components/
 │   ├── web-app.tsx         # 'use dom' entry that mounts src/web-app/app.tsx
-│   └── task-card-mobile.tsx
-├── screens/                # Native UI: main-screen/, focus/, unstick/
-├── hooks/                  # use-voice-recorder.ts (native)
-├── utils/                  # audio.ts (base64), haptics.ts (native)
-├── services/               # api.ts, firebase.ts (native)
+│   ├── task-card-mobile.tsx
+│   ├── app-provider/, native-stack/  # Native state provider and Stack config
+│   └── button/, text-field/, option-row/, screen/, status-banner/  # Native UI primitives
+├── screens/                # Native UI: main-screen/, focus/, unstick/, onboarding/
+├── hooks/                  # Native: voice recorder, auth session, task/parking-lot stores, onboarding flag
+├── theme/                  # Native: colors.js tokens, icons.ts
+├── utils/                  # audio.ts (base64), haptics.ts, focus-href.ts (native)
+├── services/               # api.ts, api-client.ts, firebase.ts, storage.ts (native)
 ├── public/images/          # Static web assets
 ├── src/                    # Web UI (React DOM + Tailwind v4)
 │   ├── web-app/app.tsx     # Main web application container
