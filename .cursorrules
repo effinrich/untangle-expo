@@ -1,0 +1,17 @@
+# Universal React Native & Expo UI/UX Rules
+
+## Architectural Integrity
+- NO platform-splitting anti-patterns. Never write separate `.web.tsx` and `.native.tsx` view layers unless accessing highly unique hardware APIs.
+- Use universal components (`<View>`, `<Text>`, `<Pressable>`).
+- Use **NativeWind v4** / Tailwind for unified styling. Use responsive prefixes (`sm:`, `md:`) for web overrides, never separate codebases.
+- Use **Expo Router** unified file-based routing layout.
+
+## Layout Geometry & Spacing
+- Enforce a strict **8dp grid system** for layout adjustments (`gap-2` = 8dp, `p-4` = 16dp, `m-8` = 32dp).
+- Font scales must use platform-aware boundaries: Mobile Header Max: 24px, Body text: 14px-16px, Sub-captions: 12px.
+- Use `<SafeAreaView>` or `useSafeAreaInsets` from `react-native-safe-area-context` to safely isolate physical notches, home indicators, and the dynamic island. Do not use manual static pixel padding hacks.
+
+## Performance & Animations
+- Never use the core React Native `Animated` package or inline structural loop animations that tie up the JavaScript execution thread.
+- Enforce **React Native Reanimated** and use strict **UI Worklets** (`'use worklet';`).
+- Leverage layout transitions (`layout={LinearTransition}`) for smooth UI structural shifts.
