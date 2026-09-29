@@ -43,7 +43,7 @@
     "import/no-unassigned-import": "off",
     "unicorn/no-useless-spread": "warn",
     "unicorn/filename-case": [
-      "warn",
+      "error",
       {
         "cases": {
           "kebabCase": true

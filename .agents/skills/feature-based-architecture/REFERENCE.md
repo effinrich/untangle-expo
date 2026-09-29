@@ -4,21 +4,23 @@ Detailed rationale, edge cases, and design decisions behind the convention.
 
 ## Why this shape
 
-The layout exists so that, for any feature, an agent or human can answer five questions without reading the page file:
+The layout exists so that, for any component folder, an agent or human can answer five questions without reading the component file:
 
-| Question | File |
-|---|---|
-| What does this feature talk to on the network? | `api.ts` |
-| What stateful behavior does it have over time? | `hooks.ts` |
-| What does its data look like? | `types.ts` |
-| What fixed values and config does it use? | `consts.ts` |
-| What pure logic does it depend on? | `utils.ts` |
+| Question                                       | File        |
+| ---------------------------------------------- | ----------- |
+| What does this feature talk to on the network? | `api.ts`    |
+| What stateful behavior does it have over time? | `hooks.ts`  |
+| What does its data look like?                  | `types.ts`  |
+| What fixed values and config does it use?      | `consts.ts` |
+| What pure logic does it depend on?             | `utils.ts`  |
 
-The page file becomes a wiring diagram you can read in 60 seconds: state declared at the top, partials composed at the bottom, props bridging them.
+The component file becomes a wiring diagram you can read in 60 seconds: state declared at the top, partials composed at the bottom, props bridging them.
+
+The like-named folder (`task-list/task-list.tsx`) is what makes this possible for every component, not just one per feature: each component or screen gets its own place for `types.ts`, `hooks.ts`, a test, and a story without prefixing any of them, and a feature can hold several screens side by side. Kebab-case everywhere keeps names identical across case-insensitive (Windows, macOS) and case-sensitive (Linux CI) file systems, so a `TaskList.tsx` vs `taskList.tsx` mismatch can never pass locally and fail in CI.
 
 ## File responsibilities in depth
 
-### `<feature>.tsx` / `index.tsx` — the page
+### `<component>/<component>.tsx` — the component or screen
 
 - Declares local state with `useState`, refs with `useRef`, derived values with `useMemo`.
 - Calls feature hooks from `hooks.ts` to get server data and behaviors.
@@ -76,8 +78,9 @@ The page file becomes a wiring diagram you can read in 60 seconds: state declare
 - Each file is one component.
 - Components receive props and emit callbacks. They may use `useRef`, `useMemo`, `useCallback`, and small amounts of local UI state (e.g. `useState(false)` for an open/closed toggle).
 - They may call a named hook from `hooks.ts` for user-triggered actions (complete, save, "break down further").
-- They may **not** call `useEffect`, `useQuery`, `useMutation`, `useSWR`, `fetch`, or `axios` in the component file. If a partial needs server data, the page is supposed to fetch it and pass it down.
-- Their types, constants, and hooks go in the feature-level `types.ts` / `consts.ts` / `hooks.ts`. `partials/` has no `types.ts` of its own.
+- They may **not** call `useEffect`, `useQuery`, `useMutation`, `useSWR`, `fetch`, or `axios` in the component file. If a partial needs server data, the parent component is supposed to fetch it (through `hooks.ts`) and pass it down.
+- Their types, constants, and hooks go in the component folder's `types.ts` / `consts.ts` / `hooks.ts` (the folder that holds `partials/`). `partials/` has no `types.ts` of its own.
+- They stay flat kebab files (`partials/task-card.tsx`), not like-named folders, unless they need their own colliding siblings.
 
 ## Edge cases and decisions
 
@@ -89,8 +92,8 @@ Skip `api.ts`. The validator allows it to be missing. If the feature uses a type
 
 Two options, prefer the first:
 
-1. **Lift the fetch to the page.** The page calls the hook and passes data + loading/error states down as props. Easier to test, easier to compose with siblings.
-2. **Treat the partial as a feature.** If a partial is large enough to fetch its own data, split it into its own feature folder.
+1. **Lift the fetch to the parent component.** The parent calls the hook and passes data + loading/error states down as props. Easier to test, easier to compose with siblings.
+2. **Promote the partial.** If a partial is large enough to fetch its own data, move it to its own like-named component folder (or its own feature) with its own `hooks.ts`.
 
 ### "Two features need the same hook"
 
@@ -98,7 +101,7 @@ Move it out of `src/features/` (for example `src/shared/hooks/<name>.ts`, or the
 
 ### "Action helpers need state"
 
-In `utils.ts`, they accept the setters and clients as parameters. The page wires them up:
+In `utils.ts`, they accept the setters and clients as parameters. The component wires them up:
 
 ```ts
 onCompose={() =>
@@ -117,13 +120,29 @@ onCompose={() =>
 
 This keeps `utils.ts` framework-agnostic and unit-testable.
 
-### "The page file is getting long"
+### "The component file is getting long"
 
-Split partials further. If the page renders several commented sections of markup, each section probably wants to be its own partial — extract it. The page's job is wiring, not markup.
+Split partials further. If the component renders several commented sections of markup, each section probably wants to be its own partial — extract it. The component's job is wiring, not markup.
 
-### "What should the page file be called?"
+### "What should the component file be called?"
 
-Name it after its component (`task-list.tsx` for `TaskList`) or use `index.tsx`. The validator accepts any single `.tsx` at the feature root. Pick one per repo and be consistent.
+After its component, in kebab-case, inside a folder of the same name: `TaskList` -> `task-list/task-list.tsx`. Not `index.tsx` (every tab and stack trace would say `index`), and never at the feature root; the validator flags a `.tsx` there.
+
+### "Where do tests and stories go?"
+
+Beside the component in its folder: `task-list/task-list.test.tsx`, `task-list/task-list.stories.tsx`. Create them when you write them; the folder exists so they have a place without cluttering the feature root.
+
+### "Is `main.tsx` / `App.tsx` a component?"
+
+`main.tsx` (the entry that calls `createRoot`) and barrel `index.ts` files are not components; they stay plain kebab files. `App` is a component, so it gets `src/app/app.tsx` and the entry imports it from there.
+
+### "Renaming `App.tsx` to `app.tsx` on Windows or macOS"
+
+Case-only renames are invisible to case-insensitive file systems and to git with `core.ignorecase=true`. Prefer a real move into the like-named folder (`App.tsx` -> `app/app.tsx`), which changes the path, not just its case. If a case-only rename is unavoidable, rename in two steps (`App.tsx` -> `app-tmp.tsx` -> `app.tsx`) or use `git mv`.
+
+### "Two features each have a `task-list/` folder"
+
+Fine. Folder names are unique within their parent, like file names; the feature folder already disambiguates.
 
 ### "Should the types file be called `task-list.types.ts`?"
 
@@ -131,26 +150,29 @@ No. Files next to a component are named for what they hold: `types.ts`, `consts.
 
 ### "A partial has its own types or constants"
 
-Put them in the feature-level files; that is the default. Give the partial its own folder (`partials/task-card/task-card.tsx` + `types.ts` + `consts.ts` + `hooks.ts`) only when its items would collide with the feature-level ones or would make those files mostly about one partial. Its sub-partials then live in the same folder.
+Put them in the parent component folder's files; that is the default. Give the partial its own folder (`partials/task-card/task-card.tsx` + `types.ts` + `consts.ts` + `hooks.ts`) only when its items would collide with the parent's or would make those files mostly about one partial. Its sub-partials then live in that folder's own `partials/`.
 
 ## Worked example: `src/features/tasks`
 
 ```
 src/features/tasks/
-  task-list.tsx       TaskList: filter/sort/search state, memoized derived lists, composes partials
-  types.ts            NewTaskInput, TaskListProps, TaskCardProps, FilterTab, SortOption, SortOptionConfig
-  consts.ts           SORT_OPTIONS, energy/priority weights, card colour maps, priorityCycle, completionConfetti
-  hooks.ts            useQuickAddForm (list keeps the form state), useTaskCardActions (card state + handlers)
-  utils.ts            getAllCategoryNames, getCategoryCounts, filterTasks, sortTasks, buildQuickAddTask, buildMarkdownPlan
-  partials/
-    category-filter-strip.tsx   energy-sort-strip.tsx   quick-add-form.tsx   sort-modal.tsx
-    status-filter-tabs.tsx      task-search-controls.tsx
-    task-list-empty-state.tsx   task-list-footer.tsx
-    task-card.tsx               task-card-actions.tsx   task-card-category-menu.tsx
-    task-card-first-step.tsx    task-card-meta.tsx      task-card-substeps.tsx
+  task-list/
+    task-list.tsx     TaskList: filter/sort/search state, memoized derived lists, composes partials
+    types.ts          NewTaskInput, TaskListProps, TaskCardProps, FilterTab, SortOption, SortOptionConfig
+    consts.ts         SORT_OPTIONS, energy/priority weights, card colour maps, priorityCycle, completionConfetti
+    hooks.ts          useQuickAddForm (list keeps the form state), useTaskCardActions (card state + handlers)
+    utils.ts          getAllCategoryNames, getCategoryCounts, filterTasks, sortTasks, buildQuickAddTask, buildMarkdownPlan
+    partials/
+      category-filter-strip.tsx   energy-sort-strip.tsx   quick-add-form.tsx   sort-modal.tsx
+      status-filter-tabs.tsx      task-search-controls.tsx
+      task-list-empty-state.tsx   task-list-footer.tsx
+      task-card.tsx               task-card-actions.tsx   task-card-category-menu.tsx
+      task-card-first-step.tsx    task-card-meta.tsx      task-card-substeps.tsx
 ```
 
-The card's props, colour maps, and hook are small, so they live in the feature-level files and `partials/` stays flat. No item is used outside `tasks`, so nothing goes to `src/shared/`.
+`TaskList` is the feature's only screen, so the feature root holds just `task-list/`; root-level `types.ts` etc. appear only when a second component folder shares something. The card's props, colour maps, and hook are small, so they live in `task-list/`'s files and `partials/` stays flat. A test would be `task-list/task-list.test.tsx`. No item is used outside `tasks`, so nothing goes to `src/shared/`.
+
+The rest of the app follows the same two rules: `src/app/app.tsx`, `src/features/braindump/brain-dump-input/brain-dump-input.tsx`, `src/features/focus/focus-radar-modal/focus-radar-modal.tsx`; the hook `src/features/audio/use-audio-recorder.ts` is not a component, so it is only renamed to kebab-case.
 
 ## When the convention does not apply
 
@@ -160,10 +182,13 @@ The card's props, colour maps, and hook are small, so they live in the feature-l
 
 ## Anti-patterns the validator catches
 
-| Smell | Why it's bad |
-|---|---|
-| `useEffect` in the page | Hides time-dependent behavior in the page; should be a named hook in `hooks.ts`. |
-| `useQuery` / `useMutation` in a partial | Couples a presentational component to a server, blocking reuse. |
-| `fetch(...)` in `hooks.ts` | Mixes I/O with React state; makes the function impossible to test without a render. |
-| `: any` in a feature file | Drops type safety; usually means a shape belongs in `types.ts`. |
-| `import x from '../other-feature/...'` | Creates a graph between features and makes deletion a refactor. |
+| Smell                                                                 | Why it's bad                                                                                 |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `TaskList.tsx`, `useThing.ts` (lint: `unicorn/filename-case`)         | Case mismatches pass on Windows/macOS and break on Linux CI.                                 |
+| `.tsx` at the feature root, or a folder without its like-named `.tsx` | No room for the component's siblings, test, or story; breaks the folder-matches-file lookup. |
+| Second component in a component folder                                | Belongs in `partials/` or its own like-named folder.                                         |
+| `useEffect` in a component file                                       | Hides time-dependent behavior in the component; should be a named hook in `hooks.ts`.        |
+| `useQuery` / `useMutation` in a partial                               | Couples a presentational component to a server, blocking reuse.                              |
+| `fetch(...)` in `hooks.ts`                                            | Mixes I/O with React state; makes the function impossible to test without a render.          |
+| `: any` in a feature file                                             | Drops type safety; usually means a shape belongs in `types.ts`.                              |
+| `import x from '../other-feature/...'`                                | Creates a graph between features and makes deletion a refactor.                              |

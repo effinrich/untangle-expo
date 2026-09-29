@@ -18,15 +18,15 @@ import {
   Zap,
 } from "lucide-react"
 import { User } from "firebase/auth"
-import { BrainDumpInput } from "./features/braindump/BrainDumpInput"
-import { TaskList } from "./features/tasks/task-list"
-import { FocusRadarModal } from "./features/focus/FocusRadarModal"
-import { UnstickMeModal } from "./features/unstick/UnstickMeModal"
-import { DopamineTracker } from "./features/stats/DopamineTracker"
-import { INITIAL_SEED_TASKS } from "./data/seed-data"
-import { DEFAULT_CATEGORIES } from "./data/categories"
-import { MicroTask, ParkingLotItem } from "./types"
-import { apiUntangleBrainDump } from "./services/api"
+import { BrainDumpInput } from "../features/braindump/brain-dump-input/brain-dump-input"
+import { TaskList } from "../features/tasks/task-list/task-list"
+import { FocusRadarModal } from "../features/focus/focus-radar-modal/focus-radar-modal"
+import { UnstickMeModal } from "../features/unstick/unstick-me-modal/unstick-me-modal"
+import { DopamineTracker } from "../features/stats/dopamine-tracker/dopamine-tracker"
+import { INITIAL_SEED_TASKS } from "../data/seed-data"
+import { DEFAULT_CATEGORIES } from "../data/categories"
+import { MicroTask, ParkingLotItem } from "../types"
+import { apiUntangleBrainDump } from "../services/api"
 import {
   auth,
   deleteParkingItemFromFirestore,
@@ -38,8 +38,8 @@ import {
   subscribeToParkingLot,
   subscribeToUserTasks,
   testFirestoreConnection,
-} from "./services/firebase"
-import calmAmbientImg from "./assets/images/calm_focus_ambient_1790313003505.jpg"
+} from "../services/firebase"
+import calmAmbientImg from "../assets/images/calm-focus-ambient-1790313003505.jpg"
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
@@ -327,29 +327,33 @@ export default function App() {
           <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-neutral-400">
             <button
               onClick={() => setActiveView("all")}
-              className={`hover:text-neutral-100 transition-colors ${activeView === "all" ? "text-amber-400 underline underline-offset-4" : ""
-                }`}
+              className={`hover:text-neutral-100 transition-colors ${
+                activeView === "all" ? "text-amber-400 underline underline-offset-4" : ""
+              }`}
             >
               Workspace
             </button>
             <button
               onClick={() => setActiveView("dump")}
-              className={`hover:text-neutral-100 transition-colors ${activeView === "dump" ? "text-amber-400 underline underline-offset-4" : ""
-                }`}
+              className={`hover:text-neutral-100 transition-colors ${
+                activeView === "dump" ? "text-amber-400 underline underline-offset-4" : ""
+              }`}
             >
               Brain Dump
             </button>
             <button
               onClick={() => setActiveView("tasks")}
-              className={`hover:text-neutral-100 transition-colors ${activeView === "tasks" ? "text-amber-400 underline underline-offset-4" : ""
-                }`}
+              className={`hover:text-neutral-100 transition-colors ${
+                activeView === "tasks" ? "text-amber-400 underline underline-offset-4" : ""
+              }`}
             >
               Micro-Tasks
             </button>
             <button
               onClick={() => setActiveView("momentum")}
-              className={`hover:text-neutral-100 transition-colors ${activeView === "momentum" ? "text-amber-400 underline underline-offset-4" : ""
-                }`}
+              className={`hover:text-neutral-100 transition-colors ${
+                activeView === "momentum" ? "text-amber-400 underline underline-offset-4" : ""
+              }`}
             >
               Momentum Ledger
             </button>
@@ -443,7 +447,7 @@ export default function App() {
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
               onError={(e) => {
-                ; (e.target as HTMLElement).style.display = "none"
+                ;(e.target as HTMLElement).style.display = "none"
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/80 to-transparent" />

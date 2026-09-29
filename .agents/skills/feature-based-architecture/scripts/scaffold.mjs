@@ -1,71 +1,81 @@
 #!/usr/bin/env node
-// Scaffold a feature folder following the feature-based architecture convention.
+// Scaffold a component folder inside a feature, following the feature-based architecture convention.
 //
 // Usage:
-//   node scaffold.mjs <name>                  -> creates src/features/<name>/
-//   node scaffold.mjs <path/with/slashes>     -> creates that exact path
+//   node scaffold.mjs <feature>               -> src/features/<feature>/<feature>/
+//   node scaffold.mjs <feature> <component>   -> src/features/<feature>/<component>/
+//   node scaffold.mjs <path/with/slashes> [component]  -> that feature path
 //
-// Refuses to overwrite. Prints the created tree.
+// Names must be kebab-case. Refuses to overwrite an existing component folder. Prints the created tree.
 
 import { mkdir, writeFile } from "node:fs/promises"
 import { existsSync } from "node:fs"
-import { resolve, join, basename } from "node:path"
+import { resolve, join, basename, relative } from "node:path"
 
-const arg = process.argv[2]
-if (!arg) {
-  console.error("Usage: scaffold.mjs <feature-name | feature-path>")
+const [featureArg, componentArg] = process.argv.slice(2)
+if (!featureArg) {
+  console.error("Usage: scaffold.mjs <feature-name | feature-path> [component-name]")
   process.exit(1)
 }
 
-const target =
-  arg.includes("/") || arg.includes("\\")
-    ? resolve(process.cwd(), arg)
-    : resolve(process.cwd(), "src", "features", arg)
+const featureDir =
+  featureArg.includes("/") || featureArg.includes("\\")
+    ? resolve(process.cwd(), featureArg)
+    : resolve(process.cwd(), "src", "features", featureArg)
 
+const name = componentArg ?? basename(featureDir)
+if (
+  !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name) ||
+  !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(basename(featureDir))
+) {
+  console.error("Feature and component names must be kebab-case (task-list, not TaskList).")
+  process.exit(1)
+}
+
+const target = join(featureDir, name)
 if (existsSync(target)) {
   console.error(`Refusing to overwrite existing path: ${target}`)
   process.exit(1)
 }
 
-const name = basename(target)
-const pascal = name.replace(/(^|[-_])(.)/g, (_, __, c) => c.toUpperCase())
+const pascal = name.replace(/(^|-)(.)/g, (_, __, c) => c.toUpperCase())
 
 const files = {
-  "index.tsx": `// ${name} — page composition only. State + wiring. No fetching, no useEffect.
+  [`${name}.tsx`]: `// ${pascal} — markup and wiring only. No fetching, no useEffect.
 
-export default function ${pascal}Page() {
-  return null;
+export const ${pascal} = () => {
+  return null
 }
 `,
   "types.ts": `// ${name} types — domain models, request/response shapes, prop contracts.
 
-export {};
+export {}
+`,
+  "consts.ts": `// ${name} constants — option lists, lookup maps, static config.
+
+export {}
 `,
   "api.ts": `// ${name} network layer — pure fetch/axios functions: input -> Promise<output>.
 // Consumed by hooks.ts only. Components never import this file directly.
 
-export {};
+export {}
 `,
-  "hooks.ts": `// ${name} hooks — useQuery/useMutation wrappers, useEffect behaviors, domain hooks.
-// All React-Query / tRPC / SWR usage lives here.
+  "hooks.ts": `// ${name} hooks — state plus handlers, useEffect behaviors, server-state wrappers.
 
-export {};
+export {}
 `,
-  "utils.ts": `// ${name} utilities — pure helpers and static config. No React, no hooks.
-// Action helpers take dependencies (clients, setters) as parameters.
+  "utils.ts": `// ${name} utilities — pure helpers. No React, no hooks.
 
-export {};
+export {}
 `,
 }
 
-await mkdir(target, { recursive: true })
 await mkdir(join(target, "partials"), { recursive: true })
 
 for (const [file, body] of Object.entries(files)) {
   await writeFile(join(target, file), body)
 }
 
-const rel = target.replace(process.cwd() + "/", "").replace(process.cwd() + "\\", "")
-console.log(`Created ${rel}/`)
+console.log(`Created ${relative(process.cwd(), target)}/`)
 for (const f of Object.keys(files)) console.log(`  ${f}`)
 console.log("  partials/")

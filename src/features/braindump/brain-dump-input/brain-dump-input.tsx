@@ -17,7 +17,7 @@ import {
 import { BRAIN_DUMP_TEMPLATES } from "../../../data/seed-data"
 import { DEFAULT_CATEGORIES } from "../../../data/categories"
 import { EnergyLevel } from "../../../types"
-import { useAudioRecorder } from "../audio/useAudioRecorder"
+import { useAudioRecorder } from "../../audio/use-audio-recorder"
 
 interface BrainDumpInputProps {
   onUntangle: (rawDump: string, energyPreference: string) => Promise<void>

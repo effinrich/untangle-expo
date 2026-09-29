@@ -41,16 +41,16 @@ The repository is structured as a full-stack monorepo containing the **Web App (
     - `POST /api/breakdown-task`: Decomposes overwhelming tasks into sub-2-minute micro-steps.
     - `POST /api/unstick-me`: Evaluates current emotional friction and chooses the lowest-resistance starter task.
 - **Frontend (**`src/`**)**:
-  - `src/App.tsx`: Central coordinator managing real-time Firestore sync, guest local storage fallback, Google Auth state, and modal triggers.
-  - `src/features/braindump/BrainDumpInput.tsx`: Input pad with voice dictation via `useAudioRecorder.ts` and template sparks.
-  - `src/features/tasks/task-list.tsx`: Micro-task list featuring:
+  - `src/app/app.tsx`: Central coordinator managing real-time Firestore sync, guest local storage fallback, Google Auth state, and modal triggers.
+  - `src/features/braindump/brain-dump-input/brain-dump-input.tsx`: Input pad with voice dictation via `use-audio-recorder.ts` and template sparks.
+  - `src/features/tasks/task-list/task-list.tsx`: Micro-task list featuring:
     - **Mental State & Energy Sort Bar**: Sort options (`energy-asc`, `energy-desc`, `time-asc`, `priority-desc`, `newest`).
     - **Priority Area Filter Strip**: Work, Personal, Health, Finance, Errands, Creative.
     - **Quick Add Form & Markdown Exporter**.
-  - `src/features/tasks/partials/task-card.tsx`: Task component rendering physical first step banner, priority badges, category dropdown, and one-click focus launcher.
-  - `src/features/focus/FocusRadarModal.tsx`: One-task radar with brown noise synthesis (`sound.ts`) and Mental Parking Lot drawer.
-  - `src/features/unstick/UnstickMeModal.tsx`: Unstick engine for decision fatigue.
-  - `src/features/stats/DopamineTracker.tsx`: Guilt-free momentum ledger tracking minutes in flow and completion percentages across priority areas.
+  - `src/features/tasks/task-list/partials/task-card.tsx`: Task component rendering physical first step banner, priority badges, category dropdown, and one-click focus launcher.
+  - `src/features/focus/focus-radar-modal/focus-radar-modal.tsx`: One-task radar with brown noise synthesis (`sound.ts`) and Mental Parking Lot drawer.
+  - `src/features/unstick/unstick-me-modal/unstick-me-modal.tsx`: Unstick engine for decision fatigue.
+  - `src/features/stats/dopamine-tracker/dopamine-tracker.tsx`: Guilt-free momentum ledger tracking minutes in flow and completion percentages across priority areas.
 - **Database & Auth (**`src/services/firebase.ts`**)**:
   - Firebase Authentication with Google Sign-In popup.
   - Cloud Firestore real-time listeners (`onSnapshot`) syncing to `/users/{userId}/tasks/{taskId}` and `/users/{userId}/parkingLot/{itemId}`.
@@ -80,11 +80,11 @@ The repository is structured as a full-stack monorepo containing the **Web App (
 ├── firestore.rules                # Hardened Firestore security rules
 ├── security_spec.md               # Dirty Dozen attack vectors & validation rules
 ├── src/
-│   ├── App.tsx                    # Main Web application container
+│   ├── app/app.tsx                # Main Web application container
 │   ├── types/index.ts             # Universal TypeScript interfaces (MicroTask, EnergyLevel, etc.)
 │   ├── data/
 │   │   ├── categories.ts          # Priority areas (Work, Personal, Health, etc.) & color configs
-│   │   └── seedData.ts            # Default starter tasks & brain dump templates
+│   │   └── seed-data.ts           # Default starter tasks & brain dump templates
 │   ├── services/
 │   │   ├── api.ts                 # Web frontend client for /api/* endpoints
 │   │   ├── firebase.ts            # Firebase Auth & Firestore CRUD/listeners

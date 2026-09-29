@@ -10,8 +10,10 @@
 import { readdir, readFile, stat } from "node:fs/promises"
 import { resolve, join, relative, dirname, basename, sep } from "node:path"
 
-const ALLOWED_ROOT_FILES = new Set(["types.ts", "consts.ts", "api.ts", "hooks.ts", "utils.ts"])
+const ALLOWED_SIBLING_FILES = new Set(["types.ts", "consts.ts", "api.ts", "hooks.ts", "utils.ts"])
 const SHARED_DIRS = ["lib", "shared"]
+const KEBAB = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const COMPANION_SUFFIXES = [".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx", ".stories.tsx"]
 
 const HOOK_PATTERNS = [
   { name: "useEffect", re: /\buseEffect\s*\(/ },
@@ -69,40 +71,89 @@ process.exit(1)
 
 // -----------------------------------------------------------------------------
 
+// Feature root: shared sibling files plus one like-named folder per component or screen.
 async function validateFeature(root) {
-  const entries = await readdir(root, { withFileTypes: true })
-  const rootFiles = entries.filter((e) => e.isFile()).map((e) => e.name)
-  const rootDirs = entries.filter((e) => e.isDirectory()).map((e) => e.name)
-  const pageFiles = rootFiles.filter((f) => f.endsWith(".tsx"))
+  const { files, dirs } = await list(root)
 
-  if (pageFiles.length === 0) {
-    violations.push({ file: root, message: "no page (.tsx) file at feature root" })
-  } else if (pageFiles.length > 1) {
+  for (const f of files) {
+    if (ALLOWED_SIBLING_FILES.has(f)) continue
     violations.push({
-      file: root,
-      message: `multiple .tsx files at root: ${pageFiles.join(", ")} — only one page allowed`,
+      file: join(root, f),
+      message: f.endsWith(".tsx")
+        ? `component at feature root — move it to ${basename(f, ".tsx")}/${f}`
+        : `unexpected root file (allowed: ${[...ALLOWED_SIBLING_FILES].join(", ")})`,
     })
   }
 
-  for (const f of rootFiles) {
-    if (f.endsWith(".tsx")) continue
-    if (!ALLOWED_ROOT_FILES.has(f)) {
-      violations.push({
-        file: join(root, f),
-        message: `unexpected root file (allowed: ${[...ALLOWED_ROOT_FILES].join(", ")}, plus one .tsx page)`,
-      })
-    }
-  }
-
-  for (const d of rootDirs) {
-    if (d !== "partials") {
+  for (const d of dirs) {
+    if (d === "partials") {
       violations.push({
         file: join(root, d),
-        message: 'unexpected subdirectory (only "partials/" allowed at feature root)',
+        message: "partials/ belongs inside a component folder, not at the feature root",
       })
+      continue
     }
+    await validateComponentFolder(join(root, d))
   }
 
+  await validateContents(root)
+}
+
+// <name>/ holds <name>.tsx, its test/story files, sibling files, and partials/.
+async function validateComponentFolder(dir) {
+  const name = basename(dir)
+  if (!KEBAB.test(name)) {
+    violations.push({ file: dir, message: "folder name is not kebab-case" })
+  }
+
+  const { files, dirs } = await list(dir)
+  if (!files.includes(`${name}.tsx`)) {
+    violations.push({
+      file: dir,
+      message: `missing ${name}.tsx (component folder must match its file)`,
+    })
+  }
+
+  for (const f of files) {
+    if (f === `${name}.tsx` || ALLOWED_SIBLING_FILES.has(f)) continue
+    if (COMPANION_SUFFIXES.some((s) => f === `${name}${s}`)) continue
+    violations.push({
+      file: join(dir, f),
+      message: f.endsWith(".tsx")
+        ? "second component in a component folder — move it to partials/"
+        : `unexpected file (allowed: ${name}.tsx, its test/story, ${[...ALLOWED_SIBLING_FILES].join(", ")})`,
+    })
+  }
+
+  for (const d of dirs) {
+    if (d === "partials") await validatePartials(join(dir, d))
+    else await validateComponentFolder(join(dir, d))
+  }
+}
+
+// partials/ holds flat <part>.tsx files; a partial gets <part>/ only when it needs its own siblings.
+async function validatePartials(dir) {
+  const { files, dirs } = await list(dir)
+  for (const f of files) {
+    if (f.endsWith(".tsx") || COMPANION_SUFFIXES.some((s) => f.endsWith(s))) continue
+    violations.push({
+      file: join(dir, f),
+      message:
+        "partials/ holds component files only — put shared types/consts/hooks in the parent folder",
+    })
+  }
+  for (const d of dirs) await validateComponentFolder(join(dir, d))
+}
+
+async function list(dir) {
+  const entries = await readdir(dir, { withFileTypes: true })
+  return {
+    files: entries.filter((e) => e.isFile()).map((e) => e.name),
+    dirs: entries.filter((e) => e.isDirectory()).map((e) => e.name),
+  }
+}
+
+async function validateContents(root) {
   const allFiles = await walk(root)
   for (const file of allFiles) {
     if (!/\.(ts|tsx)$/.test(file)) continue
