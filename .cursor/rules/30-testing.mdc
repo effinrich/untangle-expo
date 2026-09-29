@@ -1,19 +1,34 @@
 ---
-description: Where tests and stories go, and how to verify changes in this repo.
+description: Where tests and stories go, how to run them, and how to verify changes in this repo.
 alwaysApply: true
 ---
 
 # Testing and verification
 
-## Tests and stories
+## Stance
 
-- When they exist, tests and stories sit beside the component in its folder: `focus/focus.test.tsx`, `focus/focus.stories.tsx`.
-- The repo has no test runner and no test script. Do not invent one or add test files unless asked.
+- Tests are the default, not an optional extra. Spec first, then red, green, refactor: write the failing test that states the behaviour, make it pass, then clean up.
+- Every change carries the test coverage its layer allows. A change that ships without tests says why in the change description.
+- Never skip tests because a layer has no runner yet. Say the layer is untested and propose the smallest setup that unblocks it.
+
+## Where tests live
+
+- Beside the component in its folder: `focus/focus.test.tsx`, `focus/focus.stories.tsx`.
+- Firestore rules and sync: `firestore-tests/rules.test.ts`, `firestore-tests/sync.test.ts`, with `firestore-tests/emulator.ts` wiring the emulators.
+
+## Running them
+
+- `bun test` is the runner. There is no vitest, jest, or testing-library dependency.
+- `bun run test:firestore` boots the Firestore and Auth emulators (`firebase-tools@13`, project `demo-untangle`) and runs `firestore-tests/`. Any change to `firestore.rules` must pass this.
+- No runner is configured for component tests yet. Adding one is a real change: propose it, do not assume it.
 
 ## Verify every change
 
 - `bun run lint`: 0 errors (existing warnings may stay).
-- `bunx tsc --noEmit`: root tsconfig (web `src/`, `server.ts` and its `routes/` imports).
-- Mobile source changed: `mobile/node_modules/.bin/tsc --noEmit -p mobile/tsconfig.json`. Never point the root TypeScript at the mobile tsconfig.
+- `bunx tsc --noEmit`: the root tsconfig.
 - Feature layout: `node .agents/skills/feature-based-architecture/scripts/validate.mjs`.
-- Web UI changes: exercise the changed flow in the browser against the dev server (`bun run dev`, port 3000). Reuse a running server; do not start a second one.
+- Web UI changes: exercise the changed flow in the browser with `bun run web`. Reuse a running server; do not start a second one.
+
+## Known drift
+
+`mobile/`, `server.ts`, `routes/`, Vite, and `bun run dev` do not exist in this repo. Web and native are one Expo app: web renders `src/` through `components/web-app.tsx`, native screens live in `screens/`, and the API is `app/api/*+api.ts` with `server/gemini.ts`. Correct these references as you touch the files that carry them.
