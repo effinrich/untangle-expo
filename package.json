@@ -11,7 +11,8 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
-    "fmt:fix": "oxfmt --fix"
+    "fmt:fix": "oxfmt --fix",
+    "test:firestore": "npx -y firebase-tools@13 emulators:exec --only firestore,auth --project demo-untangle \"bun test --timeout 30000 firestore-tests\""
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",

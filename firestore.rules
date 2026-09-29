@@ -40,6 +40,7 @@ service cloud.firestore {
 
     function isValidMicroTask(data) {
       return data.keys().hasAll(['id', 'userId', 'title', 'firstPhysicalStep', 'category', 'completed', 'createdAt'])
+        && data.keys().hasOnly(['id', 'userId', 'title', 'firstPhysicalStep', 'estimatedMinutes', 'energyLevel', 'category', 'priority', 'whyItMatters', 'substeps', 'completed', 'completedAt', 'createdAt'])
         && data.id is string
         && data.id.size() <= 128
         && data.userId is string
@@ -60,7 +61,7 @@ service cloud.firestore {
         && (!('energyLevel' in data) || (data.energyLevel in ['low', 'medium', 'high']))
         && (!('priority' in data) || (data.priority in ['high', 'medium', 'low']))
         && (!('whyItMatters' in data) || (data.whyItMatters is string && data.whyItMatters.size() <= 500))
-        && (!('completedAt' in data) || (data.completedAt is string && data.completedAt.size() <= 64))
+        && (!('completedAt' in data) || data.completedAt == null || (data.completedAt is string && data.completedAt.size() <= 64))
         && (!('substeps' in data) || (data.substeps is list && data.substeps.size() <= 50));
     }
 
