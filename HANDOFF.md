@@ -30,17 +30,18 @@ Untangle is a neurodivergent-friendly productivity workspace designed around:
 
 ## 2. Current Architecture & Implementation State
 
-The repository is structured as a full-stack monorepo containing the **Web App (Vite React + Express)** and a scaffolded **Native Mobile App (Expo SDK 52 / React Native)**.
+The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `app/index.tsx` renders the React DOM UI in `src/` through an Expo DOM component (`components/web-app.tsx`); on iOS/Android it renders the React Native screens in `screens/`. API routes, config, and the lockfile are shared.
 
-### Web Architecture (`src/` + `server.ts`)
+### Web Architecture (`src/` + `app/api/`)
 
-- **Backend (**`server.ts` **+** `routes/`**)**: `server.ts` creates the Express app, mounts one router per endpoint from `routes/` under `/api`, and serves Vite middlewares in dev or `dist/` in production. It runs with `tsx server.ts` in both modes. The shared Gemini client lives in `routes/gemini.ts`.
+- **Backend (**`app/api/`**)**: Expo Router API routes, one `+api.ts` file per endpoint, served by the Expo server (`web.output: "server"` in `app.json`). `GEMINI_API_KEY` is read server-side only. The shared Gemini client lives in `server/gemini.ts`.
   - Endpoints:
-    - `POST /api/untangle` (`routes/untangle.ts`): Slices raw brain dumps into categorized micro-tasks using `gemini-3.8-flash`.
-    - `POST /api/transcribe-audio` (`routes/transcribe-audio.ts`): Transcribes microphone audio payloads using `gemini-3.5-transcribe`.
-    - `POST /api/breakdown-task` (`routes/breakdown-task.ts`): Decomposes overwhelming tasks into sub-2-minute micro-steps.
-    - `POST /api/unstick-me` (`routes/unstick-me.ts`): Evaluates current emotional friction and chooses the lowest-resistance starter task.
+    - `POST /api/untangle` (`app/api/untangle+api.ts`): Slices raw brain dumps into categorized micro-tasks using `gemini-3.8-flash`.
+    - `POST /api/transcribe-audio` (`app/api/transcribe-audio+api.ts`): Transcribes microphone audio payloads using `gemini-3.5-transcribe`.
+    - `POST /api/breakdown-task` (`app/api/breakdown-task+api.ts`): Decomposes overwhelming tasks into sub-2-minute micro-steps.
+    - `POST /api/unstick-me` (`app/api/unstick-me+api.ts`): Evaluates current emotional friction and chooses the lowest-resistance starter task.
 - **Frontend (**`src/`**)**:
+- `components/web-app.tsx`: `'use dom'` entry that mounts `src/app/app.tsx` with Tailwind v4 (`src/index.css`, `postcss.config.js`).
   - `src/app/app.tsx`: Central coordinator for the view, Google Auth state, and modal triggers. Task and parking-lot sync (Firestore with guest local storage fallback) lives in `src/shared/hooks/use-tasks.ts` and `src/shared/hooks/use-parking-lot.ts`.
   - `src/features/braindump/brain-dump-input/brain-dump-input.tsx`: Input pad with voice dictation via `src/shared/hooks/use-audio-recorder.ts` and template sparks.
   - `src/features/tasks/task-list/task-list.tsx`: Micro-task list featuring:
@@ -56,63 +57,57 @@ The repository is structured as a full-stack monorepo containing the **Web App (
   - Cloud Firestore real-time listeners (`onSnapshot`) syncing to `/users/{userId}/tasks/{taskId}` and `/users/{userId}/parkingLot/{itemId}`.
   - Verified and deployed `firestore.rules` enforcing user-scoped read/write invariants and field schemas (`firebase-blueprint.json`).
 
-### Mobile Architecture (`mobile/`)
+### Native Architecture (iOS/Android)
 
-- **Framework**: Expo SDK 52 with Expo Router (`mobile/app/`) and NativeWind v4 (Tailwind).
-- **Core Screens** (route files in `mobile/app/` re-export screens from `mobile/screens/`):
-  - `mobile/app/index.tsx` -> `mobile/screens/main-screen/main-screen.tsx`: Main dashboard with voice dump, energy-level quick sorting, category pills, and task list.
-  - `mobile/app/focus.tsx` -> `mobile/screens/focus/focus.tsx`: Fullscreen One Thing sprint with timer and mental parking lot.
-  - `mobile/app/unstick.tsx`: Native executive dysfunction reset flow (screen code still lives in the route file).
+- **Framework**: Expo SDK 52 with Expo Router (`app/`) and NativeWind v4 (Tailwind).
+- **Core Screens** (route files in `app/` re-export screens from `screens/`):
+  - `app/index.tsx` -> `screens/main-screen/main-screen.tsx` (native only; web renders `components/web-app.tsx`): Main dashboard with voice dump, energy-level quick sorting, category pills, and task list.
+  - `app/focus.tsx` -> `screens/focus/focus.tsx`: Fullscreen One Thing sprint with timer and mental parking lot.
+  - `app/unstick.tsx`: Native executive dysfunction reset flow (screen code still lives in the route file).
 - **Native APIs**:
-  - `expo-av` for microphone recording (`mobile/hooks/use-voice-recorder.ts`) and `expo-file-system` for base64 encoding (`mobile/utils/audio.ts`).
+  - `expo-av` for microphone recording (`hooks/use-voice-recorder.ts`) and `expo-file-system` for base64 encoding (`utils/audio.ts`).
   - `expo-haptics` for tactile dopamine rewards upon completing tasks or starting focus mode.
-  - `expo-notifications` for focus-sprint end notifications (`mobile/screens/focus/hooks.ts`).
-- **Shared Backend Client**: `mobile/services/api.ts` connects directly to the same Express / Gemini server.
-- **Auth & Sync**: `mobile/services/firebase.ts` (Google sign-in via `expo-auth-session`, Firestore task subscription).
+  - `expo-notifications` for focus-sprint end notifications (`screens/focus/hooks.ts`).
+- **Shared Backend Client**: `services/api.ts` calls the deployed API at `app.json` `extra.apiBaseUrl`.
+- **Auth & Sync**: `services/firebase.ts` (Google sign-in via `expo-auth-session`, Firestore task subscription).
 
 ---
 
 ## 3. Key Files & Directory Map
 
 ```text
-├── package.json                   # Web & Express backend dependencies
-├── server.ts                      # Express entry: middleware, mounts routes/ under /api, Vite or dist/ serving
-├── routes/                        # One Express router per endpoint + shared Gemini client (gemini.ts)
-├── firebase-applet-config.json    # Firestore & Firebase Auth credentials
-├── firebase-blueprint.json        # Firestore schema definitions (UserProfile, MicroTask, ParkingLotItem)
-├── firestore.rules                # Hardened Firestore security rules
-├── security_spec.md               # Dirty Dozen attack vectors & validation rules
-├── src/
-│   ├── app/app.tsx                # Main Web application container
-│   ├── types/index.ts             # Universal TypeScript interfaces (MicroTask, EnergyLevel, etc.)
-│   ├── data/
-│   │   ├── categories.ts          # Priority areas (Work, Personal, Health, etc.) & color configs
-│   │   └── seed-data.ts           # Default starter tasks & brain dump templates
-│   ├── services/
-│   │   ├── api.ts                 # Web frontend client for /api/* endpoints
-│   │   ├── firebase.ts            # Firebase app, Auth & Firestore init
-│   │   ├── auth.ts                # Google sign-in / sign-out
-│   │   ├── tasks.ts               # Firestore task listeners & writes
-│   │   ├── parking-lot.ts         # Firestore parking-lot listeners & writes
-│   │   ├── ambient.ts             # Web Audio ambient noise (brown, rain, white)
-│   │   └── sound.ts               # Web Audio clicks & completion chimes
-│   ├── shared/                    # Cross-feature hooks, types, consts, utils (use-audio-recorder, use-tasks, ...)
-│   └── features/                  # Each component or screen in a like-named kebab folder
-│       ├── braindump/             # brain-dump-input/, untangle-summary/, hooks.ts
-│       ├── focus/                 # focus/ ("One Thing Radar" & parking lot)
-│       ├── stats/                 # dopamine-tracker/
-│       ├── tasks/                 # task-list/ (TaskList, TaskCard & sort/filter partials)
-│       └── unstick/               # unstick-me-modal/
-└── mobile/                        # Expo SDK 52 React Native project
-    ├── app/                       # Expo Router routes (_layout, index, focus, unstick); index & focus re-export screens/
-    ├── screens/                   # main-screen/, focus/ (screen + hooks + partials)
-    ├── components/                # task-card-mobile.tsx
-    ├── hooks/                     # use-voice-recorder.ts
-    ├── utils/                     # audio.ts (base64), haptics.ts
-    ├── services/                  # api.ts (/api/* client), firebase.ts (auth & task sync)
-    ├── app.json                   # Expo configuration (iOS/Android bundles, permissions)
-    ├── package.json               # Mobile dependencies (nativewind, expo-av, expo-haptics)
-    └── tailwind.config.js         # NativeWind theme
+├── app/                    # Expo Router routes
+│   ├── _layout.tsx         # Web: Head + Slot; native: Stack
+│   ├── +html.tsx           # Web document shell
+│   ├── index.tsx           # Web: components/web-app; native: screens/main-screen
+│   ├── focus.tsx           # Re-exports screens/focus/focus
+│   ├── unstick.tsx         # Native executive dysfunction reset
+│   └── api/                # untangle, transcribe-audio, breakdown-task, unstick-me (+api.ts)
+├── server/gemini.ts        # Shared Gemini client for API routes
+├── components/
+│   ├── web-app.tsx         # 'use dom' entry that mounts src/app/app.tsx
+│   └── task-card-mobile.tsx
+├── screens/                # Native UI: main-screen/, focus/ (screen + hooks + partials)
+├── hooks/                  # use-voice-recorder.ts (native)
+├── utils/                  # audio.ts (base64), haptics.ts (native)
+├── services/               # api.ts, firebase.ts (native)
+├── public/images/          # Static web assets
+├── src/                    # Web UI (React DOM + Tailwind v4)
+│   ├── app/app.tsx         # Main web application container
+│   ├── types/index.ts      # Universal TypeScript interfaces (MicroTask, EnergyLevel, etc.)
+│   ├── data/               # categories.ts, seed-data.ts
+│   ├── services/           # api, firebase, auth, tasks, parking-lot, ambient, sound
+│   ├── shared/             # Cross-feature hooks, types, consts, utils
+│   └── features/           # braindump/, focus/, stats/, tasks/, unstick/
+├── app.json                # Expo config (router root, web server output, permissions)
+├── package.json            # Single dependency manifest (bun.lock)
+├── metro.config.js         # NativeWind for native; drops global.css on web
+├── postcss.config.js       # Tailwind v4 for src/index.css
+├── tailwind.config.js      # NativeWind (Tailwind v3) theme for native
+├── firebase-applet-config.json # Firestore & Firebase Auth credentials
+├── firebase-blueprint.json # Firestore schema definitions
+├── firestore.rules         # Hardened Firestore security rules
+└── security_spec.md        # Dirty Dozen attack vectors & validation rules
 ```
 
 ---
@@ -123,15 +118,15 @@ The repository is structured as a full-stack monorepo containing the **Web App (
 
 1. **Audio Base64 Encoding for Mobile Dictation**:
 
-- `mobile/utils/audio.ts` reads the recording with `FileSystem.readAsStringAsync(uri, { encoding: Base64 })`; `mobile/hooks/use-voice-recorder.ts` passes it to `transcribeAudio()`.
+- `utils/audio.ts` reads the recording with `FileSystem.readAsStringAsync(uri, { encoding: Base64 })`; `hooks/use-voice-recorder.ts` passes it to `transcribeAudio()`.
 
 2. **Native Firestore Sync**:
 
-- `mobile/services/firebase.ts` signs in with a Google credential and subscribes to the user's tasks; `mobile/screens/main-screen/hooks.ts` wires it up with `expo-auth-session`.
+- `services/firebase.ts` signs in with a Google credential and subscribes to the user's tasks; `screens/main-screen/hooks.ts` wires it up with `expo-auth-session`.
 
 3. **Native Push Notifications for Timers**:
 
-- `mobile/screens/focus/hooks.ts` schedules an `expo-notifications` notification for the sprint end and cancels it on early exit.
+- `screens/focus/hooks.ts` schedules an `expo-notifications` notification for the sprint end and cancels it on early exit.
 
 ### Phase 2: Enhanced Intelligence & Neurodivergent UX
 
@@ -151,19 +146,9 @@ The repository is structured as a full-stack monorepo containing the **Web App (
 
 ## 5. Instructions for Running Locally
 
-### Web & Backend:
-
 ```bash
 bun install
-bun run dev
-# Server boots at http://localhost:3000
-```
-
-### Expo Mobile App:
-
-```bash
-cd mobile
-npm install
-npx expo start
+bun run web      # web app + API routes at http://localhost:8081
+bun run start    # Expo dev server for iOS/Android
 # Press 'i' for iOS Simulator, 'a' for Android, or scan QR with Expo Go app
 ```
