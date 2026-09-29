@@ -82,7 +82,8 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 │   ├── index.tsx           # Web: components/web-app; native: screens/main-screen
 │   ├── focus.tsx           # Web: components/web-app; native: screens/focus/focus
 │   ├── unstick.tsx         # Web: components/web-app; native: screens/unstick/unstick
-│   ├── +not-found.tsx      # Web: components/web-app; native: link home
+│   ├── [...rest].tsx       # Unknown paths. Web: components/web-app (HTTP 200); native: link home
+│   ├── _sitemap.tsx        # Replaces Expo's sitemap with [...rest]
 │   └── api/                # untangle, transcribe-audio, breakdown-task, unstick-me (+api.ts)
 ├── server/gemini.ts        # Shared Gemini client for API routes
 ├── components/

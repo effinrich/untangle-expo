@@ -46,7 +46,8 @@ bun run start   # iOS/Android
 │   ├── index.tsx      # Web: components/web-app; native: screens/main-screen
 │   ├── focus.tsx      # Web: components/web-app; native: screens/focus/focus
 │   ├── unstick.tsx    # Web: components/web-app; native: screens/unstick/unstick
-│   ├── +not-found.tsx # Web: components/web-app; native: link home
+│   ├── [...rest].tsx  # Unknown paths. Web: components/web-app (HTTP 200); native: link home
+│   ├── _sitemap.tsx   # Replaces Expo's sitemap with [...rest]
 │   └── api/           # Gemini API routes (+api.ts)
 ├── server/gemini.ts   # Shared Gemini client for API routes
 ├── src/               # Web UI (React DOM, Tailwind v4)
