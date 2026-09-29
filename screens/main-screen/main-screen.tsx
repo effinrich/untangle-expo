@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Text } from "react-native"
 import { Redirect, Stack, useRouter } from "expo-router"
 import { Screen } from "../../components/screen/screen"
@@ -22,7 +22,14 @@ export default function MainScreen() {
   const app = useAppState()
   const dump = useBrainDump(app.addTasks)
   const view = useTaskView(app.tasks)
-  const [returning] = useState(() => app.tasks.some((task) => !task.completed))
+  const [returning, setReturning] = useState(false)
+  const returningCaptured = useRef(false)
+
+  useEffect(() => {
+    if (!app.tasksReady || returningCaptured.current) return
+    returningCaptured.current = true
+    setReturning(app.tasks.some((task) => !task.completed))
+  }, [app.tasks, app.tasksReady])
 
   if (app.onboardingComplete === null) return null
   if (!app.onboardingComplete) return <Redirect href="/onboarding" />

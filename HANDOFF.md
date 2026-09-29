@@ -70,7 +70,7 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
   - `expo-av` for microphone recording (`hooks/use-voice-recorder.ts`) and `expo-file-system` for base64 encoding (`utils/audio.ts`).
   - `expo-haptics` for tactile dopamine rewards upon completing tasks or starting focus mode.
   - `expo-notifications` for focus-sprint end notifications (`screens/focus/hooks.ts`).
-- **Shared Backend Client**: `services/api.ts` posts through `services/api-client.ts`. Dev builds call the Expo dev server API routes (`app/api/*`) on the Metro host (from `expo-constants` `hostUri`); release builds use `EXPO_PUBLIC_API_BASE_URL` or `app.json` `extra.apiBaseUrl`. Non-JSON or failed responses throw a typed `ApiError` with a user-facing message. The current `extra.apiBaseUrl` is an AI Studio dev preview that redirects API calls to a cookie-check HTML page, so release builds need a real deployment URL.
+- **Shared Backend Client**: `services/api.ts` posts through `services/api-client.ts`. Dev builds call the Expo dev server API routes (`app/api/*`) on the Metro host (from `expo-constants` `hostUri`); release builds require a deployed endpoint in `EXPO_PUBLIC_API_BASE_URL` or `app.json` `extra.apiBaseUrl` and fail at startup if neither is set. Non-JSON or failed responses throw a typed `ApiError` with a user-facing message.
 - **Auth & Sync**: `services/firebase.ts` (Google sign-in via `expo-auth-session`, Firestore task subscription).
 - **App state**: `components/app-provider/app-provider.tsx` composes `hooks/use-auth-session.ts`, `hooks/use-task-store.ts`, `hooks/use-parking-lot-store.ts`, and `hooks/use-onboarding-flag.ts`, and exposes them through `useAppState()` (`hooks/app-context.ts`). Guest tasks, parked thoughts, and the onboarding flag persist in AsyncStorage (`services/storage.ts`); guest tasks move to Firestore on sign-in. The provider holds the splash (`expo-splash-screen`) until these load, with a 4s cap.
 - **Design system**: semantic color tokens in `theme/colors.js` feed `tailwind.config.js` (with an iOS type ramp and 44/48/56pt control heights). Shared primitives: `components/button/`, `components/text-field/`, `components/option-row/`, `components/screen/`, `components/status-banner/`. Import icons from `theme/icons.ts`, not the `lucide-react-native` barrel, which bundles every icon.
@@ -109,7 +109,7 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 │   ├── services/           # api, firebase, auth, tasks, parking-lot, ambient, sound
 │   ├── shared/             # Cross-feature hooks, types, consts, utils
 │   └── features/           # braindump/, focus/, stats/, tasks/, unstick/
-├── app.json                # Expo config (web server output, permissions, Cloud Run apiBaseUrl)
+├── app.json                # Expo config (web server output, permissions)
 ├── package.json            # Single dependency manifest (bun.lock)
 ├── metro.config.js         # NativeWind for native; drops global.css on web
 ├── postcss.config.js       # Tailwind v4 for src/index.css

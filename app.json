@@ -57,8 +57,7 @@
     "extra": {
       "eas": {
         "projectId": "untangle-adhd-applet"
-      },
-      "apiBaseUrl": "https://ais-dev-hlh4jxillgrxmqnwolrxfw-124269995328.us-east1.run.app"
+      }
     }
   }
 }

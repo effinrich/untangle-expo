@@ -26,7 +26,7 @@ export function friendlyErrorMessage(error: unknown): string {
 }
 
 // Dev builds talk to the Expo dev server's API routes (app/api/*) on the machine running Metro;
-// release builds use EXPO_PUBLIC_API_BASE_URL or app.json extra.apiBaseUrl.
+// release builds require EXPO_PUBLIC_API_BASE_URL or app.json extra.apiBaseUrl.
 function resolveApiBaseUrl(): string {
   const override = process.env.EXPO_PUBLIC_API_BASE_URL
   if (override) return override.replace(/\/$/, "")
@@ -35,7 +35,11 @@ function resolveApiBaseUrl(): string {
   if (__DEV__ && hostUri) return `http://${hostUri.split("/")[0]}`
 
   const configured = Constants.expoConfig?.extra?.apiBaseUrl
-  return typeof configured === "string" ? configured.replace(/\/$/, "") : ""
+  if (typeof configured === "string" && configured) return configured.replace(/\/$/, "")
+  if (!__DEV__) {
+    throw new Error("Set EXPO_PUBLIC_API_BASE_URL or app.json extra.apiBaseUrl for release builds.")
+  }
+  return ""
 }
 
 export const API_BASE_URL = resolveApiBaseUrl()

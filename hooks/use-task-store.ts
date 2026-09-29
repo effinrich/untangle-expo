@@ -25,6 +25,8 @@ export function useTaskStore(user: User | null, authReady: boolean) {
     if (!authReady || user) return
     let cancelled = false
     guestLoadedRef.current = false
+    tasksRef.current = []
+    setTasks([])
     loadJson<MicroTask[]>(STORAGE_KEYS.guestTasks, []).then((stored) => {
       if (cancelled) return
       guestLoadedRef.current = true

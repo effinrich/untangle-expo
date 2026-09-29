@@ -14,7 +14,7 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
 ) {
   const [focused, setFocused] = useState(false)
   const borderClass = error
-    ? "border-danger"
+    ? "border border-danger"
     : focused
       ? "border-accent border-2"
       : "border-border-field border"
