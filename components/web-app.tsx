@@ -3,7 +3,7 @@
 import { StrictMode, useEffect, useState } from "react"
 import type { DOMProps } from "expo/dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import App from "../src/app/app"
+import App from "../src/web-app/app"
 import "../src/index.css"
 
 const queryClient = new QueryClient()

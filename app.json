@@ -34,7 +34,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      ["expo-router", { "root": "app" }],
+      "expo-router",
       [
         "expo-av",
         {
