@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { X, Sparkles, Wand2, ArrowRight, Zap, BatteryCharging, Check } from "lucide-react"
+import { ArrowRight, BatteryCharging, Check, Sparkles, Wand2, X, Zap } from "lucide-react"
 import { MicroTask, UnstickResult } from "../../types"
 import { apiUnstickMe } from "../../services/api"
 
@@ -147,7 +147,7 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
                 The 2-Minute Spark Contract:
               </span>
               <p className="text-xs text-neutral-200 mt-1 font-medium leading-relaxed">
-                "{result.sparkChallenge}"
+                &ldquo;{result.sparkChallenge}&rdquo;
               </p>
               <div className="text-[11px] text-amber-400/80 mt-2 italic">
                 *Neuro-rule: If you still want to quit after 120 seconds, you are 100% free to stop.

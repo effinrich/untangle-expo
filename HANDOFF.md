@@ -1,13 +1,12 @@
 # PROJECT HANDOFF & AGENT BRIEFING: TANGLE (ADHD Brain Dump & Priority Flow)
 
-**Date**: September 25, 2026  
+**Date**: September 28, 2026  
 **Primary Architect**: Google AI Studio Build Agent  
-**Current User / Owner**: [effinrich@pm.me](mailto:effinrich@pm.me)  
-**Applet ID**: `5f9dc31f-019f-42db-9df5-5179c4169f97`  
-**Firestore Database**: `ai-studio-tangleadhdbraind-5f9dc31f-019f-42db-9df5-5179c4169f97`  
-**GCP Project**: `gen-lang-client-0667057417`  
-**Deployed Dev URL**: `https://ais-dev-hlh4jxillgrxmqnwolrxfw-124269995328.us-east1.run.app`  
-**Deployed Public Preview URL**: `https://ais-pre-hlh4jxillgrxmqnwolrxfw-124269995328.us-east1.run.app`
+**Current User / Owner**: [richtillman@gmail.com](mailto:richtillman@gmail.com)  
+**Applet ID**: `0e6f0f3e-28a1-4517-8b78-5d76b556f7c7`  
+**Firestore Database**: `ai-studio-remixtangleadhdb-0e6f0f3e-28a1-4517-8b78-5d76b556f7c7`  
+**Firebase Project**: `auth-synth-503906`  
+**Auth Domain**: `auth-synth-503906.firebaseapp.com`
 
 ---
 

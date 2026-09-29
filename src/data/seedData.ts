@@ -1,4 +1,4 @@
-import { MicroTask, BrainDumpTemplate } from "../types"
+import { BrainDumpTemplate, MicroTask } from "../types"
 
 export const INITIAL_SEED_TASKS: MicroTask[] = [
   {

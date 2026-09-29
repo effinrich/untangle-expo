@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import {
+  Briefcase,
+  Flame,
+  Heart,
+  Home,
+  Landmark,
+  Loader2,
   Mic,
   MicOff,
-  Sparkles,
-  Wand2,
-  RotateCcw,
-  Flame,
   Radio,
-  Loader2,
+  RotateCcw,
+  Sparkles,
   Tag,
-  Briefcase,
-  Home,
-  Heart,
-  Landmark,
+  Wand2,
 } from "lucide-react"
 import { BRAIN_DUMP_TEMPLATES } from "../../data/seedData"
 import { DEFAULT_CATEGORIES } from "../../data/categories"

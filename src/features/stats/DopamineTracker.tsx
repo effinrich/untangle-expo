@@ -1,5 +1,5 @@
 import React from "react"
-import { Flame, CheckCircle, Clock, BatteryCharging, Layers, Tag } from "lucide-react"
+import { BatteryCharging, CheckCircle, Clock, Flame, Layers, Tag } from "lucide-react"
 import { MicroTask } from "../../types"
 import { DEFAULT_CATEGORIES, getCategoryStyle } from "../../data/categories"
 

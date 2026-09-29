@@ -1,24 +1,24 @@
-import React, { useState, useMemo } from "react"
+import React, { useMemo, useState } from "react"
 import {
-  Search,
-  CheckCircle2,
-  Copy,
-  Plus,
-  Trash2,
-  Sparkles,
-  Zap,
-  Tag,
-  Layers,
-  ArrowUpDown,
   ArrowDownUp,
+  ArrowUpDown,
   BatteryCharging,
-  Flame,
-  Clock,
-  X,
   Check,
+  CheckCircle2,
+  Clock,
+  Copy,
+  Flame,
+  Layers,
+  Plus,
+  Search,
   SlidersHorizontal,
+  Sparkles,
+  Tag,
+  Trash2,
+  X,
+  Zap,
 } from "lucide-react"
-import { MicroTask, EnergyLevel, PriorityLevel } from "../../types"
+import { EnergyLevel, MicroTask, PriorityLevel } from "../../types"
 import { DEFAULT_CATEGORIES, getCategoryStyle } from "../../data/categories"
 import { TaskCard } from "./TaskCard"
 import { soundService } from "../../services/sound"

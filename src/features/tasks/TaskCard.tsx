@@ -1,24 +1,24 @@
 import React, { useState } from "react"
 import {
+  AlertCircle,
+  Briefcase,
   Check,
-  Play,
-  Scissors,
-  Trash2,
   ChevronDown,
   ChevronUp,
   Clock,
-  Zap,
-  Tag,
-  AlertCircle,
-  Briefcase,
-  Home,
   Heart,
+  Home,
   Landmark,
-  ShoppingBag,
   Palette,
+  Play,
+  Scissors,
+  ShoppingBag,
+  Tag,
+  Trash2,
+  Zap,
 } from "lucide-react"
 import confetti from "canvas-confetti"
-import { MicroTask, EnergyLevel, PriorityLevel } from "../../types"
+import { EnergyLevel, MicroTask, PriorityLevel } from "../../types"
 import { soundService } from "../../services/sound"
 import { apiBreakdownTask } from "../../services/api"
 import { DEFAULT_CATEGORIES, getCategoryStyle } from "../../data/categories"

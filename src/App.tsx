@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { QueryClient, QueryClientProvider, useMutation } from "@tanstack/react-query"
 import {
-  Sparkles,
-  Zap,
-  Layers,
-  RotateCcw,
-  CheckCircle2,
-  ListTodo,
   BrainCircuit,
-  Flame,
-  LogIn,
-  LogOut,
-  User as UserIcon,
+  CheckCircle2,
   Cloud,
   CloudCheck,
-  Tag,
+  Flame,
+  Layers,
+  ListTodo,
+  LogIn,
+  LogOut,
+  RotateCcw,
   ShieldCheck,
+  Sparkles,
+  Tag,
+  User as UserIcon,
+  Zap,
 } from "lucide-react"
 import { User } from "firebase/auth"
 import { BrainDumpInput } from "./features/braindump/BrainDumpInput"
@@ -29,15 +29,15 @@ import { MicroTask, ParkingLotItem } from "./types"
 import { apiUntangleBrainDump } from "./services/api"
 import {
   auth,
+  deleteParkingItemFromFirestore,
+  deleteTaskFromFirestore,
+  saveParkingItemToFirestore,
+  saveTaskToFirestore,
   signInWithGoogle,
   signOutUser,
-  testFirestoreConnection,
-  subscribeToUserTasks,
-  saveTaskToFirestore,
-  deleteTaskFromFirestore,
   subscribeToParkingLot,
-  saveParkingItemToFirestore,
-  deleteParkingItemFromFirestore,
+  subscribeToUserTasks,
+  testFirestoreConnection,
 } from "./services/firebase"
 import calmAmbientImg from "./assets/images/calm_focus_ambient_1790313003505.jpg"
 
