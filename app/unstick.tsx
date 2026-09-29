@@ -1,9 +1,14 @@
 import React, { useState } from "react"
-import { View, Text, Pressable, ScrollView, ActivityIndicator } from "react-native"
+import { View, Text, Pressable, ScrollView, ActivityIndicator, Platform } from "react-native"
 import { useRouter } from "expo-router"
+import WebApp from "../components/web-app"
 import * as Haptics from "../utils/haptics"
 
-export default function UnstickScreen() {
+export default function Unstick() {
+  return Platform.OS === "web" ? <WebApp /> : <UnstickScreen />
+}
+
+function UnstickScreen() {
   const router = useRouter()
   const [selectedMood, setSelectedMood] = useState("Paralyzed / cannot pick where to start")
   const [isLoading, setIsLoading] = useState(false)
