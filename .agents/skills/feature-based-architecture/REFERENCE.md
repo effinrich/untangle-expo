@@ -154,6 +154,8 @@ Put them in the parent component folder's files; that is the default. Give the p
 
 ## Worked example: `src/features/tasks`
 
+From the app this skill was extracted from (a task planner). In another project, copy the shape; these files will not exist there.
+
 ```
 src/features/tasks/
   task-list/
@@ -172,7 +174,27 @@ src/features/tasks/
 
 `TaskList` is the feature's only screen, so the feature root holds just `task-list/`; root-level `types.ts` etc. appear only when a second component folder shares something. The card's props, colour maps, and hook are small, so they live in `task-list/`'s files and `partials/` stays flat. A test would be `task-list/task-list.test.tsx`. `NewTaskInput` is also used by `src/shared/hooks/use-tasks.ts`, so it lives in `src/shared/types/task.ts`; everything else is used only inside `tasks` and stays there.
 
-The rest of the app follows the same two rules: `src/web-app/app.tsx`, `src/features/braindump/brain-dump-input/brain-dump-input.tsx`, `src/features/focus/focus/focus.tsx`. A feature-specific hook may be a standalone kebab-case `use-*.ts` file at its feature root; hooks shared across features live in `src/shared/hooks/`, such as `src/shared/hooks/use-audio-recorder.ts`.
+That app's other components follow the same two rules: `src/app/app.tsx`, `src/features/braindump/brain-dump-input/brain-dump-input.tsx`, `src/features/focus/focus/focus.tsx`. A feature-specific hook may be a standalone kebab-case `use-*.ts` file at its feature root; hooks shared across features live in `src/shared/hooks/`, such as `src/shared/hooks/use-audio-recorder.ts`.
+
+## Multi-agent rule files
+
+Each tool reads a different place, so the rules exist in several copies that must mean the same thing:
+
+- **`AGENTS.md`**: read by most coding agents. Short: a pointer to this skill, the core rules, and durable workspace facts. Keep facts that are still true when editing it.
+- **`CLAUDE.md`**: Claude Code reads this name, so it is one line, `@AGENTS.md`, and nothing else.
+- **`.cursor/rules/*.mdc`**: YAML frontmatter with `description` plus either `alwaysApply: true` or `globs:` (comma-separated patterns, `alwaysApply: false`). Keep each under ~50 lines.
+- **`.windsurf/rules/*.md`**: same body as the matching `.mdc`. Only the frontmatter differs: `trigger: always_on`, or `trigger: glob` with `globs:`.
+
+The four topics:
+
+| File                 | Scope          | Holds                                                                                        |
+| -------------------- | -------------- | -------------------------------------------------------------------------------------------- |
+| `00-core-principles` | always         | Naming, like-named folders, partials, sibling files, `src/shared/`, ~200 lines, docs, git    |
+| `10-project-context` | always         | This repo only: apps, backend, data layer, feature paths, worked example, `package.json` commands |
+| `20-frontend`        | `*.ts, *.tsx`  | One component per file, lint rules actually configured, hooks/consts/utils split, imports, deps |
+| `30-testing`         | always         | Where tests and stories go, the real verify commands, browser check for UI changes           |
+
+Rules are the enforceable summary; do not paste this skill into them. State only what the repo's config confirms (lint rules, scripts, ignore patterns). When a rule changes, edit `AGENTS.md`, both rule folders, and this skill together.
 
 ## When the convention does not apply
 

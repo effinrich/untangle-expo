@@ -1,0 +1,30 @@
+---
+trigger: always_on
+description: What this repo is. Web app, mobile app, backend, data layer, and dev commands.
+---
+
+# Project context: Untangle
+
+## Apps
+
+- **Web**: Vite + React at the repo root. UI in `src/`; Express backend in `server.ts`, with one router per endpoint in `routes/` mounted under `/api` and the shared Gemini client in `routes/gemini.ts`.
+- **Mobile**: Expo (Expo Router + NativeWind) in `mobile/`, with its own `package.json`, `node_modules`, and `tsconfig.json`. oxlint ignores `mobile/**` and the root tsconfig excludes `mobile`. Screens live in `mobile/screens/<screen>/<screen>.tsx`; route files in `mobile/app/` are one-line re-exports of those screens (`unstick.tsx` still holds its own screen code).
+- **Data**: Firebase (Auth + Firestore), not Convex. Web: `src/services/firebase.ts`, `auth.ts`, `tasks.ts`, `parking-lot.ts`; mobile: `mobile/services/firebase.ts`. Rules: `firestore.rules`. Ignore Convex, Supabase, or Prisma guidance here.
+
+## Web source layout
+
+- Features: `src/features/<feature>/<component>/` (`braindump`, `focus`, `stats`, `tasks`, `unstick`).
+- Worked example: `src/features/tasks/task-list/` (`task-list.tsx`, `types.ts`, `consts.ts`, `hooks.ts`, `utils.ts`, `partials/`).
+- Focus screen: `src/features/focus/focus/focus.tsx`. App shell: `src/app/app.tsx`.
+- Existing app-level code stays in `src/services/`, `src/types/`, `src/data/`; new cross-feature code goes in `src/shared/`.
+
+## Commands (root `package.json`, run with bun)
+
+- `bun run dev` / `bun run start`: `tsx server.ts`, serves the API and the Vite app on port 3000 (or `PORT`).
+- `bun run build` / `bun run preview`: Vite build and preview.
+- `bun run lint` / `bun run lint:fix`: oxlint. `bun run fmt` / `bun run fmt:fix`: oxfmt.
+- Mobile (`mobile/package.json`): `start`, `android`, `ios`, `web` (all `expo start`), run inside `mobile/`.
+
+## Secrets
+
+- `.env*` is git-ignored; `.env.example` lists the variable names. Never write secret values or `.env` contents into code, docs, or rules.

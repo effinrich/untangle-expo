@@ -1,21 +1,31 @@
 # Agent instructions
 
+Canonical instructions for any agent.
+
+> **Architecture skill, required:** follow the feature-based-architecture skill for new projects and for structural refactors (creating, moving, or splitting a component or feature file, or extracting types/consts/hooks/helpers). Use `.agents/skills/feature-based-architecture/SKILL.md` in this repo; outside it, the same skill is installed at `~/.agents/skills/feature-based-architecture/SKILL.md`.
+
+`.cursor/rules/*.mdc` and `.windsurf/rules/*.md` carry the same rules for tools that do not load this file (`00-core-principles`, `10-project-context`, `20-frontend`, `30-testing`). Change a rule here, in both rule folders, and in the skill in the same edit.
+
 ## React structure (`src/`)
 
-- Before creating, moving, or splitting a component or feature file, or extracting types/consts/hooks/helpers, read `.agents/skills/feature-based-architecture/SKILL.md` and follow it.
 - One React component per file, named after the component in kebab-case: `TaskCard` -> `task-card.tsx`. Each component or screen lives in a like-named folder (`task-list/task-list.tsx`); partials stay flat in `partials/`. `bun run lint` enforces one-per-file and kebab-case as errors (`react/no-multi-comp`, `unicorn/filename-case`).
-- Refactors are incremental: bring the files you touch into line; leave untouched files where they are.
-- Existing app-level code lives in `src/services/`, `src/types/`, `src/data/`; new cross-feature code goes in `src/shared/{ui,hooks,types,consts,utils}` per the skill. The native UI (`screens/`, root `hooks/`, `utils/`, `services/`, `theme/`, and every `components/*` except `web-app.tsx`) sits outside these rules but is linted.
-- Verify with `bun run lint` and `bunx tsc --noEmit`.
-- When code moves or is renamed, update every doc that names the old path (`HANDOFF.md`, `README.md`, `PLAN.md`, this file, the skill) in the same change.
+- Keep files under ~200 lines. Refactors move code without changing behavior, and are incremental: bring the files you touch into line; leave untouched files where they are.
+- Existing app-level code lives in `src/services/`, `src/types/`, `src/data/`; new cross-feature code goes in `src/shared/{ui,hooks,types,consts,utils}` per the skill.
+- `mobile/` is a separate Expo app: oxlint ignores it and the root tsconfig excludes it. Its screens live in `mobile/screens/<screen>/<screen>.tsx`, re-exported by one-line route files in `mobile/app/`.
+- Verify with `bun run lint` and `bunx tsc --noEmit`; for mobile, `mobile/node_modules/.bin/tsc --noEmit -p mobile/tsconfig.json`.
+- When code moves or is renamed, update every doc that names the old path (`HANDOFF.md`, `mobile/README.md`, `PLAN.md`, this file, the rule folders, the skill) in the same change.
+- Do not commit or push unless asked.
 
 ## Learned User Preferences
 
 - Prioritize small, readable files: component files are markup plus wiring; types, consts, hooks, and helpers go in sibling files.
 - Sibling files beside a component are unprefixed (`types.ts`, `consts.ts`, `hooks.ts`, `utils.ts`), never `task-list.types.ts`.
-- Keep the feature-based-architecture skill agent-agnostic and self-contained (no Claude-only paths, tool names, or plugin wrappers); the user reuses it across models and keeps a portable copy outside the repo.
+- Keep the feature-based-architecture skill agent-agnostic and self-contained (no Claude-only paths, tool names, or plugin wrappers); the user reuses it across models and keeps a portable copy outside the repo, which must stay identical to the repo copy.
+- Name a screen's folder and file after its feature (`focus/focus.tsx`), not a descriptive variant like `focus-radar-modal`.
 
 ## Learned Workspace Facts
 
-- `AGENTS.md` is the single agent instruction file; `CLAUDE.md` only imports it with `@AGENTS.md`.
+- `AGENTS.md` is the canonical agent instruction file; `CLAUDE.md` only imports it with `@AGENTS.md`. `.cursor/rules/` and `.windsurf/rules/` mirror it for Cursor and Windsurf.
+- Data layer is Firebase (Auth + Firestore), not Convex. The backend is `server.ts` plus one Express router per endpoint in `routes/`.
 - `src/features/tasks/task-list/` is the reference example of the layout: `task-list.tsx` with sibling `types.ts`, `consts.ts`, `hooks.ts`, `utils.ts`, and components under `partials/`.
+- The focus screen is `src/features/focus/focus/focus.tsx` on web and `mobile/screens/focus/focus.tsx` on mobile (re-exported by `mobile/app/focus.tsx`).
