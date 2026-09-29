@@ -70,10 +70,11 @@ export const TaskCardActions: React.FC<TaskCardActionsProps> = ({
         <button
           type="button"
           onClick={() => onDelete(task.id)}
+          aria-label="Remove task"
           className="p-1.5 rounded-md text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
           title="Remove task"
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
         </button>
       </div>
     </div>

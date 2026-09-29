@@ -28,12 +28,16 @@ export const FocusParkingLot: React.FC<FocusParkingLotProps> = ({
       </div>
 
       <form onSubmit={onAddThought} className="flex gap-2 mb-3">
+        <label htmlFor="parking-thought" className="sr-only">
+          Park a thought
+        </label>
         <input
+          id="parking-thought"
           type="text"
           value={parkingThought}
           onChange={(e) => onChangeThought(e.target.value)}
           placeholder="e.g. Remember to buy milk, check text from mom..."
-          className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-1.5 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-amber-400"
+          className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-1.5 text-xs text-neutral-200 placeholder-neutral-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
         />
         <button
           type="submit"
@@ -59,9 +63,10 @@ export const FocusParkingLot: React.FC<FocusParkingLotProps> = ({
               <button
                 type="button"
                 onClick={() => onDeleteItem(item.id)}
+                aria-label="Remove parked thought"
                 className="text-neutral-500 hover:text-rose-400 ml-2"
               >
-                <Trash2 className="w-3 h-3" />
+                <Trash2 className="w-3 h-3" aria-hidden="true" />
               </button>
             </div>
           ))

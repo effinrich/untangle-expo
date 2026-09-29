@@ -38,9 +38,10 @@ export const FocusTopBar: React.FC<FocusTopBarProps> = ({
         <button
           type="button"
           onClick={onClose}
+          aria-label="Close focus session"
           className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 transition-colors"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" aria-hidden="true" />
         </button>
       </div>
     </div>

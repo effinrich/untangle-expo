@@ -31,7 +31,7 @@ export const AppHeroBanner: React.FC<AppHeroBannerProps> = ({ tasks, isSynced })
           <span>Priority Area Categorization & ADHD Flow</span>
           {isSynced && (
             <span className="text-[11px] text-emerald-400 font-mono flex items-center gap-1 ml-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse motion-reduce:animate-none" />
               Firestore Synced
             </span>
           )}

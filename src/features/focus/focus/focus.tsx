@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { CheckCircle2 } from "lucide-react"
+import { useModalDialog } from "../../../shared/hooks/use-modal-dialog"
 import { useFocusSession, useParkingThought } from "./hooks"
 import { FocusAmbientBar } from "./partials/focus-ambient-bar"
 import { FocusParkingLot } from "./partials/focus-parking-lot"
@@ -18,6 +19,7 @@ export const Focus: React.FC<FocusProps> = ({
   onDeleteParkingLotItem,
 }) => {
   const session = useFocusSession({ task, isOpen, onCompleteTask, onClose })
+  const dialogRef = useModalDialog<HTMLDialogElement>(isOpen)
   const { parkingThought, setParkingThought, handleAddThought } =
     useParkingThought(onAddParkingLotItem)
   const [showParkingLot, setShowParkingLot] = useState(false)
@@ -25,8 +27,19 @@ export const Focus: React.FC<FocusProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-950/95 backdrop-blur-md">
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="focus-dialog-title"
+      onCancel={(event) => {
+        event.preventDefault()
+        session.close()
+      }}
+      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-neutral-950/95 p-4 text-neutral-100 backdrop-blur-md open:flex"
+    >
       <div className="relative w-full max-w-2xl bg-neutral-900 border border-neutral-800 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col items-center text-center">
+        <h2 id="focus-dialog-title" className="sr-only">
+          One Thing Radar: {task.title}
+        </h2>
         <FocusTopBar
           showParkingLot={showParkingLot}
           parkingLotCount={parkingLot.length}
@@ -71,6 +84,6 @@ export const Focus: React.FC<FocusProps> = ({
           />
         )}
       </div>
-    </div>
+    </dialog>
   )
 }

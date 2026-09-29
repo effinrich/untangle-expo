@@ -22,7 +22,7 @@ export const BrainDumpAudioStatus: React.FC<BrainDumpAudioStatusProps> = ({
       {isRecording && (
         <div className="mt-2 p-2 bg-rose-500/10 border border-rose-500/30 rounded-lg flex items-center justify-between text-xs text-rose-300">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping motion-reduce:animate-none" />
             <span>Recording audio... Speak naturally. Tap microphone when done to transcribe.</span>
           </div>
           <button

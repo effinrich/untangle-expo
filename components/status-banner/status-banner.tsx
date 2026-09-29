@@ -2,6 +2,7 @@ import React from "react"
 import { Pressable, Text, View } from "react-native"
 import { CircleAlert, WifiOff } from "../../theme/icons"
 import colors from "../../theme/colors"
+import { useAccessibleAnnouncement } from "../../hooks/use-accessible-announcement"
 
 interface StatusBannerProps {
   title: string
@@ -19,6 +20,7 @@ export function StatusBanner({
   onAction,
 }: StatusBannerProps) {
   const Icon = tone === "offline" ? WifiOff : CircleAlert
+  useAccessibleAnnouncement(`${title}. ${message}`)
 
   return (
     <View

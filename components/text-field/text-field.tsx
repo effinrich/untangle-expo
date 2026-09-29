@@ -1,6 +1,7 @@
 import React, { forwardRef, useState } from "react"
 import { Text, TextInput, TextInputProps, View } from "react-native"
 import colors from "../../theme/colors"
+import { useAccessibleAnnouncement } from "../../hooks/use-accessible-announcement"
 
 interface TextFieldProps extends Omit<TextInputProps, "placeholderTextColor"> {
   label: string
@@ -18,6 +19,7 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
     : focused
       ? "border-accent border-2"
       : "border-border-field border"
+  useAccessibleAnnouncement(error ?? "")
 
   return (
     <View className="gap-2">

@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { ArrowRight, BatteryCharging, Check, Sparkles, Wand2, X, Zap } from "lucide-react"
+import { useModalDialog } from "../../../shared/hooks/use-modal-dialog"
 import { MicroTask, UnstickResult } from "../../../types"
 import { apiUnstickMe } from "../../../services/api"
 
@@ -19,6 +20,7 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
   const [mood, setMood] = useState("Paralyzed / cannot pick where to start")
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<UnstickResult | null>(null)
+  const dialogRef = useModalDialog<HTMLDialogElement>(isOpen)
 
   if (!isOpen) return null
 
@@ -58,19 +60,28 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-950/90 backdrop-blur-md">
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="unstick-dialog-title"
+      onCancel={(event) => {
+        event.preventDefault()
+        onClose()
+      }}
+      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-neutral-950/90 p-4 text-neutral-100 backdrop-blur-md open:flex"
+    >
       <div className="relative w-full max-w-lg bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider">
-            <Zap className="w-4 h-4 fill-amber-400" />
-            <span>ADHD Unstick Assistant</span>
+            <Zap className="w-4 h-4 fill-amber-400" aria-hidden="true" />
+            <span id="unstick-dialog-title">ADHD Unstick Assistant</span>
           </div>
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close unstick assistant"
             className="p-1 rounded-lg text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -175,6 +186,6 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </dialog>
   )
 }

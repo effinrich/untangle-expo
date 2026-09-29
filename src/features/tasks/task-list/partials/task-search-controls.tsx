@@ -22,8 +22,8 @@ export const TaskSearchControls: React.FC<TaskSearchControlsProps> = ({
       <select
         value={selectedPriority}
         onChange={(e) => onPriorityChange(e.target.value)}
-        className="bg-neutral-950/80 border border-neutral-800 rounded-lg px-2.5 py-1.5 text-xs text-neutral-300 focus:outline-none focus:border-neutral-700 min-h-[36px]"
-        title="Filter by priority tier"
+        aria-label="Filter by priority"
+        className="bg-neutral-950/80 border border-neutral-800 rounded-lg px-2.5 py-1.5 text-xs text-neutral-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 min-h-[36px]"
       >
         <option value="all">All Priorities</option>
         <option value="high">High Priority</option>
@@ -33,13 +33,20 @@ export const TaskSearchControls: React.FC<TaskSearchControlsProps> = ({
 
       {/* Search Box */}
       <div className="relative flex-1 sm:w-44 lg:w-48">
-        <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-500" />
+        <Search
+          className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-500"
+          aria-hidden="true"
+        />
+        <label htmlFor="task-search" className="sr-only">
+          Search tasks
+        </label>
         <input
-          type="text"
+          id="task-search"
+          type="search"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search tasks..."
-          className="w-full bg-neutral-950/80 border border-neutral-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-amber-400/60 min-h-[36px]"
+          className="w-full bg-neutral-950/80 border border-neutral-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-neutral-200 placeholder-neutral-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 min-h-[36px]"
         />
       </div>
 
@@ -47,9 +54,10 @@ export const TaskSearchControls: React.FC<TaskSearchControlsProps> = ({
       <button
         type="button"
         onClick={onToggleAddForm}
-        className="px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-800 text-neutral-200 hover:bg-neutral-700 border border-neutral-700/60 transition-colors flex items-center gap-1 shrink-0 min-h-[36px]"
+        aria-label="Add task"
+        className="px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-800 text-neutral-200 hover:bg-neutral-700 border border-neutral-700/60 transition-colors flex items-center gap-1 shrink-0 min-h-[36px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
       >
-        <Plus className="w-3.5 h-3.5" />
+        <Plus className="w-3.5 h-3.5" aria-hidden="true" />
         <span className="hidden sm:inline">Add Task</span>
       </button>
     </div>

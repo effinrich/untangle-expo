@@ -2,6 +2,7 @@ import React from "react"
 import { Text, View } from "react-native"
 import { Check, Pause, Play } from "../../../theme/icons"
 import { Button } from "../../../components/button/button"
+import { useAccessibleAnnouncement } from "../../../hooks/use-accessible-announcement"
 import { formatTimer, spokenTime } from "../utils"
 
 interface FocusTimerProps {
@@ -22,6 +23,7 @@ export function FocusTimer({
   const timeUp = secondsRemaining <= 0
   const progress = totalSeconds > 0 ? 1 - secondsRemaining / totalSeconds : 1
   const status = timeUp ? "Time's up. Nice work." : isRunning ? "Focusing" : "Paused"
+  useAccessibleAnnouncement(status)
 
   return (
     <View className="gap-6">
