@@ -1,3 +1,4 @@
+import { Platform } from "react-native"
 import Constants from "expo-constants"
 
 export type ApiErrorKind = "offline" | "server" | "bad-response"
@@ -26,7 +27,8 @@ export function friendlyErrorMessage(error: unknown): string {
 }
 
 // Dev builds talk to the Expo dev server's API routes (app/api/*) on the machine running Metro;
-// release builds require EXPO_PUBLIC_API_BASE_URL or app.json extra.apiBaseUrl.
+// native release builds require EXPO_PUBLIC_API_BASE_URL or app.json extra.apiBaseUrl.
+// Web bundles this module too (native screens share its routes) and calls /api on its own origin.
 function resolveApiBaseUrl(): string {
   const override = process.env.EXPO_PUBLIC_API_BASE_URL
   if (override) return override.replace(/\/$/, "")
@@ -36,7 +38,7 @@ function resolveApiBaseUrl(): string {
 
   const configured = Constants.expoConfig?.extra?.apiBaseUrl
   if (typeof configured === "string" && configured) return configured.replace(/\/$/, "")
-  if (!__DEV__) {
+  if (!__DEV__ && Platform.OS !== "web") {
     throw new Error("Set EXPO_PUBLIC_API_BASE_URL or app.json extra.apiBaseUrl for release builds.")
   }
   return ""
