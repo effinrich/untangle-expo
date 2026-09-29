@@ -37,7 +37,7 @@ The like-named folder (`task-list/task-list.tsx`) is what makes this possible fo
 
 ### `consts.ts` — the fixed values
 
-- Option lists, lookup maps, colour and label maps, default values, library option objects (`SORT_OPTIONS`, `priorityStyles`, `completionConfetti`).
+- Option lists, lookup maps, colour and label maps, default values, library option objects (`STATUS_FILTERS`, `statusColors`, `DEFAULT_PAGE_SIZE`).
 - Anything that was a literal declared inside a component body and does not depend on props or state.
 - No functions with logic; those go in `utils.ts`.
 
@@ -53,7 +53,7 @@ The like-named folder (`task-list/task-list.tsx`) is what makes this possible fo
 - Wrappers around React-Query / tRPC / SWR / Apollo, named per feature (`useGenerateMutation`, `useUserQuery`).
 - `useEffect`-based behaviors, each exported as a named hook (`useProactiveFeedback`, `useKeyboardShortcuts`).
 - Domain hooks that compose multiple primitives (`useEditorActions(editor)` returning bound handlers).
-- State plus handlers lifted out of a component in this folder (`useQuickAddForm`, `useTaskCardActions`). One file holds the hooks for every component in the folder.
+- State plus handlers lifted out of a component in this folder (`useSearchForm`, `useRowActions`). One file holds the hooks for every component in the folder.
 - Imports from `api.ts`, `consts.ts`, and `utils.ts`. Never imported by them.
 
 ### `utils.ts` — the pure layer
@@ -152,29 +152,32 @@ No. Files next to a component are named for what they hold: `types.ts`, `consts.
 
 Put them in the parent component folder's files; that is the default. Give the partial its own folder (`partials/task-card/task-card.tsx` + `types.ts` + `consts.ts` + `hooks.ts`) only when its items would collide with the parent's or would make those files mostly about one partial. Its sub-partials then live in that folder's own `partials/`.
 
-## Worked example: `src/features/tasks`
+## Worked example: a hypothetical `tasks` feature
+
+An illustration, not a real project: a feature with a list screen and a detail screen. Copy the shape; the names are placeholders.
 
 From the app this skill was extracted from (a task planner). In another project, copy the shape; these files will not exist there.
 
 ```
 src/features/tasks/
   task-list/
-    task-list.tsx     TaskList: filter/sort/search state, memoized derived lists, composes partials
-    types.ts          TaskListProps, TaskCardProps, FilterTab, SortOption, SortOptionConfig
-    consts.ts         SORT_OPTIONS, energy/priority weights, card colour maps, priorityCycle, completionConfetti
-    hooks.ts          useQuickAddForm (list keeps the form state), useTaskCardActions (card state + handlers)
-    utils.ts          getAllCategoryNames, getCategoryCounts, filterTasks, sortTasks, buildQuickAddTask, buildMarkdownPlan
+    task-list.tsx     TaskList: filter and search state, derived lists, composes partials
+    types.ts          TaskListProps, TaskRowProps, StatusFilter
+    consts.ts         STATUS_FILTERS, statusColors
+    hooks.ts          useTaskList (server state), useTaskRowActions (row state + handlers)
+    utils.ts          filterTasks, sortTasks, countByStatus
     partials/
-      category-filter-strip.tsx   energy-sort-strip.tsx   quick-add-form.tsx   sort-modal.tsx
-      status-filter-tabs.tsx      task-search-controls.tsx
-      task-list-empty-state.tsx   task-list-footer.tsx
-      task-card.tsx               task-card-actions.tsx   task-card-category-menu.tsx
-      task-card-first-step.tsx    task-card-meta.tsx      task-card-substeps.tsx
+      task-list-toolbar.tsx   task-list-empty-state.tsx
+      task-row.tsx            task-row-actions.tsx
+  task-detail/
+    task-detail.tsx   TaskDetail: loads one task, composes its partials
+    hooks.ts          useTaskDetail
+    partials/
+      task-detail-header.tsx
+  types.ts            Task: used by both task-list/ and task-detail/
 ```
 
-`TaskList` is the feature's only screen, so the feature root holds just `task-list/`; root-level `types.ts` etc. appear only when a second component folder shares something. The card's props, colour maps, and hook are small, so they live in `task-list/`'s files and `partials/` stays flat. A test would be `task-list/task-list.test.tsx`. `NewTaskInput` is also used by `src/shared/hooks/use-tasks.ts`, so it lives in `src/shared/types/task.ts`; everything else is used only inside `tasks` and stays there.
-
-That app's other components follow the same two rules: `src/app/app.tsx`, `src/features/braindump/brain-dump-input/brain-dump-input.tsx`, `src/features/focus/focus/focus.tsx`. A feature-specific hook may be a standalone kebab-case `use-*.ts` file at its feature root; hooks shared across features live in `src/shared/hooks/`, such as `src/shared/hooks/use-audio-recorder.ts`.
+`Task` is imported by two component folders, so it sits in the feature root's `types.ts`; everything else is used by one screen and stays in that screen's folder. The row's props, colours, and hook are small, so they live in `task-list/`'s files and `partials/` stays flat. A test would be `task-list/task-list.test.tsx`. If a second feature (say `<other-feature>`) started importing `Task`, it would move to `src/shared/types/task.ts`, and a hook both use would move to `src/shared/hooks/use-tasks.ts`.
 
 ## Multi-agent rule files
 
@@ -190,7 +193,7 @@ The four topics:
 | File                 | Scope          | Holds                                                                                        |
 | -------------------- | -------------- | -------------------------------------------------------------------------------------------- |
 | `00-core-principles` | always         | Naming, like-named folders, partials, sibling files, `src/shared/`, ~200 lines, docs, git    |
-| `10-project-context` | always         | This repo only: apps, backend, data layer, feature paths, worked example, `package.json` commands |
+| `10-project-context` | always         | This project only: apps, backend, data layer, feature paths, a reference feature, real scripts |
 | `20-frontend`        | `*.ts, *.tsx`  | One component per file, lint rules actually configured, hooks/consts/utils split, imports, deps |
 | `30-testing`         | always         | Where tests and stories go, the real verify commands, browser check for UI changes           |
 

@@ -3,7 +3,7 @@
 //
 // Usage:
 //   node validate.mjs                          -> validates every dir under src/features/
-//   node validate.mjs src/app src/features/x   -> validates each given feature folder
+//   node validate.mjs src/features/<feature>...  -> validates each given feature folder
 //
 // Exits 0 if clean, 1 if violations found, 2 if no features to validate.
 
