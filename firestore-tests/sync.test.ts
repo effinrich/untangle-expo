@@ -6,7 +6,16 @@ import {
   type OnlineDetector,
   type StorageAdapter,
 } from "@tanstack/offline-transactions"
-import { deleteDoc, doc, getDoc, getDocs, collection, setDoc } from "firebase/firestore"
+import {
+  collection,
+  deleteDoc,
+  disableNetwork,
+  doc,
+  enableNetwork,
+  getDoc,
+  getDocs,
+  setDoc,
+} from "firebase/firestore"
 import type { MicroTask } from "../services/api"
 import { INITIAL_SEED_TASKS } from "../src/data/seed-data"
 import { fromParkingDoc, fromTaskDoc, toParkingDoc, toTaskDoc } from "../services/db/doc-shapes"
@@ -168,6 +177,35 @@ describe("firestore collection", () => {
     await waitFor(() => !tasks.has("cached_only"))
     await tasks.cleanup()
   })
+
+  test("cache-only snapshots preserve cached items and pending outbox writes", async () => {
+    const cache = memoryStorage()
+    const cachedTask = task("offline_cached")
+    const cachedJson = JSON.stringify([cachedTask])
+    cache.setItem("tasks", cachedJson)
+    const collections = userCollections(user.uid, cache)
+    const outboxData = new Map<string, string>()
+
+    await disableNetwork(user.db)
+    const outbox = outboxFor(user.uid, collections, toggleableOnline(false), outboxData)
+    try {
+      await collections.tasks.preload()
+      await outbox.waitForInit()
+      const tx = outbox.createOfflineTransaction({ mutationFnName: "firestoreWrite", autoCommit: false })
+      tx.mutate(() => collections.tasks.insert(task("offline_pending")))
+      void tx.commit().catch(() => {})
+
+      await waitFor(() => outboxData.size > 0)
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      expect(collections.tasks.has(cachedTask.id)).toBe(true)
+      expect(collections.tasks.has("offline_pending")).toBe(true)
+      expect(cache.getItem("tasks")).toBe(cachedJson)
+    } finally {
+      outbox.dispose()
+      await collections.tasks.cleanup()
+      await enableNetwork(user.db)
+    }
+  })
 })
 
 describe("offline outbox", () => {
@@ -250,6 +288,34 @@ describe("offline outbox", () => {
     restarted.dispose()
     await second.parkingLot.cleanup()
   })
+
+  test("rejects transactions over Firestore's batch limit without partial writes", async () => {
+    const collections = userCollections(user.uid, memoryStorage())
+    await collections.tasks.preload()
+    const outbox = outboxFor(user.uid, collections, toggleableOnline(true))
+    await outbox.waitForInit()
+
+    const prefix = `batch_${Date.now()}`
+    const oversized = Array.from({ length: 501 }, (_, index) => task(`${prefix}_${index}`))
+    const tx = outbox.createOfflineTransaction({
+      mutationFnName: "firestoreWrite",
+      autoCommit: false,
+    })
+    tx.mutate(() => collections.tasks.insert(oversized))
+    await expect(tx.commit()).rejects.toBeInstanceOf(NonRetriableError)
+    await waitFor(
+      () => !collections.tasks.has(oversized[0].id) && !collections.tasks.has(oversized.at(-1)!.id),
+    )
+    expect(
+      (await getDoc(doc(user.db, `users/${user.uid}/tasks/${oversized[0].id}`))).exists(),
+    ).toBe(false)
+    expect(
+      (await getDoc(doc(user.db, `users/${user.uid}/tasks/${oversized.at(-1)!.id}`))).exists(),
+    ).toBe(false)
+
+    outbox.dispose()
+    await collections.tasks.cleanup()
+  })
 })
 
 describe("guest migration", () => {
@@ -278,5 +344,10 @@ describe("guest migration", () => {
     await deleteDoc(doc(fresh.db, `users/${fresh.uid}/tasks/seed-task-1`))
     await migrateGuestData(fresh.db, fresh.uid, guest)
     expect((await getDoc(doc(fresh.db, `users/${fresh.uid}/tasks/seed-task-1`))).exists()).toBe(false)
+
+    const allTasks = await getDocs(collection(fresh.db, `users/${fresh.uid}/tasks`))
+    await Promise.all(allTasks.docs.map((snapshot) => deleteDoc(snapshot.ref)))
+    await migrateGuestData(fresh.db, fresh.uid, { tasks: seeds, thoughts: [] })
+    expect((await getDocs(collection(fresh.db, `users/${fresh.uid}/tasks`))).size).toBe(0)
   })
 })

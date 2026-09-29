@@ -124,6 +124,17 @@ service cloud.firestore {
           && incoming().createdAt == existing().createdAt;
         allow delete: if isOwner(userId) && isValidId(userId) && isValidId(itemId);
       }
+
+      // Account-level marker prevents deleted sample tasks from being re-seeded on another device.
+      match /seedStatus/{statusId} {
+        allow get: if isOwner(userId) && isValidId(userId) && statusId == 'initial';
+        allow list, update, delete: if false;
+        allow create: if isOwner(userId)
+          && isValidId(userId)
+          && statusId == 'initial'
+          && incoming().keys().hasOnly(['initialSeedsHandled'])
+          && incoming().initialSeedsHandled == true;
+      }
     }
   }
 }

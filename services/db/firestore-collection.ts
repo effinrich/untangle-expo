@@ -58,10 +58,14 @@ export function firestoreCollectionOptions<T extends object>(
         const unsubscribe = onSnapshot(
           collection(firestore, path),
           (snapshot) => {
-            // A cache-only snapshot (e.g. an offline cold start) can be empty or partial, so it
-            // may add and update items but never delete them or replace the device cache.
-            const fromServer = !snapshot.metadata.fromCache
-            const next = fromServer ? new Map<string, string>() : new Map(known)
+            // The device cache is authoritative until Firestore supplies a server-backed snapshot.
+            // Ignoring cache-only snapshots also keeps stale SDK data from replacing outbox edits.
+            if (snapshot.metadata.fromCache) {
+              markReadyOnce()
+              return
+            }
+
+            const next = new Map<string, string>()
             const items: T[] = []
             begin()
             snapshot.forEach((docSnap) => {
@@ -74,14 +78,12 @@ export function firestoreCollectionOptions<T extends object>(
               if (previous === undefined) write({ type: "insert", value: item })
               else if (previous !== json) write({ type: "update", value: item })
             })
-            if (fromServer) {
-              for (const [key, json] of known) {
-                if (!next.has(key)) write({ type: "delete", value: JSON.parse(json) as T })
-              }
+            for (const [key, json] of known) {
+              if (!next.has(key)) write({ type: "delete", value: JSON.parse(json) as T })
             }
             commit()
             known = next
-            if (fromServer) cache.setItem(cacheKey, JSON.stringify(items))
+            cache.setItem(cacheKey, JSON.stringify(items))
             markReadyOnce()
           },
           (error) => {

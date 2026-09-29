@@ -153,3 +153,14 @@ describe("profiles", () => {
     ).rejects.toThrow()
   })
 })
+
+describe("seed status", () => {
+  test("only the owner can create the initial seed marker", async () => {
+    const marker = doc(alice.liteDb, `users/${alice.uid}/seedStatus/initial`)
+    await expect(setDoc(marker, { initialSeedsHandled: true, extra: true })).rejects.toThrow()
+    await setDoc(marker, { initialSeedsHandled: true })
+    expect((await getDoc(marker)).data()).toEqual({ initialSeedsHandled: true })
+    await expect(setDoc(marker, { initialSeedsHandled: false })).rejects.toThrow()
+    await expect(getDoc(doc(bob.liteDb, `users/${alice.uid}/seedStatus/initial`))).rejects.toThrow()
+  })
+})

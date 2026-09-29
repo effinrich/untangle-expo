@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import type { Collection } from "@tanstack/db"
 import type { OfflineExecutor } from "@tanstack/offline-transactions"
 import { randomUUID } from "expo-crypto"
@@ -43,13 +43,20 @@ export function useAppData(user: User | null, authReady: boolean) {
   const [source, setSource] = useState<DataSource>(GUEST_SOURCE)
   const [dataReady, setDataReady] = useState(false)
   const [syncError, setSyncError] = useState<string | null>(null)
+  const [syncRetry, setSyncRetry] = useState<(() => void) | null>(null)
   const userId = user?.uid ?? null
+  const activeUserId = useRef<string | null>(null)
+  useLayoutEffect(() => {
+    activeUserId.current = userId
+  }, [userId])
 
   useEffect(() => {
     if (!authReady) return
     let cancelled = false
+    const isActive = () => !cancelled && activeUserId.current === userId
     setDataReady(false)
     setSyncError(null)
+    setSyncRetry(null)
 
     if (!userId) {
       removeDeviceKeys(STORAGE_KEYS.userPrefix)
@@ -58,7 +65,7 @@ export function useAppData(user: User | null, authReady: boolean) {
         .then(() => Promise.all([ensureGuestSeeded(), guestParkingLotCollection.preload()]))
         .catch((error) => setSyncError(errorMessage(error)))
         .finally(() => {
-          if (!cancelled) setDataReady(true)
+          if (isActive()) setDataReady(true)
         })
       return () => {
         cancelled = true
@@ -70,23 +77,36 @@ export function useAppData(user: User | null, authReady: boolean) {
     const tasks = createUserTasksCollection(userId, onError)
     const parkingLot = createUserParkingLotCollection(userId, onError)
     const outbox = startUserOutbox(userId, tasks, parkingLot)
-    setSource({ tasks, parkingLot, outbox })
+    const userSource = { tasks, parkingLot, outbox }
+    setSource(GUEST_SOURCE)
 
-    Promise.all([tasks.preload(), parkingLot.preload(), outbox.waitForInit()])
+    const sourcesReady = Promise.all([
+      tasks.preload(),
+      parkingLot.preload(),
+      outbox.waitForInit(),
+      guestTasksCollection.preload(),
+      guestParkingLotCollection.preload(),
+    ])
       .catch(onError)
       .finally(() => {
-        if (!cancelled) setDataReady(true)
+        if (isActive()) setDataReady(true)
       })
     let retryTimer: ReturnType<typeof setTimeout> | undefined
     const migrate = (attempt: number) => {
-      moveGuestToAccount(userId, () => !cancelled).catch((error) => {
-        if (cancelled) return
-        const delay = Math.min(MIGRATION_RETRY_MS * 2 ** attempt, MIGRATION_RETRY_MAX_MS)
-        console.warn(`Guest data migration failed; retrying in ${delay / 1000}s:`, error)
-        retryTimer = setTimeout(() => migrate(attempt + 1), delay)
-      })
+      moveGuestToAccount(userId, isActive)
+        .then(() => {
+          if (isActive()) setSource(userSource)
+        })
+        .catch((error) => {
+          if (!isActive()) return
+          const delay = Math.min(MIGRATION_RETRY_MS * 2 ** attempt, MIGRATION_RETRY_MAX_MS)
+          console.warn(`Guest data migration failed; retrying in ${delay / 1000}s:`, error)
+          retryTimer = setTimeout(() => migrate(attempt + 1), delay)
+        })
     }
-    migrate(0)
+    void sourcesReady.then(() => {
+      if (isActive()) migrate(0)
+    })
 
     return () => {
       cancelled = true
@@ -107,7 +127,16 @@ export function useAppData(user: User | null, authReady: boolean) {
       autoCommit: false,
     })
     transaction.mutate(() => change(source))
-    transaction.commit().catch((error: unknown) => setSyncError(errorMessage(error)))
+    transaction.commit().then(
+      () => {
+        setSyncRetry(null)
+        setSyncError(null)
+      },
+      (error: unknown) => {
+        setSyncError(errorMessage(error))
+        setSyncRetry(() => () => write(change))
+      },
+    )
   }
 
   // AI-provided ids repeat across dumps and may not match the Firestore id rule.
@@ -152,6 +181,13 @@ export function useAppData(user: User | null, authReady: boolean) {
     dataReady,
     syncError,
     clearSyncError: () => setSyncError(null),
+    hasSyncRetry: syncRetry !== null,
+    retrySyncError: () => {
+      const retry = syncRetry
+      setSyncRetry(null)
+      setSyncError(null)
+      retry?.()
+    },
     hasUnsyncedChanges: () => (source.outbox?.getPendingCount() ?? 0) > 0,
     addTasks,
     setCompleted,

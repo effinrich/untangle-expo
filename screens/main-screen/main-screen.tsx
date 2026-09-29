@@ -70,8 +70,8 @@ export default function MainScreen() {
           <StatusBanner
             title="A change didn't save"
             message={`It may have been undone, so check your tasks and try again. (${app.syncError})`}
-            actionLabel="Dismiss"
-            onAction={app.clearSyncError}
+            actionLabel={app.hasSyncRetry ? "Retry change" : "Dismiss"}
+            onAction={app.hasSyncRetry ? app.retrySyncError : app.clearSyncError}
           />
         ) : null}
 

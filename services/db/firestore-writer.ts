@@ -17,35 +17,37 @@ const PERMANENT_CODES = new Set([
   "out-of-range",
 ])
 
-// Firestore caps a write batch at 500 operations; only larger transactions span batches.
+// Firestore caps a write batch at 500 operations. Larger transactions must fail as a whole.
 const BATCH_LIMIT = 500
 
-/** Outbox mutation function: writes a transaction's mutations to Firestore as one batch. */
+/** Outbox mutation function: writes a transaction's mutations to Firestore atomically. */
 export function firestoreMutationFn(
   firestore: Firestore,
   writers: Record<string, DocWriter>,
 ): OfflineMutationFn {
   return async ({ transaction }) => {
+    if (transaction.mutations.length > BATCH_LIMIT) {
+      throw new NonRetriableError(`Firestore transactions are limited to ${BATCH_LIMIT} writes`)
+    }
+
     const writes = transaction.mutations.map((mutation) => {
       const writer = writers[mutation.collection.id]
       if (!writer) throw new NonRetriableError(`No Firestore writer for ${mutation.collection.id}`)
       return { mutation, writer, ref: doc(firestore, writer.path(String(mutation.key))) }
     })
 
-    for (let start = 0; start < writes.length; start += BATCH_LIMIT) {
-      const batch = writeBatch(firestore)
-      for (const { mutation, writer, ref } of writes.slice(start, start + BATCH_LIMIT)) {
-        if (mutation.type === "delete") batch.delete(ref)
-        else batch.set(ref, writer.toDoc(mutation.modified))
+    const batch = writeBatch(firestore)
+    for (const { mutation, writer, ref } of writes) {
+      if (mutation.type === "delete") batch.delete(ref)
+      else batch.set(ref, writer.toDoc(mutation.modified))
+    }
+    try {
+      await batch.commit()
+    } catch (error) {
+      if (error instanceof FirebaseError && PERMANENT_CODES.has(error.code)) {
+        throw new NonRetriableError(error.message)
       }
-      try {
-        await batch.commit()
-      } catch (error) {
-        if (error instanceof FirebaseError && PERMANENT_CODES.has(error.code)) {
-          throw new NonRetriableError(error.message)
-        }
-        throw error
-      }
+      throw error
     }
   }
 }

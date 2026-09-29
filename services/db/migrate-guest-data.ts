@@ -60,7 +60,22 @@ export async function migrateGuestData(
 ): Promise<void> {
   const tasksPath = `users/${userId}/tasks`
   const existing = await getDocs(query(collection(firestore, tasksPath), limit(1)))
-  const tasks = existing.empty ? guest.tasks : guest.tasks.filter((task) => !isUntouchedSeed(task))
+  const seedStatusRef = doc(firestore, `users/${userId}/seedStatus/initial`)
+  const includeGuestSeeds = await runTransaction(firestore, async (transaction) => {
+    const status = await transaction.get(seedStatusRef)
+    if (status.exists()) return false
+
+    if (existing.empty) {
+      for (const seed of guest.tasks.filter(isUntouchedSeed)) {
+        transaction.set(doc(firestore, `${tasksPath}/${seed.id}`), toTaskDoc(seed, userId))
+      }
+    }
+    transaction.set(seedStatusRef, { initialSeedsHandled: true })
+    return existing.empty
+  })
+  const tasks = includeGuestSeeds
+    ? guest.tasks
+    : guest.tasks.filter((task) => !isUntouchedSeed(task))
 
   await createMissing(firestore, [
     ...tasks.map((task): DocEntry => [`${tasksPath}/${task.id}`, toTaskDoc(task, userId)]),
