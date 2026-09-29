@@ -45,14 +45,15 @@ bun run start   # iOS/Android
 │   ├── +html.tsx      # Web document shell
 │   ├── index.tsx      # Web: components/web-app; native: screens/main-screen
 │   ├── focus.tsx      # Web: components/web-app; native: screens/focus/focus
-│   ├── unstick.tsx    # Web: components/web-app; native: executive dysfunction reset
+│   ├── unstick.tsx    # Web: components/web-app; native: screens/unstick/unstick
 │   ├── +not-found.tsx # Web: components/web-app; native: link home
 │   └── api/           # Gemini API routes (+api.ts)
 ├── server/gemini.ts   # Shared Gemini client for API routes
 ├── src/               # Web UI (React DOM, Tailwind v4)
 ├── screens/
 │   ├── main-screen/   # Voice brain dump, energy sort, category pills, task list (+ hooks, partials)
-│   └── focus/         # Fullscreen "One Thing Radar" with timer & parking lot (+ hooks, partials)
+│   ├── focus/         # Fullscreen "One Thing Radar" with timer & parking lot (+ hooks, partials)
+│   └── unstick/       # Executive dysfunction reset (2-minute spark contract)
 ├── components/
 │   ├── web-app.tsx    # 'use dom' entry for the web UI
 │   └── task-card-mobile.tsx # Native task item with physical first action & haptics

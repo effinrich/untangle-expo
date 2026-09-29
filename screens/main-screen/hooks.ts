@@ -51,7 +51,9 @@ export function useGoogleAuth() {
 export function useMainTasks(user: User | null) {
   const [tasks, setTasks] = useState<MicroTask[]>(SEED_TASKS)
   const tasksRef = useRef(tasks)
-  tasksRef.current = tasks
+  useEffect(() => {
+    tasksRef.current = tasks
+  }, [tasks])
   const persistTask = (userId: string, task: MicroTask) => {
     saveTaskToFirestore(userId, task).catch((error) => {
       console.error(`Failed to sync task ${task.id}:`, error)

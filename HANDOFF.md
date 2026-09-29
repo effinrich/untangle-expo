@@ -63,7 +63,7 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 - **Core Screens** (route files in `app/` re-export screens from `screens/`):
   - `app/index.tsx` -> `screens/main-screen/main-screen.tsx` (native only; web renders `components/web-app.tsx`): Main dashboard with voice dump, energy-level quick sorting, category pills, and task list.
   - `app/focus.tsx` -> `screens/focus/focus.tsx` (native only; on web `/focus`, `/unstick`, and unknown paths render `components/web-app.tsx`, like the old SPA fallback): Fullscreen One Thing sprint with timer and mental parking lot.
-  - `app/unstick.tsx`: Native executive dysfunction reset flow (screen code still lives in the route file).
+  - `app/unstick.tsx` -> `screens/unstick/unstick.tsx`: Native executive dysfunction reset flow.
 - **Native APIs**:
   - `expo-av` for microphone recording (`hooks/use-voice-recorder.ts`) and `expo-file-system` for base64 encoding (`utils/audio.ts`).
   - `expo-haptics` for tactile dopamine rewards upon completing tasks or starting focus mode.
@@ -81,14 +81,14 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 │   ├── +html.tsx           # Web document shell
 │   ├── index.tsx           # Web: components/web-app; native: screens/main-screen
 │   ├── focus.tsx           # Web: components/web-app; native: screens/focus/focus
-│   ├── unstick.tsx         # Web: components/web-app; native: executive dysfunction reset
+│   ├── unstick.tsx         # Web: components/web-app; native: screens/unstick/unstick
 │   ├── +not-found.tsx      # Web: components/web-app; native: link home
 │   └── api/                # untangle, transcribe-audio, breakdown-task, unstick-me (+api.ts)
 ├── server/gemini.ts        # Shared Gemini client for API routes
 ├── components/
 │   ├── web-app.tsx         # 'use dom' entry that mounts src/web-app/app.tsx
 │   └── task-card-mobile.tsx
-├── screens/                # Native UI: main-screen/, focus/ (screen + hooks + partials)
+├── screens/                # Native UI: main-screen/, focus/, unstick/
 ├── hooks/                  # use-voice-recorder.ts (native)
 ├── utils/                  # audio.ts (base64), haptics.ts (native)
 ├── services/               # api.ts, firebase.ts (native)

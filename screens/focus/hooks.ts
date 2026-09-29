@@ -19,7 +19,9 @@ export function useFocusTimer(title: string | undefined, minutes: string | undef
 
   const [secondsRemaining, setSecondsRemaining] = useState(parseFocusSeconds(minutes))
   const [isRunning, setIsRunning] = useState(true)
-  secondsRemainingRef.current = secondsRemaining
+  useEffect(() => {
+    secondsRemainingRef.current = secondsRemaining
+  }, [secondsRemaining])
 
   useEffect(() => {
     let cancelled = false
