@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Alert } from "react-native"
 import * as Google from "expo-auth-session/providers/google"
 import { onAuthStateChanged, User } from "firebase/auth"
@@ -15,6 +15,8 @@ import firebaseConfig from "../../firebase-applet-config.json"
 import { SEED_TASKS } from "./consts"
 import { SortType } from "./types"
 import { filterAndSortTasks } from "./utils"
+
+const SEED_TASK_IDS = new Set(SEED_TASKS.map((task) => task.id))
 
 export function useGoogleAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -48,13 +50,59 @@ export function useGoogleAuth() {
 
 export function useMainTasks(user: User | null) {
   const [tasks, setTasks] = useState<MicroTask[]>(SEED_TASKS)
+  const tasksRef = useRef(tasks)
+  tasksRef.current = tasks
+  const persistTask = (userId: string, task: MicroTask) => {
+    saveTaskToFirestore(userId, task).catch((error) => {
+      console.error(`Failed to sync task ${task.id}:`, error)
+    })
+  }
 
   useEffect(() => {
     if (user) {
-      const unsubscribe = subscribeToUserTasks(user.uid, (fetchedTasks) => {
-        setTasks(fetchedTasks)
+      let unsubscribe: (() => void) | undefined
+      let cancelled = false
+      let isInitialSnapshot = true
+
+      const startSync = async () => {
+        const localTasks = tasksRef.current
+          .filter((task) => !SEED_TASK_IDS.has(task.id))
+          .map((task) => ({ ...task, userId: user.uid }))
+        const migrationResults = await Promise.allSettled(
+          localTasks.map((task) => saveTaskToFirestore(user.uid, task)),
+        )
+        const failedMigrations = migrationResults.filter((result) => result.status === "rejected")
+        if (failedMigrations.length > 0) {
+          console.error(`Failed to migrate ${failedMigrations.length} local task(s) to Firestore`)
+        }
+        if (cancelled) return
+
+        unsubscribe = subscribeToUserTasks(
+          user.uid,
+          (fetchedTasks) => {
+            if (isInitialSnapshot) {
+              setTasks((currentTasks) => {
+                const remoteIds = new Set(fetchedTasks.map((task) => task.id))
+                const localOnlyTasks = currentTasks.filter((task) => !remoteIds.has(task.id))
+                return [...fetchedTasks, ...localOnlyTasks]
+              })
+              isInitialSnapshot = false
+              return
+            }
+            setTasks(fetchedTasks)
+          },
+          (error) => console.error("Tasks sync error:", error),
+        )
+      }
+
+      startSync().catch((error) => {
+        console.error("Failed to start task sync:", error)
       })
-      return () => unsubscribe()
+
+      return () => {
+        cancelled = true
+        unsubscribe?.()
+      }
     } else {
       setTasks(SEED_TASKS)
     }
@@ -68,7 +116,7 @@ export function useMainTasks(user: User | null) {
     setTasks((prev) => [...newTasks, ...prev])
 
     if (user) {
-      newTasks.forEach((t) => saveTaskToFirestore(user.uid, t))
+      newTasks.forEach((task) => persistTask(user.uid, task))
     }
   }
 
@@ -82,7 +130,7 @@ export function useMainTasks(user: User | null) {
             completedAt: !t.completed ? new Date().toISOString() : undefined,
           }
           if (user) {
-            saveTaskToFirestore(user.uid, updated)
+            persistTask(user.uid, updated)
           }
           return updated
         }

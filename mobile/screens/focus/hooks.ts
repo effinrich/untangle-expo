@@ -15,56 +15,74 @@ Notifications.setNotificationHandler({
 // Countdown plus a local push notification scheduled for when the sprint ends
 export function useFocusTimer(title: string | undefined, minutes: string | undefined) {
   const notificationIdRef = useRef<string | null>(null)
-
-  useEffect(() => {
-    ;(async () => {
-      if (Platform.OS !== "web") {
-        const { status } = await Notifications.getPermissionsAsync()
-        if (status !== "granted") {
-          await Notifications.requestPermissionsAsync()
-        }
-      }
-    })()
-    return () => {
-      // Cleanup notification on unmount
-      if (notificationIdRef.current) {
-        Notifications.cancelScheduledNotificationAsync(notificationIdRef.current)
-      }
-    }
-  }, [])
+  const secondsRemainingRef = useRef(parseFocusSeconds(minutes))
 
   const [secondsRemaining, setSecondsRemaining] = useState(parseFocusSeconds(minutes))
   const [isRunning, setIsRunning] = useState(true)
+  secondsRemainingRef.current = secondsRemaining
 
   useEffect(() => {
-    // Handle local push notification scheduling
-    const scheduleNotification = async () => {
+    let cancelled = false
+
+    const updateScheduledNotification = async () => {
       if (Platform.OS === "web") return
-      if (isRunning && secondsRemaining > 0) {
-        if (notificationIdRef.current) {
+
+      if (!isRunning) {
+        if (secondsRemainingRef.current > 0 && notificationIdRef.current) {
           await Notifications.cancelScheduledNotificationAsync(notificationIdRef.current)
         }
-        const id = await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "Time is up! ⚡",
-            body: `Your focus sprint "${title}" is complete. Claim your dopamine!`,
-            sound: true,
-          },
-          trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-            seconds: secondsRemaining,
-          },
+        notificationIdRef.current = null
+        return
+      }
+
+      if (notificationIdRef.current) {
+        await Notifications.cancelScheduledNotificationAsync(notificationIdRef.current)
+      }
+      if (cancelled || secondsRemainingRef.current <= 0) return
+
+      const { status: existingStatus } = await Notifications.getPermissionsAsync()
+      const status =
+        existingStatus === "granted"
+          ? existingStatus
+          : (await Notifications.requestPermissionsAsync()).status
+      if (cancelled || status !== "granted") return
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Time is up! ⚡",
+          body: `Your focus sprint "${title}" is complete. Claim your dopamine!`,
+          sound: true,
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: secondsRemainingRef.current,
+        },
+      })
+      if (cancelled) {
+        await Notifications.cancelScheduledNotificationAsync(notificationId)
+        return
+      }
+      notificationIdRef.current = notificationId
+    }
+
+    updateScheduledNotification().catch((error) => {
+      console.error("Failed to update focus notification:", error)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [isRunning, title])
+
+  useEffect(() => {
+    return () => {
+      if (notificationIdRef.current) {
+        Notifications.cancelScheduledNotificationAsync(notificationIdRef.current).catch((error) => {
+          console.error("Failed to cancel focus notification:", error)
         })
-        notificationIdRef.current = id
-      } else {
-        if (notificationIdRef.current) {
-          await Notifications.cancelScheduledNotificationAsync(notificationIdRef.current)
-          notificationIdRef.current = null
-        }
       }
     }
-    scheduleNotification()
-  }, [isRunning, secondsRemaining, title])
+  }, [])
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null
