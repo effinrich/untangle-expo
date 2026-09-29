@@ -1,10 +1,4 @@
-import Constants from "expo-constants"
-
-// Resolves backend API URL (local dev or deployed Cloud Run)
-const API_BASE_URL =
-  Constants.expoConfig?.extra?.apiBaseUrl ||
-  (typeof window !== "undefined" && window.location?.origin) ||
-  "https://ais-dev-hlh4jxillgrxmqnwolrxfw-124269995328.us-east1.run.app"
+import { postJson } from "./api-client"
 
 export interface MicroTask {
   id: string
@@ -26,36 +20,35 @@ export interface MicroTask {
   createdAt: string
 }
 
+export interface UnstickResult {
+  chosenTaskId: string
+  reasoning: string
+  sparkChallenge: string
+}
+
 export async function untangleBrainDump(
   rawDump: string,
   userEnergyPreference: string = "all",
 ): Promise<{ summary: string; tasks: MicroTask[] }> {
-  const response = await fetch(`${API_BASE_URL}/api/untangle`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ rawDump, userEnergyPreference }),
-  })
-
-  if (!response.ok) {
-    throw new Error("Failed to untangle brain dump")
-  }
-
-  const data = await response.json()
+  const data = await postJson<{ summary?: string; tasks?: Record<string, unknown>[] }>(
+    "/api/untangle",
+    { rawDump, userEnergyPreference },
+  )
   return {
-    summary: data.summary,
+    summary: data.summary ?? "",
     tasks: (data.tasks || []).map((t: Record<string, unknown>, index: number) => ({
-      id: t.id || `task_${Date.now()}_${index}`,
-      title: t.title || "Untitled Action",
-      firstPhysicalStep: t.firstPhysicalStep || "Open relevant tool or app",
+      id: (t.id as string) || `task_${Date.now()}_${index}`,
+      title: (t.title as string) || "Untitled Action",
+      firstPhysicalStep: (t.firstPhysicalStep as string) || "Open relevant tool or app",
       estimatedMinutes: Number(t.estimatedMinutes) || 10,
-      energyLevel: t.energyLevel || "medium",
-      category: t.category || "Personal",
-      priority: t.priority || "medium",
-      whyItMatters: t.whyItMatters || "Frees up mental RAM",
+      energyLevel: (t.energyLevel as MicroTask["energyLevel"]) || "medium",
+      category: (t.category as string) || "Personal",
+      priority: (t.priority as MicroTask["priority"]) || "medium",
+      whyItMatters: (t.whyItMatters as string) || "Frees up mental RAM",
       substeps: Array.isArray(t.substeps)
-        ? t.substeps.map((sub: string, sIdx: number) => ({
+        ? t.substeps.map((sub: string | { text: string }, sIdx: number) => ({
             id: `sub_${Date.now()}_${index}_${sIdx}`,
-            text: typeof sub === "string" ? sub : (sub as { text: string }).text,
+            text: typeof sub === "string" ? sub : sub.text,
             completed: false,
           }))
         : [],
@@ -65,30 +58,10 @@ export async function untangleBrainDump(
   }
 }
 
-export async function transcribeAudio(audioBase64: string, mimeType: string = "audio/m4a") {
-  const response = await fetch(`${API_BASE_URL}/api/transcribe-audio`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ audioBase64, mimeType }),
-  })
-
-  if (!response.ok) {
-    throw new Error("Audio transcription failed")
-  }
-
-  return response.json()
+export function transcribeAudio(audioBase64: string, mimeType: string = "audio/m4a") {
+  return postJson<{ text?: string }>("/api/transcribe-audio", { audioBase64, mimeType })
 }
 
-export async function unstickMe(tasks: MicroTask[], currentMood: string) {
-  const response = await fetch(`${API_BASE_URL}/api/unstick-me`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ tasks, currentMood }),
-  })
-
-  if (!response.ok) {
-    throw new Error("Unstick recommendation failed")
-  }
-
-  return response.json()
+export function unstickMe(tasks: MicroTask[], currentMood: string) {
+  return postJson<UnstickResult>("/api/unstick-me", { tasks, currentMood })
 }

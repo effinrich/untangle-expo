@@ -68,7 +68,7 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
   - `expo-av` for microphone recording (`hooks/use-voice-recorder.ts`) and `expo-file-system` for base64 encoding (`utils/audio.ts`).
   - `expo-haptics` for tactile dopamine rewards upon completing tasks or starting focus mode.
   - `expo-notifications` for focus-sprint end notifications (`screens/focus/hooks.ts`).
-- **Shared Backend Client**: `services/api.ts` calls the Cloud Run deployment at `app.json` `extra.apiBaseUrl`. Native does not use the Expo API routes.
+- **Shared Backend Client**: `services/api.ts` posts through `services/api-client.ts`. Dev builds call the Expo dev server API routes (`app/api/*`) on the Metro host (from `expo-constants` `hostUri`); release builds use `EXPO_PUBLIC_API_BASE_URL` or `app.json` `extra.apiBaseUrl`. Non-JSON or failed responses throw a typed `ApiError` with a user-facing message. The current `extra.apiBaseUrl` is an AI Studio dev preview that redirects API calls to a cookie-check HTML page, so release builds need a real deployment URL.
 - **Auth & Sync**: `services/firebase.ts` (Google sign-in via `expo-auth-session`, Firestore task subscription).
 
 ---

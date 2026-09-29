@@ -5,6 +5,7 @@ import { onAuthStateChanged, User } from "firebase/auth"
 import { useVoiceRecorder } from "../../hooks/use-voice-recorder"
 import * as Haptics from "../../utils/haptics"
 import { MicroTask, untangleBrainDump } from "../../services/api"
+import { friendlyErrorMessage } from "../../services/api-client"
 import {
   auth,
   saveTaskToFirestore,
@@ -184,7 +185,7 @@ export function useBrainDumpPad(onUntangled: (tasks: MicroTask[]) => void) {
       setBrainDumpText("")
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     } catch (err: unknown) {
-      Alert.alert("Untangle Error", (err as Error)?.message || "Failed to process thoughts.")
+      Alert.alert("Couldn't untangle that", friendlyErrorMessage(err))
     } finally {
       setIsUntangling(false)
     }
