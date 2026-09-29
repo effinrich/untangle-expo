@@ -1,6 +1,6 @@
 import React from "react"
 import { Layers } from "lucide-react"
-import { getCategoryStyle } from "../../../data/categories"
+import { getCategoryStyle } from "../../../../data/categories"
 
 interface CategoryFilterStripProps {
   categoryNames: string[]

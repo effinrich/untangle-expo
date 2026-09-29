@@ -1,6 +1,6 @@
 import React from "react"
 import { Check } from "lucide-react"
-import { MicroTask } from "../../../types"
+import { MicroTask } from "../../../../types"
 
 interface TaskCardSubstepsProps {
   substeps: MicroTask["substeps"]

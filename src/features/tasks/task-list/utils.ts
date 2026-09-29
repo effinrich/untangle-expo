@@ -1,5 +1,5 @@
-import { EnergyLevel, MicroTask, PriorityLevel } from "../../types"
-import { DEFAULT_CATEGORIES } from "../../data/categories"
+import { EnergyLevel, MicroTask, PriorityLevel } from "../../../types"
+import { DEFAULT_CATEGORIES } from "../../../data/categories"
 import { SORT_OPTIONS, energyValues, priorityValues } from "./consts"
 import { FilterTab, NewTaskInput, SortOption } from "./types"
 

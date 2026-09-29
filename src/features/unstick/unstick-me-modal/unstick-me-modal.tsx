@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { ArrowRight, BatteryCharging, Check, Sparkles, Wand2, X, Zap } from "lucide-react"
-import { MicroTask, UnstickResult } from "../../types"
-import { apiUnstickMe } from "../../services/api"
+import { MicroTask, UnstickResult } from "../../../types"
+import { apiUnstickMe } from "../../../services/api"
 
 interface UnstickMeModalProps {
   isOpen: boolean

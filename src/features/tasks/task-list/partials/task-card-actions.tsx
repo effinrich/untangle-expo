@@ -1,6 +1,6 @@
 import React from "react"
 import { ChevronDown, ChevronUp, Play, Scissors, Trash2 } from "lucide-react"
-import { MicroTask } from "../../../types"
+import { MicroTask } from "../../../../types"
 
 interface TaskCardActionsProps {
   task: MicroTask

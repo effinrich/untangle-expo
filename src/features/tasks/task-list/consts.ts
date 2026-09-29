@@ -1,5 +1,5 @@
 import confetti from "canvas-confetti"
-import { EnergyLevel, PriorityLevel } from "../../types"
+import { EnergyLevel, PriorityLevel } from "../../../types"
 import { SortOptionConfig } from "./types"
 
 export const SORT_OPTIONS: SortOptionConfig[] = [

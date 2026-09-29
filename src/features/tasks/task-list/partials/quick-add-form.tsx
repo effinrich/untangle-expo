@@ -1,5 +1,5 @@
 import React from "react"
-import { EnergyLevel, PriorityLevel } from "../../../types"
+import { EnergyLevel, PriorityLevel } from "../../../../types"
 import { QuickAddFormState } from "../hooks"
 
 interface QuickAddFormProps {

@@ -15,9 +15,9 @@ import {
   Zap,
 } from "lucide-react"
 import confetti from "canvas-confetti"
-import { AmbientSoundType, MicroTask, ParkingLotItem } from "../../types"
-import { ambientEngine } from "../../services/ambient"
-import { soundService } from "../../services/sound"
+import { AmbientSoundType, MicroTask, ParkingLotItem } from "../../../types"
+import { ambientEngine } from "../../../services/ambient"
+import { soundService } from "../../../services/sound"
 
 interface FocusRadarModalProps {
   task: MicroTask

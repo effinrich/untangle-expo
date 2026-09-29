@@ -1,6 +1,6 @@
 import React from "react"
 import { Clock } from "lucide-react"
-import { MicroTask } from "../../../types"
+import { MicroTask } from "../../../../types"
 import { energyColors, priorityStyles } from "../consts"
 import { TaskCardCategoryMenu } from "./task-card-category-menu"
 

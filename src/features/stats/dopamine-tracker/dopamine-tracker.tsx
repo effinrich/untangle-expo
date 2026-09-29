@@ -1,7 +1,7 @@
 import React from "react"
 import { BatteryCharging, CheckCircle, Clock, Flame, Layers, Tag } from "lucide-react"
-import { MicroTask } from "../../types"
-import { DEFAULT_CATEGORIES, getCategoryStyle } from "../../data/categories"
+import { MicroTask } from "../../../types"
+import { DEFAULT_CATEGORIES, getCategoryStyle } from "../../../data/categories"
 
 interface DopamineTrackerProps {
   tasks: MicroTask[]

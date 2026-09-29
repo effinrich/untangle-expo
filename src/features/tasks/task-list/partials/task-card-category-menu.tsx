@@ -1,7 +1,7 @@
 import React from "react"
 import { ChevronDown, Tag } from "lucide-react"
-import { MicroTask } from "../../../types"
-import { DEFAULT_CATEGORIES, getCategoryStyle } from "../../../data/categories"
+import { MicroTask } from "../../../../types"
+import { DEFAULT_CATEGORIES, getCategoryStyle } from "../../../../data/categories"
 
 interface TaskCardCategoryMenuProps {
   task: MicroTask

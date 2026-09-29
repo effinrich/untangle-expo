@@ -14,9 +14,9 @@ import {
   Tag,
   Wand2,
 } from "lucide-react"
-import { BRAIN_DUMP_TEMPLATES } from "../../data/seed-data"
-import { DEFAULT_CATEGORIES } from "../../data/categories"
-import { EnergyLevel } from "../../types"
+import { BRAIN_DUMP_TEMPLATES } from "../../../data/seed-data"
+import { DEFAULT_CATEGORIES } from "../../../data/categories"
+import { EnergyLevel } from "../../../types"
 import { useAudioRecorder } from "../audio/useAudioRecorder"
 
 interface BrainDumpInputProps {

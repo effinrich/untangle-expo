@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react"
-import { soundService } from "../../services/sound"
+import { soundService } from "../../../services/sound"
 import { SORT_OPTIONS } from "./consts"
 import { useQuickAddForm } from "./hooks"
 import { FilterTab, SortOption, TaskListProps } from "./types"
