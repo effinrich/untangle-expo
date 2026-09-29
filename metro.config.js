@@ -7,7 +7,11 @@ const config = withNativeWind(getDefaultConfig(__dirname), { input: "./global.cs
 const resolveRequest = config.resolver.resolveRequest
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (platform === "web" && moduleName.endsWith("/global.css")) return { type: "empty" }
-  return (resolveRequest ?? context.resolveRequest)(context, moduleName, platform)
+  // @tanstack/db requires pacer-lite subpaths that only exist in its package "exports" map.
+  const scoped = moduleName.startsWith("@tanstack/pacer-lite/")
+    ? { ...context, unstable_enablePackageExports: true }
+    : context
+  return (resolveRequest ?? context.resolveRequest)(scoped, moduleName, platform)
 }
 
 module.exports = config
