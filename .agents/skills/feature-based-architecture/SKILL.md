@@ -9,7 +9,7 @@ A component file reads as markup plus wiring. Types, constants, hooks, and logic
 
 ## Layout rules
 
-1. **Every file and folder name is kebab-case.** `task-list.tsx`, `use-audio-recorder.ts`, never `TaskList.tsx` or `useAudioRecorder.ts`. Enforce with lint rule `unicorn/filename-case` (`kebabCase`) set to error.
+1. **Every file and folder name is kebab-case.** `task-list.tsx`, `use-local-storage.ts`, never `TaskList.tsx` or `useLocalStorage.ts`. Enforce with lint rule `unicorn/filename-case` (`kebabCase`) set to error.
 2. **Every component or screen lives in a like-named folder**: `task-list/task-list.tsx`. The folder is where its sibling files, test (`task-list.test.tsx`), and story (`task-list.stories.tsx`) go. Partials are the exception: flat `partials/<part>.tsx` files. Entry files that are not components (`main.tsx`, `index.ts`) stay plain files; `App` is a component (`src/app/app.tsx`).
 
 A feature is a kebab folder; each component or screen inside it is a kebab folder named after itself.
@@ -55,7 +55,7 @@ Naming:
 - One `types.ts` / `consts.ts` / `hooks.ts` / `utils.ts` per folder, covering every component in it. Create each only when it has content.
 - `partials/` has no `types.ts` of its own; flat partials use the component folder's files. Prefer flat. Give a partial its own folder only when its types or consts would collide with, or crowd out, the parent's.
 - Shared files are named for the concept (`task.ts`, `use-tasks.ts`), never for a feature (`tasks.types.ts`). No `shared/types/index.ts` holding every type.
-- Repos that already keep app-level code elsewhere (`src/services/`, `src/types/`, `src/data/`) keep those files; new cross-feature code goes in `src/shared/`.
+- Repos that already keep app-level code elsewhere (for example a top-level `services/` or `types/` folder) keep those files; new cross-feature code goes in `src/shared/`.
 
 ## Extraction rule
 
@@ -76,12 +76,12 @@ When an importer appears at a wider level, move the item up then, not before.
 2. **Component files are markup plus wiring**: state declarations, hook calls, short handlers that call props or helpers, and composed partials. Literal config, data shaping, and multi-step handlers move out.
 3. **Props interfaces** may stay in the component file. When a hook, helper, or second file needs the props type, it moves to the folder's `types.ts`.
 4. **Keep files under ~200 lines.** A component that fetches, derives state, and renders a long tree gets split even when shorter: hooks out, helpers out, sections into partials. Non-component modules over the ceiling split by concern into plain-named siblings; a coherent flat data table may stay whole.
-5. **Partials are presentational.** Props in, callbacks out; small local UI state is fine. They render data passed as props; user-triggered actions (a save, an AI call) may come from a hook in `hooks.ts`.
+5. **Partials are presentational.** Props in, callbacks out; small local UI state is fine. They render data passed as props; user-triggered actions (a save, a delete) may come from a hook in `hooks.ts`.
 6. **Effects and server state live in hook files** (a folder's `hooks.ts`, or `src/shared/hooks/`).
 7. **Raw `fetch` / `axios` inside a feature lives in `api.ts`.** App-wide clients live outside features.
 8. **Helpers are pure**: no React, dependencies passed as parameters. Types are explicit; `any` only with a lint-disable comment.
 9. **Features import only from themselves and shared code**, never from a sibling feature.
-10. **Docs change with the code they describe.** When a file moves or is renamed, update every doc path that names it (README, handoff notes, agent instructions, this skill's examples) in the same change. No follow-up.
+10. **Docs change with the code they describe.** When a file moves or is renamed, update every doc path that names it (README, other project docs, agent instructions and rule files) in the same change. No follow-up.
 
 ## Splitting a large component
 
