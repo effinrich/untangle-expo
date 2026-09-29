@@ -156,6 +156,8 @@ Put them in the parent component folder's files; that is the default. Give the p
 
 An illustration, not a real project: a feature with a list screen and a detail screen. Copy the shape; the names are placeholders.
 
+From the app this skill was extracted from (a task planner). In another project, copy the shape; these files will not exist there.
+
 ```
 src/features/tasks/
   task-list/
