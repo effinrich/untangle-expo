@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { QueryClient, QueryClientProvider, useMutation } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import {
   BrainCircuit,
   CheckCircle2,
@@ -19,11 +19,11 @@ import {
 } from "lucide-react"
 import { User } from "firebase/auth"
 import { BrainDumpInput } from "./features/braindump/BrainDumpInput"
-import { TaskList } from "./features/tasks/TaskList"
+import { TaskList } from "./features/tasks/task-list"
 import { FocusRadarModal } from "./features/focus/FocusRadarModal"
 import { UnstickMeModal } from "./features/unstick/UnstickMeModal"
 import { DopamineTracker } from "./features/stats/DopamineTracker"
-import { INITIAL_SEED_TASKS } from "./data/seedData"
+import { INITIAL_SEED_TASKS } from "./data/seed-data"
 import { DEFAULT_CATEGORIES } from "./data/categories"
 import { MicroTask, ParkingLotItem } from "./types"
 import { apiUntangleBrainDump } from "./services/api"
@@ -41,9 +41,7 @@ import {
 } from "./services/firebase"
 import calmAmbientImg from "./assets/images/calm_focus_ambient_1790313003505.jpg"
 
-const queryClient = new QueryClient()
-
-function TangleApp() {
+export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [authLoading, setAuthLoading] = useState(true)
   const [firestoreConnected, setFirestoreConnected] = useState(false)
@@ -329,33 +327,29 @@ function TangleApp() {
           <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-neutral-400">
             <button
               onClick={() => setActiveView("all")}
-              className={`hover:text-neutral-100 transition-colors ${
-                activeView === "all" ? "text-amber-400 underline underline-offset-4" : ""
-              }`}
+              className={`hover:text-neutral-100 transition-colors ${activeView === "all" ? "text-amber-400 underline underline-offset-4" : ""
+                }`}
             >
               Workspace
             </button>
             <button
               onClick={() => setActiveView("dump")}
-              className={`hover:text-neutral-100 transition-colors ${
-                activeView === "dump" ? "text-amber-400 underline underline-offset-4" : ""
-              }`}
+              className={`hover:text-neutral-100 transition-colors ${activeView === "dump" ? "text-amber-400 underline underline-offset-4" : ""
+                }`}
             >
               Brain Dump
             </button>
             <button
               onClick={() => setActiveView("tasks")}
-              className={`hover:text-neutral-100 transition-colors ${
-                activeView === "tasks" ? "text-amber-400 underline underline-offset-4" : ""
-              }`}
+              className={`hover:text-neutral-100 transition-colors ${activeView === "tasks" ? "text-amber-400 underline underline-offset-4" : ""
+                }`}
             >
               Micro-Tasks
             </button>
             <button
               onClick={() => setActiveView("momentum")}
-              className={`hover:text-neutral-100 transition-colors ${
-                activeView === "momentum" ? "text-amber-400 underline underline-offset-4" : ""
-              }`}
+              className={`hover:text-neutral-100 transition-colors ${activeView === "momentum" ? "text-amber-400 underline underline-offset-4" : ""
+                }`}
             >
               Momentum Ledger
             </button>
@@ -449,7 +443,7 @@ function TangleApp() {
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
               onError={(e) => {
-                ;(e.target as HTMLElement).style.display = "none"
+                ; (e.target as HTMLElement).style.display = "none"
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/80 to-transparent" />
@@ -606,13 +600,5 @@ function TangleApp() {
         </div>
       </footer>
     </div>
-  )
-}
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TangleApp />
-    </QueryClientProvider>
   )
 }

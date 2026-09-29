@@ -24,7 +24,7 @@
     "react/no-array-index-key": "off",
     "react/react-in-jsx-scope": "off",
     "react/no-children-prop": "warn",
-    "react/no-multi-comp": "off",
+    "react/no-multi-comp": "error",
     "react/no-unescaped-entities": "error",
     "react/jsx-no-constructed-context-values": "warn",
     "react/jsx-no-target-blank": "error",

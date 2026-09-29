@@ -43,11 +43,11 @@ The repository is structured as a full-stack monorepo containing the **Web App (
 - **Frontend (**`src/`**)**:
   - `src/App.tsx`: Central coordinator managing real-time Firestore sync, guest local storage fallback, Google Auth state, and modal triggers.
   - `src/features/braindump/BrainDumpInput.tsx`: Input pad with voice dictation via `useAudioRecorder.ts` and template sparks.
-  - `src/features/tasks/TaskList.tsx`: Micro-task list featuring:
+  - `src/features/tasks/task-list.tsx`: Micro-task list featuring:
     - **Mental State & Energy Sort Bar**: Sort options (`energy-asc`, `energy-desc`, `time-asc`, `priority-desc`, `newest`).
     - **Priority Area Filter Strip**: Work, Personal, Health, Finance, Errands, Creative.
     - **Quick Add Form & Markdown Exporter**.
-  - `src/features/tasks/TaskCard.tsx`: Task component rendering physical first step banner, priority badges, category dropdown, and one-click focus launcher.
+  - `src/features/tasks/partials/task-card.tsx`: Task component rendering physical first step banner, priority badges, category dropdown, and one-click focus launcher.
   - `src/features/focus/FocusRadarModal.tsx`: One-task radar with brown noise synthesis (`sound.ts`) and Mental Parking Lot drawer.
   - `src/features/unstick/UnstickMeModal.tsx`: Unstick engine for decision fatigue.
   - `src/features/stats/DopamineTracker.tsx`: Guilt-free momentum ledger tracking minutes in flow and completion percentages across priority areas.
