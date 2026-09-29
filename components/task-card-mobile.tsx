@@ -1,6 +1,6 @@
 import React from "react"
-import { Pressable, Text, View } from "react-native"
-import { Check, Play } from "../theme/icons"
+import { Alert, Pressable, Text, View } from "react-native"
+import { Check, Play, Trash2 } from "../theme/icons"
 import * as Haptics from "../utils/haptics"
 import { MicroTask } from "../services/api"
 import colors from "../theme/colors"
@@ -10,12 +10,13 @@ interface TaskCardMobileProps {
   task: MicroTask
   onSetCompleted: (id: string, completed: boolean) => void
   onStartFocus: (task: MicroTask) => void
+  onDelete: (id: string) => void
 }
 
 const ENERGY_LABEL = { low: "Low energy", medium: "Medium energy", high: "High energy" }
 const ENERGY_DOT = { low: "bg-success", medium: "bg-accent", high: "bg-danger" }
 
-export function TaskCardMobile({ task, onSetCompleted, onStartFocus }: TaskCardMobileProps) {
+export function TaskCardMobile({ task, onSetCompleted, onStartFocus, onDelete }: TaskCardMobileProps) {
   const meta = `${task.category} · ${ENERGY_LABEL[task.energyLevel]} · ${task.estimatedMinutes} min`
 
   const toggle = () => {
@@ -23,6 +24,12 @@ export function TaskCardMobile({ task, onSetCompleted, onStartFocus }: TaskCardM
     else Haptics.selectionAsync()
     onSetCompleted(task.id, !task.completed)
   }
+
+  const confirmDelete = () =>
+    Alert.alert("Delete this step?", task.title, [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: () => onDelete(task.id) },
+    ])
 
   return (
     <View className={`flex-row gap-2 p-3 rounded-2xl ${task.completed ? "bg-canvas border border-divider" : "bg-surface"}`}>
@@ -88,6 +95,15 @@ export function TaskCardMobile({ task, onSetCompleted, onStartFocus }: TaskCardM
           />
         )}
       </View>
+
+      <Pressable
+        onPress={confirmDelete}
+        accessibilityRole="button"
+        accessibilityLabel={`Delete ${task.title}`}
+        className="w-11 h-11 items-center justify-center active:opacity-70"
+      >
+        <Trash2 size={18} color={colors["text-secondary"]} accessible={false} />
+      </Pressable>
     </View>
   )
 }

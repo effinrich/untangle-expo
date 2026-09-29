@@ -13,6 +13,7 @@ interface MainTaskListProps {
   onToggleDone: () => void
   onSetCompleted: (id: string, completed: boolean) => void
   onStartFocus: (task: MicroTask) => void
+  onDelete: (id: string) => void
 }
 
 export function MainTaskList({
@@ -22,6 +23,7 @@ export function MainTaskList({
   onToggleDone,
   onSetCompleted,
   onStartFocus,
+  onDelete,
 }: MainTaskListProps) {
   const DoneChevron = showDone ? ChevronUp : ChevronDown
 
@@ -34,7 +36,12 @@ export function MainTaskList({
           exiting={FadeOut}
           layout={LinearTransition}
         >
-          <TaskCardMobile task={task} onSetCompleted={onSetCompleted} onStartFocus={onStartFocus} />
+          <TaskCardMobile
+            task={task}
+            onSetCompleted={onSetCompleted}
+            onStartFocus={onStartFocus}
+            onDelete={onDelete}
+          />
         </Animated.View>
       ))}
 
@@ -60,6 +67,7 @@ export function MainTaskList({
                 task={task}
                 onSetCompleted={onSetCompleted}
                 onStartFocus={onStartFocus}
+                onDelete={onDelete}
               />
             </Animated.View>
           ))

@@ -3,7 +3,7 @@ import { Pressable, Text, View } from "react-native"
 import { X } from "../../../theme/icons"
 import { Button } from "../../../components/button/button"
 import { TextField } from "../../../components/text-field/text-field"
-import { ParkedThought } from "../../../hooks/use-parking-lot-store"
+import type { ParkedThought } from "../../../services/db/types"
 import colors from "../../../theme/colors"
 
 interface FocusParkingLotProps {

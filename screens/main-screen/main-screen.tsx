@@ -4,6 +4,7 @@ import { Redirect, Stack, useRouter } from "expo-router"
 import { Screen } from "../../components/screen/screen"
 import { StatusBanner } from "../../components/status-banner/status-banner"
 import { useAppState } from "../../hooks/app-context"
+import { useTasks } from "../../hooks/use-live-data"
 import { EXAMPLE_DUMP } from "./consts"
 import { useBrainDump, useTaskView } from "./hooks"
 import { MainAccountButton } from "./partials/main-account-button"
@@ -21,21 +22,22 @@ export default function MainScreen() {
   const router = useRouter()
   const app = useAppState()
   const dump = useBrainDump(app.addTasks)
-  const view = useTaskView(app.tasks)
+  const tasks = useTasks()
+  const view = useTaskView(tasks)
   const [returning, setReturning] = useState(false)
   const returningCaptured = useRef(false)
 
   useEffect(() => {
-    if (!app.tasksReady || returningCaptured.current) return
+    if (!app.dataReady || returningCaptured.current) return
     returningCaptured.current = true
-    setReturning(app.tasks.some((task) => !task.completed))
-  }, [app.tasks, app.tasksReady])
+    setReturning(tasks.some((task) => !task.completed))
+  }, [tasks, app.dataReady])
 
   if (app.onboardingComplete === null) return null
   if (!app.onboardingComplete) return <Redirect href="/onboarding" />
 
   const untangling = dump.status.state === "untangling"
-  const hasTasks = app.tasks.length > 0
+  const hasTasks = tasks.length > 0
 
   return (
     <>
@@ -47,6 +49,7 @@ export default function MainScreen() {
               canSignIn={app.canSignIn}
               onSignIn={app.signIn}
               onSignOut={app.signOut}
+              hasUnsyncedChanges={app.hasUnsyncedChanges}
             />
           ),
         }}
@@ -101,6 +104,7 @@ export default function MainScreen() {
           onToggleDone={view.toggleDone}
           onSetCompleted={app.setCompleted}
           onStartFocus={(task) => router.push(focusHref(task.id))}
+          onDelete={app.deleteTask}
         />
       </Screen>
 

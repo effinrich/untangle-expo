@@ -11,10 +11,9 @@ import {
 // @ts-expect-error getReactNativePersistence is exported by @firebase/auth's react-native condition.
 import { getReactNativePersistence } from "@firebase/auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { getFirestore, doc, collection, onSnapshot, setDoc, deleteDoc } from "firebase/firestore"
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore"
 import { Platform } from "react-native"
 import firebaseConfig from "../firebase-applet-config.json"
-import { MicroTask } from "./api"
 
 export const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId)
@@ -30,138 +29,26 @@ if (Platform.OS === "web") {
 }
 export const auth = _auth
 
-export enum OperationType {
-  CREATE = "create",
-  UPDATE = "update",
-  DELETE = "delete",
-  LIST = "list",
-  GET = "get",
-  WRITE = "write",
-}
-
-export interface FirestoreErrorInfo {
-  error: string
-  operationType: OperationType
-  path: string | null
-  authInfo: {
-    userId?: string | null
-    email?: string | null
-    emailVerified?: boolean | null
-    isAnonymous?: boolean | null
-    tenantId?: string | null
-  }
-}
-
-export function handleFirestoreError(
-  error: unknown,
-  operationType: OperationType,
-  path: string | null,
-): Error {
-  const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
-    authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
-      tenantId: auth.currentUser?.tenantId,
-    },
-    operationType,
-    path,
-  }
-  console.error("Firestore Error: ", JSON.stringify(errInfo))
-  return new Error(JSON.stringify(errInfo))
+// Create-only: firestore.rules keep profile createdAt immutable, so re-sign-ins must not rewrite it.
+async function ensureUserProfile(user: User): Promise<void> {
+  const profileRef = doc(db, "users", user.uid)
+  if ((await getDoc(profileRef)).exists()) return
+  await setDoc(profileRef, {
+    userId: user.uid,
+    email: user.email || "",
+    displayName: user.displayName || "ADHD Planner",
+    photoURL: user.photoURL || "",
+    createdAt: new Date().toISOString(),
+  })
 }
 
 export async function signInWithGoogleCredential(idToken: string): Promise<User> {
-  try {
-    const credential = GoogleAuthProvider.credential(idToken)
-    const result = await signInWithCredential(auth, credential)
-    const user = result.user
-
-    const userDocRef = doc(db, "users", user.uid)
-    await setDoc(
-      userDocRef,
-      {
-        userId: user.uid,
-        email: user.email || "",
-        displayName: user.displayName || "ADHD Planner",
-        photoURL: user.photoURL || "",
-        createdAt: new Date().toISOString(),
-      },
-      { merge: true },
-    )
-
-    return user
-  } catch (err) {
-    console.error("Sign in failed:", err)
-    throw err
-  }
+  const credential = GoogleAuthProvider.credential(idToken)
+  const { user } = await signInWithCredential(auth, credential)
+  ensureUserProfile(user).catch((error) => console.warn("Couldn't create user profile:", error))
+  return user
 }
 
 export async function signOutUser(): Promise<void> {
   await signOut(auth)
-}
-
-export function subscribeToUserTasks(
-  userId: string,
-  onTasksUpdated: (tasks: MicroTask[]) => void,
-  onError?: (err: unknown) => void,
-): () => void {
-  const path = `users/${userId}/tasks`
-  const tasksRef = collection(db, "users", userId, "tasks")
-
-  const unsubscribe = onSnapshot(
-    tasksRef,
-    (snapshot) => {
-      const tasks: MicroTask[] = []
-      snapshot.forEach((docSnap) => {
-        tasks.push(docSnap.data() as MicroTask)
-      })
-
-      tasks.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      onTasksUpdated(tasks)
-    },
-    (error) => {
-      const firestoreError = handleFirestoreError(error, OperationType.LIST, path)
-      onError?.(firestoreError)
-    },
-  )
-
-  return unsubscribe
-}
-
-export async function saveTaskToFirestore(userId: string, task: MicroTask): Promise<void> {
-  const path = `users/${userId}/tasks/${task.id}`
-  try {
-    const taskDocRef = doc(db, "users", userId, "tasks", task.id)
-    const sanitizedTask = {
-      id: task.id,
-      userId,
-      title: task.title.slice(0, 300),
-      firstPhysicalStep: task.firstPhysicalStep.slice(0, 500),
-      estimatedMinutes: Number(task.estimatedMinutes) || 5,
-      energyLevel: task.energyLevel || "medium",
-      category: task.category || "Personal",
-      priority: task.priority || "medium",
-      whyItMatters: (task.whyItMatters || "").slice(0, 500),
-      substeps: task.substeps || [],
-      completed: Boolean(task.completed),
-      completedAt: task.completedAt || null,
-      createdAt: task.createdAt || new Date().toISOString(),
-    }
-    await setDoc(taskDocRef, sanitizedTask, { merge: true })
-  } catch (error) {
-    throw handleFirestoreError(error, OperationType.WRITE, path)
-  }
-}
-
-export async function deleteTaskFromFirestore(userId: string, taskId: string): Promise<void> {
-  const path = `users/${userId}/tasks/${taskId}`
-  try {
-    const taskDocRef = doc(db, "users", userId, "tasks", taskId)
-    await deleteDoc(taskDocRef)
-  } catch (error) {
-    throw handleFirestoreError(error, OperationType.DELETE, path)
-  }
 }

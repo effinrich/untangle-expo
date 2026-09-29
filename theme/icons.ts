@@ -16,6 +16,7 @@ export { default as RotateCcw } from "lucide-react-native/dist/esm/icons/rotate-
 export { default as SlidersHorizontal } from "lucide-react-native/dist/esm/icons/sliders-horizontal"
 export { default as Sparkles } from "lucide-react-native/dist/esm/icons/sparkles"
 export { default as Square } from "lucide-react-native/dist/esm/icons/square"
+export { default as Trash2 } from "lucide-react-native/dist/esm/icons/trash-2"
 export { default as WifiOff } from "lucide-react-native/dist/esm/icons/wifi-off"
 export { default as X } from "lucide-react-native/dist/esm/icons/x"
 export { default as Zap } from "lucide-react-native/dist/esm/icons/zap"

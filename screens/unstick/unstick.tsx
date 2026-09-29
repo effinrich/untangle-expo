@@ -6,7 +6,7 @@ import { Button } from "../../components/button/button"
 import { OptionRow } from "../../components/option-row/option-row"
 import { Screen } from "../../components/screen/screen"
 import { StatusBanner } from "../../components/status-banner/status-banner"
-import { useAppState } from "../../hooks/app-context"
+import { useOpenTasks } from "../../hooks/use-live-data"
 import { focusHref } from "../../utils/focus-href"
 import { MOODS, SPARK_MINUTES } from "./consts"
 import { useUnstick } from "./hooks"
@@ -14,8 +14,7 @@ import { UnstickResultCard } from "./partials/unstick-result-card"
 
 export default function UnstickScreen() {
   const router = useRouter()
-  const { tasks } = useAppState()
-  const openTasks = tasks.filter((t) => !t.completed)
+  const openTasks = useOpenTasks()
   const unstick = useUnstick(openTasks)
 
   const closeButton = () => <Button label="Close" variant="ghost" onPress={() => router.back()} />

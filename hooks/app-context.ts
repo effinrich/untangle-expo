@@ -1,12 +1,10 @@
 import { createContext, useContext } from "react"
+import type { useAppData } from "./use-app-data"
 import { useAuthSession } from "./use-auth-session"
 import { useOnboardingFlag } from "./use-onboarding-flag"
-import { useParkingLotStore } from "./use-parking-lot-store"
-import { useTaskStore } from "./use-task-store"
 
 export type AppState = ReturnType<typeof useAuthSession> &
-  ReturnType<typeof useTaskStore> &
-  ReturnType<typeof useParkingLotStore> &
+  ReturnType<typeof useAppData> &
   ReturnType<typeof useOnboardingFlag>
 
 export const AppContext = createContext<AppState | null>(null)
