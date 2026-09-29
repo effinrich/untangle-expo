@@ -52,7 +52,7 @@ export function useFocusTimer(title: string | undefined, minutes: string | undef
       const notificationId = await Notifications.scheduleNotificationAsync({
         content: {
           title: "Time is up! ⚡",
-          body: `Your focus sprint "${title}" is complete. Claim your dopamine!`,
+          body: `Your focus sprint "${title ?? "your next step"}" is complete. Claim your dopamine!`,
           sound: true,
         },
         trigger: {
@@ -107,18 +107,4 @@ export function useFocusTimer(title: string | undefined, minutes: string | undef
   }
 
   return { secondsRemaining, isRunning, toggleRunning }
-}
-
-export function useParkingLot() {
-  const [parkingThought, setParkingThought] = useState("")
-  const [parkingLot, setParkingLot] = useState<string[]>([])
-
-  const parkThought = () => {
-    if (!parkingThought.trim()) return
-    setParkingLot((prev) => [parkingThought.trim(), ...prev])
-    setParkingThought("")
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-  }
-
-  return { parkingThought, setParkingThought, parkingLot, parkThought }
 }
