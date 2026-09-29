@@ -13,6 +13,7 @@ import { resolve, join, relative, dirname, basename, sep } from "node:path"
 const ALLOWED_SIBLING_FILES = new Set(["types.ts", "consts.ts", "api.ts", "hooks.ts", "utils.ts"])
 const SHARED_DIRS = ["lib", "shared"]
 const KEBAB = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const STANDALONE_HOOK = /^use-[a-z0-9]+(?:-[a-z0-9]+)*\.ts$/
 const COMPANION_SUFFIXES = [".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx", ".stories.tsx"]
 
 const HOOK_PATTERNS = [
@@ -76,12 +77,12 @@ async function validateFeature(root) {
   const { files, dirs } = await list(root)
 
   for (const f of files) {
-    if (ALLOWED_SIBLING_FILES.has(f)) continue
+    if (ALLOWED_SIBLING_FILES.has(f) || STANDALONE_HOOK.test(f)) continue
     violations.push({
       file: join(root, f),
       message: f.endsWith(".tsx")
         ? `component at feature root — move it to ${basename(f, ".tsx")}/${f}`
-        : `unexpected root file (allowed: ${[...ALLOWED_SIBLING_FILES].join(", ")})`,
+        : `unexpected root file (allowed: ${[...ALLOWED_SIBLING_FILES].join(", ")}, kebab-case use-*.ts hooks)`,
     })
   }
 
@@ -160,9 +161,10 @@ async function validateContents(root) {
     const content = await readFile(file, "utf8")
     const codeOnly = stripComments(content)
     const name = basename(file)
+    const isHookFile = name === "hooks.ts" || STANDALONE_HOOK.test(name)
 
     for (const { name: pat, re } of HOOK_PATTERNS) {
-      if (re.test(codeOnly) && name !== "hooks.ts") {
+      if (re.test(codeOnly) && !isHookFile) {
         violations.push({ file, message: `${pat} called outside hooks.ts` })
       }
     }

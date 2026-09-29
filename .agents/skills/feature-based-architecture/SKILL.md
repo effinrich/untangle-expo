@@ -36,6 +36,8 @@ src/features/<feature>/
   types.ts  consts.ts  hooks.ts  utils.ts  api.ts   Only for items shared by several component folders.
 ```
 
+Feature-specific standalone hooks may also be kebab-case `use-*.ts` files at the feature root. Hooks shared across features belong in `src/shared/hooks/`.
+
 Shared across features:
 
 ```
@@ -113,6 +115,6 @@ Migrate incrementally: the file you touch moves toward the layout; everything el
 Run from the repo root. `<skill-dir>` is this skill's folder (for example `.agents/skills/feature-based-architecture`).
 
 - `scaffold.mjs <feature | feature-path> [component]`: creates `src/features/<feature>/<component>/` (component defaults to the feature name) with `<component>.tsx`, sibling stubs, and an empty `partials/`. Rejects non-kebab names; refuses to overwrite.
-- `validate.mjs [feature-path...]`: no arguments validates every folder under `src/features/`. Exits non-zero on violations: components at the feature root, component folders without a like-named `.tsx`, second components outside `partials/`, non-kebab folder names, unexpected files, effects or server-state hooks outside `hooks.ts`, network calls outside `api.ts`, inline `any`, sibling-feature imports.
+- `validate.mjs [feature-path...]`: no arguments validates every folder under `src/features/`. Exits non-zero on violations: components at the feature root, component folders without a like-named `.tsx`, second components outside `partials/`, non-kebab folder names, unexpected files, effects or server-state hooks outside `hooks.ts` or a standalone feature hook, network calls outside `api.ts`, inline `any`, sibling-feature imports.
 
 Worked example, rationale, and edge cases: [REFERENCE.md](REFERENCE.md).

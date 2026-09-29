@@ -172,7 +172,7 @@ src/features/tasks/
 
 `TaskList` is the feature's only screen, so the feature root holds just `task-list/`; root-level `types.ts` etc. appear only when a second component folder shares something. The card's props, colour maps, and hook are small, so they live in `task-list/`'s files and `partials/` stays flat. A test would be `task-list/task-list.test.tsx`. No item is used outside `tasks`, so nothing goes to `src/shared/`.
 
-The rest of the app follows the same two rules: `src/app/app.tsx`, `src/features/braindump/brain-dump-input/brain-dump-input.tsx`, `src/features/focus/focus-radar-modal/focus-radar-modal.tsx`; the hook `src/features/audio/use-audio-recorder.ts` is not a component, so it is only renamed to kebab-case.
+The rest of the app follows the same two rules: `src/app/app.tsx`, `src/features/braindump/brain-dump-input/brain-dump-input.tsx`, `src/features/focus/focus-radar-modal/focus-radar-modal.tsx`. A feature-specific hook may be a standalone kebab-case `use-*.ts` file at its feature root; hooks shared across features live in `src/shared/hooks/`, such as `src/shared/hooks/use-audio-recorder.ts`.
 
 ## When the convention does not apply
 
