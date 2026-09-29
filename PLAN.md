@@ -23,8 +23,9 @@ The goal is to implement the Phase 1 tasks for the Expo universal app (web, iOS,
   - Text area updates with the transcribed text.
 - **Verification Commands**: `bunx tsc --noEmit` inside `mobile/`.
 - **Dependencies**: `expo-file-system`
-- **Files Touched**: `mobile/app/index.tsx`, `mobile/package.json`
+- **Files Touched**: `mobile/utils/audio.ts`, `mobile/hooks/use-voice-recorder.ts`, `mobile/package.json`
 - **Size**: S
+- **Status**: Implemented.
 
 **Task 2: Native Firestore Sync & Authentication**
 
@@ -32,23 +33,25 @@ The goal is to implement the Phase 1 tasks for the Expo universal app (web, iOS,
 - **Acceptance Criteria**:
   - `mobile/services/firebase.ts` is created and initializes Firebase with appropriate persistence (AsyncStorage for native, browser for web).
   - Google Sign-In is implemented using `expo-auth-session/providers/google`.
-  - `mobile/app/index.tsx` is updated to sync tasks using `subscribeToUserTasks` and handle auth state.
+  - `mobile/screens/main-screen/hooks.ts` syncs tasks using `subscribeToUserTasks` and handles auth state.
 - **Verification Commands**: `bunx tsc --noEmit` inside `mobile/`.
 - **Dependencies**: `@react-native-async-storage/async-storage`, `expo-auth-session`, `expo-crypto`, `expo-web-browser`
-- **Files Touched**: `mobile/services/firebase.ts`, `mobile/app/index.tsx`, `mobile/package.json`
+- **Files Touched**: `mobile/services/firebase.ts`, `mobile/screens/main-screen/hooks.ts`, `mobile/package.json`
 - **Size**: M
+- **Status**: Implemented.
 
 **Task 3: Native Push Notifications for Timers**
 
 - **Description**: Integrate `expo-notifications` to alert users when a focus sprint ends if the app is in the background.
 - **Acceptance Criteria**:
   - `expo-notifications` is installed and permissions are requested.
-  - A local notification is scheduled when a timer starts in `mobile/app/focus.tsx`.
+  - A local notification is scheduled when a timer starts in `mobile/screens/focus/hooks.ts`.
   - The notification is cancelled if the timer is stopped manually before finishing.
 - **Verification Commands**: `bunx tsc --noEmit` inside `mobile/`.
 - **Dependencies**: `expo-notifications`
-- **Files Touched**: `mobile/app/focus.tsx`, `mobile/package.json`, `mobile/app.json`
+- **Files Touched**: `mobile/screens/focus/hooks.ts`, `mobile/package.json`, `mobile/app.json`
 - **Size**: S
+- **Status**: Implemented.
 
 ## Risks and Mitigations
 

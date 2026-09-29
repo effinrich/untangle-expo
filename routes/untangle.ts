@@ -1,0 +1,198 @@
+import { Router } from "express"
+import { Type } from "@google/genai"
+import { ai, apiKey } from "./gemini"
+
+interface DeconstructedTask {
+  id: string
+  title: string
+  firstPhysicalStep: string
+  estimatedMinutes: number
+  energyLevel: "low" | "medium" | "high"
+  category: string
+  whyItMatters: string
+  substeps?: string[]
+}
+
+export const untangleRouter = Router()
+
+// 1. Untangle Brain Dump endpoint
+untangleRouter.post("/untangle", async (req, res) => {
+  try {
+    const { rawDump, userEnergyPreference } = req.body
+
+    if (!rawDump || typeof rawDump !== "string" || !rawDump.trim()) {
+      res.status(400).json({ error: "Please provide a brain dump text." })
+      return
+    }
+
+    if (!apiKey) {
+      // Graceful fallback for offline / mock dev mode if API key is not present
+      const fallbackTasks = generateFallbackUntangle(rawDump)
+      res.json({
+        summary: "Parsed from your thoughts into quick micro-actions.",
+        tasks: fallbackTasks,
+      })
+      return
+    }
+
+    const prompt = `You are an expert ADHD Executive Function coach and productivity architect.
+The user just provided a chaotic, overwhelming "brain dump" of thoughts, tasks, worries, or to-dos.
+ADHD brains get paralyzed by ambiguous, large tasks. Your job is to:
+1. Untangle this into concrete, bite-sized MICRO-TASKS (ideally 3 to 20 minutes each).
+2. For each task, extract the EXACT "First Physical Step" (the frictionless spark action, e.g. "Pick up your phone and open the banking app", "Open Chrome and search for John's email", "Stand up and grab a trash bag").
+3. Assign realistic estimatedMinutes (e.g., 3, 5, 10, 15, 20, 25).
+4. Assign energyLevel: "low" (brain fried/lazy), "medium" (standard), or "high" (requires hyperfocus/deep creativity).
+5. Assign a concise priority category (e.g. Work, Personal, Health, Finance / Admin, Errands, Creative).
+6. Assign priority: "high", "medium", or "low".
+7. Give a 1-sentence "whyItMatters" that gives a quick dopamine reason or removes anxiety.
+8. Break down any medium/larger task into 2-3 microscopic sequential substeps.
+
+User's current state/energy preference: ${userEnergyPreference || "all"}
+User's raw brain dump:
+"""
+${rawDump}
+"""`
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.8-flash",
+      contents: prompt,
+      config: {
+        systemInstruction:
+          "You transform chaotic ADHD thoughts into actionable, non-intimidating, high-clarity micro-steps.",
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            summary: {
+              type: Type.STRING,
+              description:
+                "A warm, validating 1-2 sentence assessment showing they are heard and everything is manageable.",
+            },
+            tasks: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  title: {
+                    type: Type.STRING,
+                    description: "Short, punchy action-verb title",
+                  },
+                  firstPhysicalStep: {
+                    type: Type.STRING,
+                    description: "The immediate physical micro-movement to start",
+                  },
+                  estimatedMinutes: {
+                    type: Type.INTEGER,
+                    description: "Estimated time in minutes (3 to 30)",
+                  },
+                  energyLevel: {
+                    type: Type.STRING,
+                    description: "'low', 'medium', or 'high'",
+                  },
+                  category: {
+                    type: Type.STRING,
+                    description:
+                      "Category label such as Work, Personal, Health, Finance / Admin, Errands",
+                  },
+                  priority: {
+                    type: Type.STRING,
+                    description: "'high', 'medium', or 'low'",
+                  },
+                  whyItMatters: {
+                    type: Type.STRING,
+                    description: "Quick motivational or anxiety-reducing rationale",
+                  },
+                  substeps: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING },
+                    description: "2-3 micro mini-steps",
+                  },
+                },
+                required: [
+                  "title",
+                  "firstPhysicalStep",
+                  "estimatedMinutes",
+                  "energyLevel",
+                  "category",
+                  "whyItMatters",
+                ],
+              },
+            },
+          },
+          required: ["summary", "tasks"],
+        },
+      },
+    })
+
+    const text = response.text
+    if (!text) {
+      throw new Error("No response generated by model")
+    }
+
+    const data = JSON.parse(text)
+    // Ensure every task has an id
+    if (Array.isArray(data.tasks)) {
+      data.tasks = data.tasks.map((t: any, idx: number) => ({
+        ...t,
+        id: t.id || `task_${Date.now()}_${idx}`,
+        energyLevel: ["low", "medium", "high"].includes(t.energyLevel) ? t.energyLevel : "medium",
+        estimatedMinutes: Math.max(1, Number(t.estimatedMinutes) || 10),
+      }))
+    }
+
+    res.json(data)
+  } catch (err: any) {
+    console.error("Error in /api/untangle:", err)
+    // Fallback if API call hits quota or fails
+    const fallbackTasks = generateFallbackUntangle(req.body.rawDump || "")
+    res.json({
+      summary: "I've structured your brain dump into clean micro-steps.",
+      tasks: fallbackTasks,
+    })
+  }
+})
+
+// Helper for offline / fallback untangling
+function generateFallbackUntangle(raw: string): DeconstructedTask[] {
+  const lines = raw
+    .split(/\n|,|\.|\band\b/i)
+    .map((l) => l.trim())
+    .filter((l) => l.length > 2)
+
+  if (lines.length === 0) {
+    return [
+      {
+        id: `task_${Date.now()}_1`,
+        title: "Clear desk of empty cups",
+        firstPhysicalStep: "Grab the nearest mug and carry it to the sink",
+        estimatedMinutes: 3,
+        energyLevel: "low",
+        category: "Home",
+        whyItMatters: "Clears visual noise so your brain feels lighter",
+        substeps: ["Collect dishes", "Take to kitchen", "Drink a glass of water"],
+      },
+      {
+        id: `task_${Date.now()}_2`,
+        title: "Review unread message from team",
+        firstPhysicalStep: "Unlock phone and tap the chat icon",
+        estimatedMinutes: 5,
+        energyLevel: "low",
+        category: "Work",
+        whyItMatters: "Removes the background dread of people waiting",
+        substeps: ["Open message", "Send a quick 1-line acknowledgment"],
+      },
+    ]
+  }
+
+  return lines.slice(0, 6).map((line, idx) => ({
+    id: `task_${Date.now()}_${idx}`,
+    title: line.charAt(0).toUpperCase() + line.slice(1),
+    firstPhysicalStep: `Open or step toward the first item needed for "${line.slice(0, 20)}..."`,
+    estimatedMinutes: idx % 2 === 0 ? 5 : 15,
+    energyLevel: idx === 0 ? "low" : idx % 2 === 0 ? "medium" : "high",
+    category: idx % 2 === 0 ? "Quick Win" : "Focus Project",
+    whyItMatters: "Completing this frees up mental RAM in your working memory",
+    substeps: [`Step 1: Start 2-min timer`, `Step 2: Do the first tiny piece`],
+  }))
+}
