@@ -4,10 +4,10 @@ import type { OfflineExecutor } from "@tanstack/offline-transactions"
 import { randomUUID } from "expo-crypto"
 import type { User } from "firebase/auth"
 import type { MicroTask } from "../services/api"
-import { db } from "../services/firebase"
 import { guestParkingLotCollection } from "../services/db/guest-parking-lot-collection"
 import { ensureGuestSeeded, guestTasksCollection } from "../services/db/guest-tasks-collection"
-import { migrateGuestData } from "../services/db/migrate-guest-data"
+import { importLegacyGuestData } from "../services/db/legacy-guest-data"
+import { moveGuestToAccount } from "../services/db/move-guest-to-account"
 import { FIRESTORE_WRITE, startUserOutbox } from "../services/db/outbox"
 import { STORAGE_KEYS, removeDeviceKeys } from "../services/db/storage"
 import type { ParkedThought } from "../services/db/types"
@@ -27,28 +27,17 @@ const GUEST_SOURCE: DataSource = {
   outbox: null,
 }
 
+const MIGRATION_RETRY_MS = 5_000
+const MIGRATION_RETRY_MAX_MS = 60_000
+
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
 }
 
-async function migrateGuest(userId: string): Promise<void> {
-  await Promise.all([guestTasksCollection.preload(), guestParkingLotCollection.preload()])
-  const tasks = guestTasksCollection.toArray
-  const thoughts = guestParkingLotCollection.toArray
-  if (tasks.length === 0 && thoughts.length === 0) return
-
-  await migrateGuestData(db, userId, { tasks, thoughts })
-  if (tasks.length > 0) {
-    await guestTasksCollection.delete(tasks.map((task) => task.id)).isPersisted.promise
-  }
-  if (thoughts.length > 0) {
-    await guestParkingLotCollection.delete(thoughts.map((thought) => thought.id)).isPersisted.promise
-  }
-}
-
 /**
  * Guests read and write device-only collections. Signed-in users read a live Firestore mirror
- * and write through a persisted outbox; guest data is copied up once, then cleared locally.
+ * and write through a persisted outbox; guest data is copied up (retrying until it succeeds),
+ * then cleared locally.
  */
 export function useAppData(user: User | null, authReady: boolean) {
   const [source, setSource] = useState<DataSource>(GUEST_SOURCE)
@@ -65,7 +54,8 @@ export function useAppData(user: User | null, authReady: boolean) {
     if (!userId) {
       removeDeviceKeys(STORAGE_KEYS.userPrefix)
       setSource(GUEST_SOURCE)
-      Promise.all([ensureGuestSeeded(), guestParkingLotCollection.preload()])
+      importLegacyGuestData()
+        .then(() => Promise.all([ensureGuestSeeded(), guestParkingLotCollection.preload()]))
         .catch((error) => setSyncError(errorMessage(error)))
         .finally(() => {
           if (!cancelled) setDataReady(true)
@@ -87,12 +77,20 @@ export function useAppData(user: User | null, authReady: boolean) {
       .finally(() => {
         if (!cancelled) setDataReady(true)
       })
-    migrateGuest(userId).catch((error) => {
-      console.warn("Guest data migration will retry on next launch:", error)
-    })
+    let retryTimer: ReturnType<typeof setTimeout> | undefined
+    const migrate = (attempt: number) => {
+      moveGuestToAccount(userId, () => !cancelled).catch((error) => {
+        if (cancelled) return
+        const delay = Math.min(MIGRATION_RETRY_MS * 2 ** attempt, MIGRATION_RETRY_MAX_MS)
+        console.warn(`Guest data migration failed; retrying in ${delay / 1000}s:`, error)
+        retryTimer = setTimeout(() => migrate(attempt + 1), delay)
+      })
+    }
+    migrate(0)
 
     return () => {
       cancelled = true
+      clearTimeout(retryTimer)
       outbox.dispose()
       void tasks.cleanup()
       void parkingLot.cleanup()
@@ -139,7 +137,7 @@ export function useAppData(user: User | null, authReady: boolean) {
     const trimmed = text.trim()
     if (!trimmed) return
     const thought: ParkedThought = {
-      id: `thought_${Date.now()}`,
+      id: `thought_${randomUUID()}`,
       text: trimmed,
       createdAt: new Date().toISOString(),
       ...(userId ? { userId } : {}),
@@ -153,6 +151,7 @@ export function useAppData(user: User | null, authReady: boolean) {
     collections: source as DataCollections,
     dataReady,
     syncError,
+    clearSyncError: () => setSyncError(null),
     hasUnsyncedChanges: () => (source.outbox?.getPendingCount() ?? 0) > 0,
     addTasks,
     setCompleted,
