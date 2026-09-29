@@ -1,47 +1,69 @@
 import React from "react"
-import { View, Text, Pressable } from "react-native"
-import { useRouter } from "expo-router"
+import { Pressable, Text, View } from "react-native"
+import Animated, { FadeIn, FadeInDown, FadeOut, LinearTransition } from "react-native-reanimated"
+import { ChevronDown, ChevronUp } from "../../../theme/icons"
 import { MicroTask } from "../../../services/api"
 import { TaskCardMobile } from "../../../components/task-card-mobile"
+import colors from "../../../theme/colors"
 
 interface MainTaskListProps {
-  tasks: MicroTask[]
-  onToggleComplete: (id: string) => void
+  openTasks: MicroTask[]
+  doneTasks: MicroTask[]
+  showDone: boolean
+  onToggleDone: () => void
+  onSetCompleted: (id: string, completed: boolean) => void
+  onStartFocus: (task: MicroTask) => void
 }
 
-export function MainTaskList({ tasks, onToggleComplete }: MainTaskListProps) {
-  const router = useRouter()
+export function MainTaskList({
+  openTasks,
+  doneTasks,
+  showDone,
+  onToggleDone,
+  onSetCompleted,
+  onStartFocus,
+}: MainTaskListProps) {
+  const DoneChevron = showDone ? ChevronUp : ChevronDown
 
   return (
-    <View className="mb-6">
-      <View className="flex-row items-center justify-between mb-3">
-        <Text className="text-sm font-bold text-neutral-100">Action Steps ({tasks.length})</Text>
-        <Pressable
-          onPress={() => router.push("/unstick")}
-          className="bg-amber-400/20 border border-amber-400/40 px-2.5 py-1 rounded-lg"
-        >
-          <Text className="text-xs font-bold text-amber-300">⚡ Unstick Me</Text>
-        </Pressable>
-      </View>
-
-      {tasks.map((task) => (
-        <TaskCardMobile
+    <View className="gap-3">
+      {openTasks.map((task, index) => (
+        <Animated.View
           key={task.id}
-          task={task}
-          onToggleComplete={onToggleComplete}
-          onStartFocus={(t) =>
-            router.push({
-              pathname: "/focus",
-              params: {
-                id: t.id,
-                title: t.title,
-                firstStep: t.firstPhysicalStep,
-                minutes: String(t.estimatedMinutes),
-              },
-            })
-          }
-        />
+          entering={FadeInDown.delay(Math.min(index, 5) * 40)}
+          exiting={FadeOut}
+          layout={LinearTransition}
+        >
+          <TaskCardMobile task={task} onSetCompleted={onSetCompleted} onStartFocus={onStartFocus} />
+        </Animated.View>
       ))}
+
+      {doneTasks.length > 0 ? (
+        <Pressable
+          onPress={onToggleDone}
+          accessibilityRole="button"
+          accessibilityLabel={`Done, ${doneTasks.length} ${doneTasks.length === 1 ? "step" : "steps"}`}
+          accessibilityState={{ expanded: showDone }}
+          className="min-h-control flex-row items-center justify-between px-1 active:opacity-70"
+        >
+          <Text className="text-callout font-semibold text-text-secondary">
+            Done ({doneTasks.length})
+          </Text>
+          <DoneChevron size={20} color={colors["text-secondary"]} accessible={false} />
+        </Pressable>
+      ) : null}
+
+      {showDone
+        ? doneTasks.map((task) => (
+            <Animated.View key={task.id} entering={FadeIn} layout={LinearTransition}>
+              <TaskCardMobile
+                task={task}
+                onSetCompleted={onSetCompleted}
+                onStartFocus={onStartFocus}
+              />
+            </Animated.View>
+          ))
+        : null}
     </View>
   )
 }
