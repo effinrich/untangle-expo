@@ -7,7 +7,8 @@ import {
   GoogleAuthProvider,
   signInWithCredential,
 } from "firebase/auth"
-// @ts-ignore
+// Expo resolves the React Native entrypoint at runtime, but Firebase's default type export omits it.
+// @ts-expect-error getReactNativePersistence is exported by @firebase/auth's react-native condition.
 import { getReactNativePersistence } from "@firebase/auth"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { getFirestore, doc, collection, onSnapshot, setDoc, deleteDoc } from "firebase/firestore"
@@ -55,7 +56,7 @@ export function handleFirestoreError(
   error: unknown,
   operationType: OperationType,
   path: string | null,
-) {
+): Error {
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
@@ -69,7 +70,7 @@ export function handleFirestoreError(
     path,
   }
   console.error("Firestore Error: ", JSON.stringify(errInfo))
-  throw new Error(JSON.stringify(errInfo))
+  return new Error(JSON.stringify(errInfo))
 }
 
 export async function signInWithGoogleCredential(idToken: string): Promise<User> {
@@ -122,8 +123,8 @@ export function subscribeToUserTasks(
       onTasksUpdated(tasks)
     },
     (error) => {
-      handleFirestoreError(error, OperationType.LIST, path)
-      if (onError) onError(error)
+      const firestoreError = handleFirestoreError(error, OperationType.LIST, path)
+      onError?.(firestoreError)
     },
   )
 
@@ -151,7 +152,7 @@ export async function saveTaskToFirestore(userId: string, task: MicroTask): Prom
     }
     await setDoc(taskDocRef, sanitizedTask, { merge: true })
   } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path)
+    throw handleFirestoreError(error, OperationType.WRITE, path)
   }
 }
 
@@ -161,6 +162,6 @@ export async function deleteTaskFromFirestore(userId: string, taskId: string): P
     const taskDocRef = doc(db, "users", userId, "tasks", taskId)
     await deleteDoc(taskDocRef)
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path)
+    throw handleFirestoreError(error, OperationType.DELETE, path)
   }
 }

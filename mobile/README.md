@@ -38,15 +38,24 @@ npx expo start
 
 ```text
 mobile/
-├── app/
+├── app/                # Expo Router routes
 │   ├── _layout.tsx    # Root navigation & theme
-│   ├── index.tsx      # Main screen: voice brain dump, energy sort, task cards
-│   ├── focus.tsx      # Fullscreen "One Thing Radar" with timer & parking lot
+│   ├── index.tsx      # Re-exports screens/main-screen/main-screen
+│   ├── focus.tsx      # Re-exports screens/focus/focus
 │   └── unstick.tsx    # Executive dysfunction reset (2-minute spark contract)
+├── screens/
+│   ├── main-screen/   # Voice brain dump, energy sort, category pills, task list (+ hooks, partials)
+│   └── focus/         # Fullscreen "One Thing Radar" with timer & parking lot (+ hooks, partials)
 ├── components/
-│   └── TaskCardMobile.tsx # Native task item with physical first action & haptics
+│   └── task-card-mobile.tsx # Native task item with physical first action & haptics
+├── hooks/
+│   └── use-voice-recorder.ts # Record, base64-encode, and transcribe audio
+├── utils/
+│   ├── audio.ts       # Base64 file reading for recordings
+│   └── haptics.ts     # Haptics wrapper
 ├── services/
-│   └── api.ts         # Shared API client for Gemini and untangling
+│   ├── api.ts         # Shared API client for Gemini and untangling
+│   └── firebase.ts    # Google sign-in & Firestore task sync
 ├── app.json           # Expo app config (permissions, bundle IDs, icons)
 ├── package.json       # Expo SDK 52 dependencies
 └── tailwind.config.js # NativeWind styles
