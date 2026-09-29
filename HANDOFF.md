@@ -94,7 +94,7 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 ├── services/               # api.ts, firebase.ts (native)
 ├── public/images/          # Static web assets
 ├── src/                    # Web UI (React DOM + Tailwind v4)
-│   ├── app/app.tsx         # Main web application container
+│   ├── web-app/app.tsx     # Main web application container
 │   ├── types/index.ts      # Universal TypeScript interfaces (MicroTask, EnergyLevel, etc.)
 │   ├── data/               # categories.ts, seed-data.ts
 │   ├── services/           # api, firebase, auth, tasks, parking-lot, ambient, sound
