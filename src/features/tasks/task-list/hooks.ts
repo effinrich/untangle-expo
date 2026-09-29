@@ -3,8 +3,9 @@ import confetti from "canvas-confetti"
 import { EnergyLevel, PriorityLevel } from "../../../types"
 import { soundService } from "../../../services/sound"
 import { apiBreakdownTask } from "../../../services/api"
+import { NewTaskInput } from "../../../shared/types/task"
 import { completionConfetti, priorityCycle } from "./consts"
-import { NewTaskInput, TaskCardProps } from "./types"
+import { TaskCardProps } from "./types"
 import { buildQuickAddTask } from "./utils"
 
 // Lives in the list (not the form) so minutes/energy/category/priority persist between openings.

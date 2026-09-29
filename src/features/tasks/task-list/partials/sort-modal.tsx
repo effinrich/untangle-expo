@@ -42,10 +42,11 @@ export const SortModal: React.FC<SortModalProps> = ({ sortBy, onSelectSort, onCl
                 key={opt.id}
                 type="button"
                 onClick={() => onSelectSort(opt.id)}
-                className={`w-full text-left p-3 rounded-xl border transition-all flex items-start gap-3 ${isSelected
+                className={`w-full text-left p-3 rounded-xl border transition-all flex items-start gap-3 ${
+                  isSelected
                     ? "bg-amber-400/10 border-amber-400/50 text-neutral-100 shadow-sm"
                     : "bg-neutral-950/60 border-neutral-800/80 text-neutral-300 hover:bg-neutral-950 hover:border-neutral-700"
-                  }`}
+                }`}
               >
                 <span className="text-lg shrink-0 mt-0.5">{opt.icon}</span>
                 <div className="flex-1 min-w-0">

@@ -1,7 +1,8 @@
 import { EnergyLevel, MicroTask, PriorityLevel } from "../../../types"
 import { DEFAULT_CATEGORIES } from "../../../data/categories"
+import { NewTaskInput } from "../../../shared/types/task"
 import { SORT_OPTIONS, energyValues, priorityValues } from "./consts"
-import { FilterTab, NewTaskInput, SortOption } from "./types"
+import { FilterTab, SortOption } from "./types"
 
 // Available categories from tasks plus defaults
 export function getAllCategoryNames(tasks: MicroTask[]): string[] {
@@ -127,7 +128,8 @@ export function buildQuickAddTask(fields: {
   return {
     title: fields.title.trim(),
     firstPhysicalStep:
-      fields.firstStep.trim() || `Open the relevant app or physical tool for ${fields.title.trim()}`,
+      fields.firstStep.trim() ||
+      `Open the relevant app or physical tool for ${fields.title.trim()}`,
     estimatedMinutes: Number(fields.minutes) || 5,
     energyLevel: fields.energy,
     category: fields.category.trim() || "Personal",

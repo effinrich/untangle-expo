@@ -17,7 +17,9 @@ export const TaskListEmptyState: React.FC<TaskListEmptyStateProps> = ({
         <Sparkles className="w-5 h-5 text-amber-400/80" />
       </div>
       <h3 className="text-sm font-semibold text-neutral-200">
-        {selectedCategory !== "all" ? `No tasks under "${selectedCategory}"` : "No tasks in this view"}
+        {selectedCategory !== "all"
+          ? `No tasks under "${selectedCategory}"`
+          : "No tasks in this view"}
       </h3>
       <p className="text-xs text-neutral-500 mt-1 max-w-sm mx-auto">
         {filterTab === "completed"

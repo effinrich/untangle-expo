@@ -73,7 +73,7 @@ When an importer appears at a wider level, move the item up then, not before.
 1. **One component per file**, named after it in kebab-case (`TaskCard` -> `task-card.tsx`). Every other component, including tiny unexported ones and provider wrappers, gets its own file.
 2. **Component files are markup plus wiring**: state declarations, hook calls, short handlers that call props or helpers, and composed partials. Literal config, data shaping, and multi-step handlers move out.
 3. **Props interfaces** may stay in the component file. When a hook, helper, or second file needs the props type, it moves to the folder's `types.ts`.
-4. **Split for readability, not line count.** Ceiling: a component that fetches, derives state, and renders a long tree gets split. Hooks out, helpers out, sections into partials.
+4. **Keep files under ~200 lines.** A component that fetches, derives state, and renders a long tree gets split even when shorter: hooks out, helpers out, sections into partials. Non-component modules over the ceiling split by concern into plain-named siblings; a coherent flat data table may stay whole.
 5. **Partials are presentational.** Props in, callbacks out; small local UI state is fine. They render data passed as props; user-triggered actions (a save, an AI call) may come from a hook in `hooks.ts`.
 6. **Effects and server state live in hook files** (a folder's `hooks.ts`, or `src/shared/hooks/`).
 7. **Raw `fetch` / `axios` inside a feature lives in `api.ts`.** App-wide clients live outside features.
