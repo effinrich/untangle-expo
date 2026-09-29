@@ -17,7 +17,7 @@ import {
 import { BRAIN_DUMP_TEMPLATES } from "../../../data/seed-data"
 import { DEFAULT_CATEGORIES } from "../../../data/categories"
 import { EnergyLevel } from "../../../types"
-import { useAudioRecorder } from "../../audio/use-audio-recorder"
+import { useAudioRecorder } from "../../../shared/hooks/use-audio-recorder"
 
 interface BrainDumpInputProps {
   onUntangle: (rawDump: string, energyPreference: string) => Promise<void>
@@ -92,10 +92,11 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
                 key={level}
                 type="button"
                 onClick={() => setEnergyPreference(level)}
-                className={`px-2.5 py-1 font-medium rounded-md transition-colors whitespace-nowrap ${isSelected
-                  ? "bg-neutral-800 text-amber-300 shadow-sm border border-neutral-700/60"
-                  : "text-neutral-400 hover:text-neutral-200"
-                  }`}
+                className={`px-2.5 py-1 font-medium rounded-md transition-colors whitespace-nowrap ${
+                  isSelected
+                    ? "bg-neutral-800 text-amber-300 shadow-sm border border-neutral-700/60"
+                    : "text-neutral-400 hover:text-neutral-200"
+                }`}
               >
                 {labels[level]}
               </button>
@@ -115,10 +116,11 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
           <button
             type="button"
             onClick={() => setSelectedFocusCategory("all")}
-            className={`px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap transition-colors ${selectedFocusCategory === "all"
-              ? "bg-neutral-800 border-neutral-600 text-amber-300 font-medium"
-              : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200"
-              }`}
+            className={`px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap transition-colors ${
+              selectedFocusCategory === "all"
+                ? "bg-neutral-800 border-neutral-600 text-amber-300 font-medium"
+                : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200"
+            }`}
           >
             Auto-Detect All
           </button>
@@ -127,10 +129,11 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
               key={cat.id}
               type="button"
               onClick={() => setSelectedFocusCategory(cat.name)}
-              className={`px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap transition-colors flex items-center gap-1 ${selectedFocusCategory === cat.name
-                ? `${cat.bgLight} ${cat.borderColor} ${cat.textColor} font-semibold`
-                : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200"
-                }`}
+              className={`px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap transition-colors flex items-center gap-1 ${
+                selectedFocusCategory === cat.name
+                  ? `${cat.bgLight} ${cat.borderColor} ${cat.textColor} font-semibold`
+                  : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200"
+              }`}
             >
               <span>{cat.name}</span>
             </button>
@@ -162,10 +165,11 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
             key={tpl.id}
             type="button"
             onClick={() => handleApplyTemplate(tpl)}
-            className={`px-2.5 py-1 rounded-md border whitespace-nowrap transition-colors flex items-center gap-1.5 ${activeTemplate === tpl.id
-              ? "border-amber-500/40 bg-amber-500/10 text-amber-300"
-              : "border-neutral-800 bg-neutral-950/80 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200"
-              }`}
+            className={`px-2.5 py-1 rounded-md border whitespace-nowrap transition-colors flex items-center gap-1.5 ${
+              activeTemplate === tpl.id
+                ? "border-amber-500/40 bg-amber-500/10 text-amber-300"
+                : "border-neutral-800 bg-neutral-950/80 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200"
+            }`}
           >
             <span>{tpl.title}</span>
           </button>
@@ -197,12 +201,13 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
               type="button"
               onClick={isRecording ? stopRecording : startRecording}
               disabled={isTranscribing}
-              className={`p-2.5 rounded-lg border transition-all ${isRecording
-                ? "bg-rose-500 text-white border-rose-400 animate-pulse shadow-lg shadow-rose-500/30 ring-2 ring-rose-400/40"
-                : isTranscribing
-                  ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
-                  : "bg-neutral-900 border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800"
-                }`}
+              className={`p-2.5 rounded-lg border transition-all ${
+                isRecording
+                  ? "bg-rose-500 text-white border-rose-400 animate-pulse shadow-lg shadow-rose-500/30 ring-2 ring-rose-400/40"
+                  : isTranscribing
+                    ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                    : "bg-neutral-900 border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800"
+              }`}
               title={
                 isRecording
                   ? "Click to stop and transcribe with gemini-3.5-transcribe"

@@ -59,6 +59,24 @@ export async function apiUntangleBrainDump(
   }
 }
 
+export async function apiTranscribeAudio(
+  audioBase64: string,
+  mimeType: string,
+): Promise<{ text: string }> {
+  const res = await fetch("/api/transcribe-audio", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ audioBase64, mimeType }),
+  })
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}))
+    throw new Error(errData.error || "Failed to transcribe audio with Gemini 3.5")
+  }
+
+  return res.json()
+}
+
 export async function apiBreakdownTask(
   taskTitle: string,
   currentFirstStep?: string,

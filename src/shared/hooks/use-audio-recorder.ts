@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react"
+import { apiTranscribeAudio } from "../../services/api"
 
 interface UseAudioRecorderOptions {
   onTranscription: (text: string) => void
@@ -12,7 +13,7 @@ export function useAudioRecorder({ onTranscription, onError }: UseAudioRecorderO
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
-  const timerIntervalRef = useRef<any>(null)
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const startRecording = useCallback(async () => {
     try {
@@ -61,34 +62,20 @@ export function useAudioRecorder({ onTranscription, onError }: UseAudioRecorderO
           reader.onloadend = async () => {
             try {
               const base64Audio = reader.result as string
-              const res = await fetch("/api/transcribe-audio", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  audioBase64: base64Audio,
-                  mimeType: audioBlob.type || "audio/webm",
-                }),
-              })
-
-              if (!res.ok) {
-                const errData = await res.json().catch(() => ({}))
-                throw new Error(errData.error || "Failed to transcribe audio with Gemini 3.5")
-              }
-
-              const data = await res.json()
+              const data = await apiTranscribeAudio(base64Audio, audioBlob.type || "audio/webm")
               if (data.text) {
                 onTranscription(data.text)
               }
-            } catch (err: any) {
+            } catch (err) {
               console.error("Transcription error:", err)
-              if (onError) onError(err.message || "Transcription failed")
+              if (onError) onError((err instanceof Error && err.message) || "Transcription failed")
             } finally {
               setIsTranscribing(false)
             }
           }
-        } catch (err: any) {
+        } catch (err) {
           setIsTranscribing(false)
-          if (onError) onError(err.message || "Error processing audio")
+          if (onError) onError((err instanceof Error && err.message) || "Error processing audio")
         }
       }
 
@@ -100,10 +87,10 @@ export function useAudioRecorder({ onTranscription, onError }: UseAudioRecorderO
       timerIntervalRef.current = setInterval(() => {
         setRecordingSeconds((prev) => prev + 1)
       }, 1000)
-    } catch (err: any) {
+    } catch (err) {
       console.error("Microphone error:", err)
       setIsRecording(false)
-      if (onError) onError(err.message || "Could not access microphone")
+      if (onError) onError((err instanceof Error && err.message) || "Could not access microphone")
     }
   }, [onTranscription, onError])
 
