@@ -6,9 +6,9 @@ import { FocusParkingLot } from "./partials/focus-parking-lot"
 import { FocusTaskSpark } from "./partials/focus-task-spark"
 import { FocusTimer } from "./partials/focus-timer"
 import { FocusTopBar } from "./partials/focus-top-bar"
-import { FocusRadarModalProps } from "./types"
+import { FocusProps } from "./types"
 
-export const FocusRadarModal: React.FC<FocusRadarModalProps> = ({
+export const Focus: React.FC<FocusProps> = ({
   task,
   isOpen,
   onClose,

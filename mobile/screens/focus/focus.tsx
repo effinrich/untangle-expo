@@ -6,7 +6,7 @@ import { useFocusTimer, useParkingLot } from "./hooks"
 import { FocusParkingLot } from "./partials/focus-parking-lot"
 import { FocusTimer } from "./partials/focus-timer"
 
-export default function FocusScreen() {
+export default function Focus() {
   const router = useRouter()
   const { title, firstStep, minutes } = useLocalSearchParams<{
     id: string

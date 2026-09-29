@@ -1,1 +1,1 @@
-export { default } from "../screens/focus-screen/focus-screen"
+export { default } from "../screens/focus/focus"

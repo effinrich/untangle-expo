@@ -1,6 +1,6 @@
 import { MicroTask, ParkingLotItem } from "../../../types"
 
-export interface FocusRadarModalProps {
+export interface FocusProps {
   task: MicroTask
   isOpen: boolean
   onClose: () => void

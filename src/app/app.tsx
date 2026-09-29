@@ -3,7 +3,7 @@ import { BrainDumpInput } from "../features/braindump/brain-dump-input/brain-dum
 import { useUntangle } from "../features/braindump/hooks"
 import { UntangleSummary } from "../features/braindump/untangle-summary/untangle-summary"
 import { TaskList } from "../features/tasks/task-list/task-list"
-import { FocusRadarModal } from "../features/focus/focus-radar-modal/focus-radar-modal"
+import { Focus } from "../features/focus/focus/focus"
 import { UnstickMeModal } from "../features/unstick/unstick-me-modal/unstick-me-modal"
 import { DopamineTracker } from "../features/stats/dopamine-tracker/dopamine-tracker"
 import { useParkingLot } from "../shared/hooks/use-parking-lot"
@@ -104,7 +104,7 @@ export default function App() {
 
       {/* Focus Radar Modal ("One Thing Mode") */}
       {focusTask && (
-        <FocusRadarModal
+        <Focus
           task={focusTask}
           isOpen={!!focusTask}
           onClose={() => setFocusTask(null)}

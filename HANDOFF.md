@@ -48,7 +48,7 @@ The repository is structured as a full-stack monorepo containing the **Web App (
     - **Priority Area Filter Strip**: Work, Personal, Health, Finance, Errands, Creative.
     - **Quick Add Form & Markdown Exporter**.
   - `src/features/tasks/task-list/partials/task-card.tsx`: Task component rendering physical first step banner, priority badges, category dropdown, and one-click focus launcher.
-  - `src/features/focus/focus-radar-modal/focus-radar-modal.tsx`: One-task radar with brown noise synthesis (`sound.ts`) and Mental Parking Lot drawer.
+  - `src/features/focus/focus/focus.tsx`: One-task radar with brown noise synthesis (`sound.ts`) and Mental Parking Lot drawer.
   - `src/features/unstick/unstick-me-modal/unstick-me-modal.tsx`: Unstick engine for decision fatigue.
   - `src/features/stats/dopamine-tracker/dopamine-tracker.tsx`: Guilt-free momentum ledger tracking minutes in flow and completion percentages across priority areas.
 - **Database & Auth (**`src/services/firebase.ts`**)**:
