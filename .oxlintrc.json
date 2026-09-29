@@ -79,6 +79,12 @@
     ".claude/**",
     "tools/**",
     ".expo/**",
-    "mobile/**"
+    "screens/**",
+    "hooks/**",
+    "utils/**",
+    "services/**",
+    "components/task-card-mobile.tsx",
+    "app/focus.tsx",
+    "app/unstick.tsx"
   ]
 }
