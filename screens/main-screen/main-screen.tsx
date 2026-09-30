@@ -16,7 +16,8 @@ import { MainStuckCard } from "./partials/main-stuck-card"
 import { MainTaskList } from "./partials/main-task-list"
 import { MainTaskSkeleton } from "./partials/main-task-skeleton"
 import { focusHref } from "../../utils/focus-href"
-import { greetingFor, viewSummary } from "./utils"
+import { Greeting } from "./types"
+import { arrivalGreetingFor, viewSummary } from "./utils"
 
 export default function MainScreen() {
   const router = useRouter()
@@ -24,13 +25,13 @@ export default function MainScreen() {
   const dump = useBrainDump(app.addTasks)
   const tasks = useTasks()
   const view = useTaskView(tasks)
-  const [returning, setReturning] = useState(false)
-  const returningCaptured = useRef(false)
+  const [arrival, setArrival] = useState<Greeting>(null)
+  const arrivalCaptured = useRef(false)
 
   useEffect(() => {
-    if (!app.dataReady || returningCaptured.current) return
-    returningCaptured.current = true
-    setReturning(tasks.some((task) => !task.completed))
+    if (!app.dataReady || arrivalCaptured.current) return
+    arrivalCaptured.current = true
+    setArrival(arrivalGreetingFor(tasks))
   }, [tasks, app.dataReady])
 
   if (app.onboardingComplete === null) return null
@@ -55,10 +56,7 @@ export default function MainScreen() {
         }}
       />
       <Screen>
-        <MainGreeting
-          greeting={greetingFor(app.firstLaunch, returning, view.openTasks)}
-          openCount={view.openTasks.length}
-        />
+        <MainGreeting greeting={arrival} openCount={view.openTasks.length} />
 
         {app.signInError ? (
           <StatusBanner title="Sign-in didn't work" message={app.signInError} />

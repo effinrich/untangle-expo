@@ -1,13 +1,11 @@
 import { createContext, useContext } from "react"
 import type { useAppData } from "./use-app-data"
 import { useAuthSession } from "./use-auth-session"
-import type { useLaunchHistory } from "./use-launch-history"
 import { useOnboardingFlag } from "./use-onboarding-flag"
 
 export type AppState = ReturnType<typeof useAuthSession> &
   ReturnType<typeof useAppData> &
-  ReturnType<typeof useOnboardingFlag> &
-  ReturnType<typeof useLaunchHistory>
+  ReturnType<typeof useOnboardingFlag>
 
 export const AppContext = createContext<AppState | null>(null)
 

@@ -2,7 +2,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const STORAGE_KEYS = {
   onboardingComplete: "untangle.onboarding-complete.v1",
-  hasLaunched: "untangle.has-launched.v1",
 } as const
 
 export async function loadJson<T>(key: string, fallback: T): Promise<T> {

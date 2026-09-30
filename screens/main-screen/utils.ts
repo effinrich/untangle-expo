@@ -25,13 +25,11 @@ export function viewSummary(sortBy: SortType, area: string): string {
   return `${sortLabel} · ${area}`
 }
 
-// First launch greets only a list of untouched samples; "welcome back" waits for a later launch.
-export function greetingFor(
-  firstLaunch: boolean | null,
-  hadOpenTasksAtLaunch: boolean,
-  openTasks: MicroTask[],
-): Greeting {
-  if (openTasks.length === 0) return null
-  if (firstLaunch) return openTasks.every(isUntouchedSeed) ? "first-run" : null
-  return hadOpenTasksAtLaunch ? "returning" : null
+// The greeting is decided by what the list looked like on arrival, not by launch count:
+// untouched samples stay explained for as long as they survive, and a synced account
+// greets as returning.
+export function arrivalGreetingFor(tasks: MicroTask[]): Greeting {
+  const open = tasks.filter((task) => !task.completed)
+  if (open.length === 0) return null
+  return open.every(isUntouchedSeed) ? "samples" : "returning"
 }

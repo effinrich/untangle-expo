@@ -8,10 +8,9 @@ interface MainGreetingProps {
 }
 
 export function MainGreeting({ greeting, openCount }: MainGreetingProps) {
+  if (greeting === null || openCount === 0) return null
   switch (greeting) {
-    case null:
-      return null
-    case "first-run":
+    case "samples":
       return (
         <Text className="text-callout text-text-secondary -mt-2">
           Here are a few examples to try. Start one, or delete them and dump your own.
