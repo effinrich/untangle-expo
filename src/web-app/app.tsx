@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { BrainDumpInput } from "../features/braindump/brain-dump-input/brain-dump-input"
 import { useUntangle } from "../features/braindump/hooks"
 import { UntangleSummary } from "../features/braindump/untangle-summary/untangle-summary"
@@ -76,6 +76,16 @@ export default function App() {
     clearCompleted()
   }
 
+  const untangleResultRef = useRef<HTMLDivElement>(null)
+
+  // A result that renders off-screen reads as nothing happening at all. The
+  // composer sitting above the list is the real fix; this is the safety net for
+  // anyone scrolled past it.
+  useEffect(() => {
+    if (!aiSummary) return
+    untangleResultRef.current?.scrollIntoView({ block: "nearest" })
+  }, [aiSummary])
+
   const handleResetToSeed = () => {
     if (!confirm(RESET_TO_SEED_PROMPT)) return
     resetToSeed()
@@ -100,8 +110,10 @@ export default function App() {
 
         {writeError && <AppWriteErrorBanner onDismiss={clearWriteError} />}
 
-        {/* The list is the instrument, so it leads. The composer is a tool and
-            the ledger is a footnote; neither earns a panel above the work. */}
+        {/* The composer is the entry point, so it sits above the list: untangle
+            results then appear below where you are looking, instead of above
+            your viewport. It stays collapsed to one row so the list still owns
+            the first screen. The ledger is a footnote. */}
         <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-9 space-y-9">
           <AppStatusLine tasks={tasks} isSynced={!!currentUser} />
 
@@ -110,7 +122,27 @@ export default function App() {
               role="status" natively, so no ARIA is needed. */}
           <output className="sr-only">{aiSummary ?? ""}</output>
 
-          {aiSummary && <UntangleSummary summary={aiSummary} onDismiss={clearAiSummary} />}
+          {(activeView === "all" || activeView === "dump") && (
+            <section id="braindump-section" className="space-y-4">
+              {untangleError && (
+                <p
+                  role="alert"
+                  className="rounded-md border border-rose-500/40 bg-rose-950/40 p-3 text-sm text-rose-300"
+                >
+                  {untangleError}
+                </p>
+              )}
+              <ErrorBoundary>
+                <BrainDumpInput onUntangle={handleUntangle} isLoading={isUntangling} />
+              </ErrorBoundary>
+            </section>
+          )}
+
+          {aiSummary && (
+            <div ref={untangleResultRef}>
+              <UntangleSummary summary={aiSummary} onDismiss={clearAiSummary} />
+            </div>
+          )}
 
           {(activeView === "all" || activeView === "tasks") && (
             <section id="tasks-section" className="space-y-4">
@@ -126,22 +158,6 @@ export default function App() {
                   onClearCompleted={handleClearCompleted}
                   onOpenUnstick={() => setIsUnstickOpen(true)}
                 />
-              </ErrorBoundary>
-            </section>
-          )}
-
-          {(activeView === "all" || activeView === "dump") && (
-            <section id="braindump-section" className="space-y-4">
-              {untangleError && (
-                <p
-                  role="alert"
-                  className="rounded-md border border-rose-500/40 bg-rose-950/40 p-3 text-sm text-rose-300"
-                >
-                  {untangleError}
-                </p>
-              )}
-              <ErrorBoundary>
-                <BrainDumpInput onUntangle={handleUntangle} isLoading={isUntangling} />
               </ErrorBoundary>
             </section>
           )}
