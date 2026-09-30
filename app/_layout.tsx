@@ -16,9 +16,9 @@ if (Platform.OS !== "web") SplashScreen.preventAutoHideAsync().catch(() => {})
 
 const queryClient = new QueryClient()
 
-const TITLE = "Untangle - ADHD Brain Dump & Micro-Task Planner"
+const TITLE = "Untangle - ADHD Brain Dump & Next Steps"
 const DESCRIPTION =
-  "Turn chaotic thoughts and ADHD brain dumps into short, bite-sized micro-tasks with energy levels, dopamine rewards, and single-task focus radar."
+  "Turn chaotic thoughts and ADHD brain dumps into short, bite-sized steps with energy levels, dopamine rewards, and one-thing-at-a-time focus."
 
 export default function RootLayout() {
   if (Platform.OS === "web") {

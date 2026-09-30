@@ -14,11 +14,11 @@ export const QuickAddForm: React.FC<QuickAddFormProps> = ({ form, categoryNames,
       onSubmit={form.handleCreateTask}
       className="p-4 bg-neutral-900/90 border border-amber-500/30 rounded-xl space-y-3"
     >
-      <div className="text-xs font-semibold text-amber-300">Quick Micro-Task Entry</div>
+      <div className="text-xs font-semibold text-amber-300">Add a step</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor="quick-add-title" className="text-[11px] text-neutral-400 block mb-1">
-            Task title
+            Step title
           </label>
           <input
             id="quick-add-title"
@@ -126,7 +126,7 @@ export const QuickAddForm: React.FC<QuickAddFormProps> = ({ form, categoryNames,
             type="submit"
             className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-amber-400 text-neutral-950 hover:bg-amber-300"
           >
-            Save task
+            Save step
           </button>
         </div>
       </div>

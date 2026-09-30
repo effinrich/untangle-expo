@@ -54,12 +54,12 @@ Every category has a dedicated hue with subtle 10% opacity backdrops and crisp b
 ## 3. Typographic Hierarchy
 
 - **Font Family**: Inter, system sans-serif font stack with high x-height for scannability.
-- **Numbers & Durations**: Always `font-mono tabular-nums` (e.g., `4m`, `15m`, `12/15 micro-steps`) so executive working memory does not strain to compare time blocks.
+- **Numbers & Durations**: Always `font-mono tabular-nums` (e.g., `4m`, `15m`, `12/15 steps`) so executive working memory does not strain to compare time blocks.
 
 | Role               | Style                                                                 | Use Case                         |
 | :----------------- | :-------------------------------------------------------------------- | :------------------------------- |
 | **Headline 1**     | `text-2xl` to `text-3xl font-bold tracking-tight text-neutral-100`    | Hero viewport statement          |
-| **Section Header** | `text-base font-semibold text-neutral-200`                            | Brain Dump, Micro-Task list      |
+| **Section Header** | `text-base font-semibold text-neutral-200`                            | Brain Dump, Step list      |
 | **Task Title**     | `text-sm font-semibold text-neutral-100 leading-snug`                 | Action step title                |
 | **Physical Step**  | `text-xs text-neutral-300 font-normal leading-relaxed`                | Immediate physical micro-action  |
 | **Micro-Label**    | `text-[10px]` or `text-[11px] font-semibold uppercase tracking-wider` | Section categories, battery cues |

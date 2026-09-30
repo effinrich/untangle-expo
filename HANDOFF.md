@@ -36,9 +36,9 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 
 - **Backend (**`app/api/`**)**: Expo Router API routes, one `+api.ts` file per endpoint, served by the Expo server (`web.output: "server"` in `app.json`). `GEMINI_API_KEY` is read server-side only. The shared Gemini client lives in `server/gemini.ts`.
   - Endpoints:
-    - `POST /api/untangle` (`app/api/untangle+api.ts`): Slices raw brain dumps into categorized micro-tasks using `gemini-3.8-flash`.
+    - `POST /api/untangle` (`app/api/untangle+api.ts`): Slices raw brain dumps into categorized steps using `gemini-3.8-flash`.
     - `POST /api/transcribe-audio` (`app/api/transcribe-audio+api.ts`): Transcribes microphone audio payloads using `gemini-3.5-transcribe`.
-    - `POST /api/breakdown-task` (`app/api/breakdown-task+api.ts`): Decomposes overwhelming tasks into sub-2-minute micro-steps.
+    - `POST /api/breakdown-task` (`app/api/breakdown-task+api.ts`): Decomposes overwhelming tasks into sub-2-minute steps.
     - `POST /api/unstick-me` (`app/api/unstick-me+api.ts`): Evaluates current emotional friction and chooses the lowest-resistance starter task.
 - **Frontend (**`src/`**)**:
 - `components/web-app.tsx`: `'use dom'` entry that mounts `src/web-app/app.tsx` with Tailwind v4 (`src/index.css`, `postcss.config.js`).
@@ -148,7 +148,7 @@ The repository is one **Expo Router app (Expo SDK 52)** at the root. On web, `ap
 
 2. **Context-Aware Calendar / Time-Blocking Integration**:
 
-- Allow dragging micro-tasks directly into open calendar gaps without cluttering primary calendars.
+- Allow dragging steps directly into open calendar gaps without cluttering primary calendars.
 
 3. **Offline-First Synchronization**:
 

@@ -1,6 +1,6 @@
 # Untangle (Expo Router)
 
-ADHD Brain Dump & Micro-Task Planner built as one **Expo SDK 52** / **Expo Router** app for web, iOS, and Android.
+ADHD Brain Dump & Next Steps built as one **Expo SDK 52** / **Expo Router** app for web, iOS, and Android.
 
 ---
 
@@ -10,7 +10,7 @@ ADHD Brain Dump & Micro-Task Planner built as one **Expo SDK 52** / **Expo Route
 - **API routes**: `app/api/*+api.ts` (`/api/untangle`, `/api/breakdown-task`, `/api/unstick-me`, `/api/transcribe-audio`) run on the Expo server; `GEMINI_API_KEY` stays server-side. Native dev builds call them on the Metro host; release builds require a deployed endpoint in `EXPO_PUBLIC_API_BASE_URL` or `app.json` `extra.apiBaseUrl` and fail at startup if neither is set (see `services/api-client.ts`).
 - **Gemini 3.5 Transcribe**: Audio microphone recordings are transcribed into clean text.
 - **Firebase Firestore**: Web and native use the same Firestore collection (`/users/{userId}/tasks`).
-- **Haptic Feedback**: Uses `expo-haptics` for dopamine rewards when completing micro-tasks.
+- **Haptic Feedback**: Uses `expo-haptics` for dopamine rewards when completing steps.
 
 ---
 
