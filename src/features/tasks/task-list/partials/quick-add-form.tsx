@@ -27,7 +27,7 @@ export const QuickAddForm: React.FC<QuickAddFormProps> = ({ form, categoryNames,
             onChange={(e) => form.setNewTitle(e.target.value)}
             placeholder="e.g. Call pharmacy for refill"
             required
-            className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-1.5 text-xs text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
+            className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-1.5 text-base text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
           />
         </div>
         <div>
@@ -43,7 +43,7 @@ export const QuickAddForm: React.FC<QuickAddFormProps> = ({ form, categoryNames,
             value={form.newFirstStep}
             onChange={(e) => form.setNewFirstStep(e.target.value)}
             placeholder="e.g. Tap green phone icon and dial 1-800..."
-            className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-1.5 text-xs text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
+            className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-1.5 text-base text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
           />
         </div>
       </div>
@@ -57,7 +57,7 @@ export const QuickAddForm: React.FC<QuickAddFormProps> = ({ form, categoryNames,
             id="quick-add-category"
             value={form.newCategory}
             onChange={(e) => form.setNewCategory(e.target.value)}
-            className="bg-neutral-950 border border-neutral-800 rounded-lg px-2.5 py-1 text-xs text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
+            className="bg-neutral-950 border border-neutral-800 rounded-lg px-2.5 py-1 text-base text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
           >
             {categoryNames.map((cat) => (
               <option key={cat} value={cat}>
@@ -75,7 +75,7 @@ export const QuickAddForm: React.FC<QuickAddFormProps> = ({ form, categoryNames,
             id="quick-add-priority"
             value={form.newPriority}
             onChange={(e) => form.setNewPriority(e.target.value as PriorityLevel)}
-            className="bg-neutral-950 border border-neutral-800 rounded-lg px-2.5 py-1 text-xs text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
+            className="bg-neutral-950 border border-neutral-800 rounded-lg px-2.5 py-1 text-base text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
           >
             <option value="high">High Priority</option>
             <option value="medium">Medium Priority</option>
@@ -94,7 +94,7 @@ export const QuickAddForm: React.FC<QuickAddFormProps> = ({ form, categoryNames,
             max={60}
             value={form.newMinutes}
             onChange={(e) => form.setNewMinutes(Number(e.target.value))}
-            className="w-16 bg-neutral-950 border border-neutral-800 rounded-lg px-2 py-1 text-xs text-neutral-200 text-center font-mono tabular-nums focus-visible:ring-2 focus-visible:ring-amber-400"
+            className="w-16 bg-neutral-950 border border-neutral-800 rounded-lg px-2 py-1 text-base text-neutral-200 text-center font-mono tabular-nums focus-visible:ring-2 focus-visible:ring-amber-400"
           />
         </div>
 
@@ -106,7 +106,7 @@ export const QuickAddForm: React.FC<QuickAddFormProps> = ({ form, categoryNames,
             id="quick-add-energy"
             value={form.newEnergy}
             onChange={(e) => form.setNewEnergy(e.target.value as EnergyLevel)}
-            className="bg-neutral-950 border border-neutral-800 rounded-lg px-2.5 py-1 text-xs text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
+            className="bg-neutral-950 border border-neutral-800 rounded-lg px-2.5 py-1 text-base text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
           >
             <option value="low">Low Energy</option>
             <option value="medium">Medium</option>

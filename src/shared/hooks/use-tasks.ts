@@ -111,6 +111,16 @@ export function useTasks(currentUser: User | null) {
     )
   }
 
+  const restoreTask = (task: MicroTask) => {
+    setTasks((prev) => (prev.some((t) => t.id === task.id) ? prev : [task, ...prev]))
+    if (!currentUser) return
+    const uid = currentUser.uid
+    persist(
+      () => setTasks((cur) => cur.filter((t) => t.id !== task.id)),
+      () => [saveTaskToFirestore(uid, { ...task, userId: uid })],
+    )
+  }
+
   const updateTask = (updated: MicroTask) => {
     const previous = tasks.find((t) => t.id === updated.id) ?? null
     setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)))
@@ -181,6 +191,7 @@ export function useTasks(currentUser: User | null) {
     toggleComplete,
     toggleSubstep,
     deleteTask,
+    restoreTask,
     updateTask,
     addTask,
     addUntangledTasks,

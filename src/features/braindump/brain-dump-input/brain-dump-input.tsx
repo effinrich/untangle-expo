@@ -42,7 +42,7 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
             onChange={(e) => dump.editText(e.target.value)}
             placeholder="What's floating in your head right now? e.g. Need to pay the electric bill before Friday, cat needs medication, finish the budget report for Sarah, clean the laundry mountain off the chair..."
             rows={4}
-            className="w-full bg-transparent p-4 pr-16 text-sm text-neutral-200 placeholder-neutral-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 resize-y min-h-[110px] leading-relaxed"
+            className="w-full bg-transparent p-4 pr-16 text-base text-neutral-200 placeholder-neutral-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 resize-y min-h-[110px] leading-relaxed"
           />
 
           <BrainDumpVoiceButton

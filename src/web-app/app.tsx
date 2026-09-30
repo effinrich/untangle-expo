@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { BrainDumpInput } from "../features/braindump/brain-dump-input/brain-dump-input"
 import { useUntangle } from "../features/braindump/hooks"
 import { UntangleSummary } from "../features/braindump/untangle-summary/untangle-summary"
@@ -18,6 +18,7 @@ import { AppFooter } from "./partials/app-footer"
 import { AppHeader } from "./partials/app-header"
 import { AppRootErrorFallback } from "./partials/app-root-error-fallback"
 import { AppStatusLine } from "./partials/app-status-line"
+import { AppUndoBar } from "./partials/app-undo-bar"
 import { AppWriteErrorBanner } from "./partials/app-write-error-banner"
 import { ActiveView } from "./types"
 
@@ -38,6 +39,7 @@ export default function App() {
     toggleComplete,
     toggleSubstep,
     deleteTask,
+    restoreTask,
     updateTask,
     addTask,
     addUntangledTasks,
@@ -50,6 +52,27 @@ export default function App() {
   const [focusTask, setFocusTask] = useState<MicroTask | null>(null)
   const [isUnstickOpen, setIsUnstickOpen] = useState(false)
   const [activeView, setActiveView] = useState<ActiveView>("all")
+  const [undo, setUndo] = useState<{ task: MicroTask; message: string } | null>(null)
+
+  // A single delete is recoverable, so it gets undo rather than a confirm, and
+  // the bar clears itself if the user moves on. Bulk delete keeps a confirm.
+  useEffect(() => {
+    if (!undo) return
+    const timer = setTimeout(() => setUndo(null), 7000)
+    return () => clearTimeout(timer)
+  }, [undo])
+
+  const handleDeleteTask = (id: string) => {
+    const task = tasks.find((t) => t.id === id)
+    if (!task) return
+    deleteTask(id)
+    setUndo({ task, message: `Removed "${task.title}".` })
+  }
+
+  const handleClearCompleted = () => {
+    if (!confirm("Delete every completed step? This cannot be undone.")) return
+    clearCompleted()
+  }
 
   const handleResetToSeed = () => {
     if (!confirm(RESET_TO_SEED_PROMPT)) return
@@ -94,11 +117,11 @@ export default function App() {
                   tasks={tasks}
                   onToggleComplete={toggleComplete}
                   onToggleSubstep={toggleSubstep}
-                  onDelete={deleteTask}
+                  onDelete={handleDeleteTask}
                   onStartFocus={(task) => setFocusTask(task)}
                   onUpdateTask={updateTask}
                   onAddTask={addTask}
-                  onClearCompleted={clearCompleted}
+                  onClearCompleted={handleClearCompleted}
                   onOpenUnstick={() => setIsUnstickOpen(true)}
                 />
               </ErrorBoundary>
@@ -157,6 +180,17 @@ export default function App() {
             }}
           />
         </ErrorBoundary>
+
+        {undo && (
+          <AppUndoBar
+            message={undo.message}
+            onUndo={() => {
+              restoreTask(undo.task)
+              setUndo(null)
+            }}
+            onDismiss={() => setUndo(null)}
+          />
+        )}
 
         <AppFooter onOpenUnstick={() => setIsUnstickOpen(true)} />
       </ErrorBoundary>

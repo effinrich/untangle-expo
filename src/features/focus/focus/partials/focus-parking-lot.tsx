@@ -37,7 +37,7 @@ export const FocusParkingLot: React.FC<FocusParkingLotProps> = ({
           value={parkingThought}
           onChange={(e) => onChangeThought(e.target.value)}
           placeholder="e.g. Remember to buy milk, check text from mom..."
-          className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-1.5 text-xs text-neutral-200 placeholder-neutral-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+          className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-1.5 text-base text-neutral-200 placeholder-neutral-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
         />
         <button
           type="submit"

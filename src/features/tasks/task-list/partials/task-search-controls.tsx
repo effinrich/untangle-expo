@@ -23,7 +23,7 @@ export const TaskSearchControls: React.FC<TaskSearchControlsProps> = ({
         value={selectedPriority}
         onChange={(e) => onPriorityChange(e.target.value)}
         aria-label="Filter by priority"
-        className="bg-neutral-950/80 border border-neutral-800 rounded-lg px-2.5 py-1.5 text-xs text-neutral-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 min-h-11"
+        className="bg-neutral-950/80 border border-neutral-800 rounded-lg px-2.5 py-1.5 text-base text-neutral-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 min-h-11"
       >
         <option value="all">All Priorities</option>
         <option value="high">High Priority</option>
@@ -46,7 +46,7 @@ export const TaskSearchControls: React.FC<TaskSearchControlsProps> = ({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search tasks..."
-          className="w-full bg-neutral-950/80 border border-neutral-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-neutral-200 placeholder-neutral-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 min-h-11"
+          className="w-full bg-neutral-950/80 border border-neutral-800 rounded-lg pl-8 pr-3 py-1.5 text-base text-neutral-200 placeholder-neutral-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 min-h-11"
         />
       </div>
 
