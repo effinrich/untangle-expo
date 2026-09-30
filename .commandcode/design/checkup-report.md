@@ -65,7 +65,9 @@ Seven captures supplied by the user. This closes most of the web verification ga
 
 Untangle is a genuinely authored product: obsidian canvas, an amber accent, an ADHD-first copy voice, and a dump → slice → focus flow. The native surface executes that well.
 
-Web has two separate problems. The **access layer was never designed**: overlays have no dialog semantics, focus trap, Escape, or restore; controls are focusable with nothing visible to show focus landed, or mouse-only; delete has no undo; a placeholder is doing a label's job; looping motion ignores reduced motion. And the **composition does not serve the work**: the first viewport is a pitch, not an instrument, and the list a user came for sits below it. The renders also revoke my earlier Intentionality score — nine simultaneous accents is not a considered palette, it is a spray. See the revision below.
+Web has two separate problems. The **access layer was never designed**: overlays have no dialog semantics, focus trap, Escape, or restore; controls are focusable with nothing visible to show focus landed, or mouse-only; delete has no undo; a placeholder is doing a label's job; looping motion ignores reduced motion. And the **composition does not serve the work**: the first viewport is a pitch, not an instrument, and the list a user came for sits below it.
+
+The renders also moved my earlier Intentionality score down (see the revision below). The composition buries the work, and amber is doing too many jobs at once, though a measurement across the full-page capture shows that second problem is role dilution rather than coverage.
 
 Native is in much better shape: a live-region platform gap, web-only features amputated, an offline banner styled as an error, a blank-screen edge on boot, a checkmark drawn inside a radio, and a placeholder app icon.
 
@@ -122,7 +124,7 @@ Web **25 / 60** · Native **50 / 60**. Six vitals × 10 points (Healthy 10 / Wat
 | 14 | LOW | Motion | `sort-modal.tsx:14` | `animate-in fade-in duration-150` | Remove, or add `tailwindcss-animate` | The plugin is not installed, so the entrance never runs. |
 | 15 | LOW | Accessibility | `app-nav.tsx:15-24` | Active nav button styled amber + underline only, no programmatic state | Add `aria-current="page"` | Sighted users get the underline; assistive tech gets nothing. |
 | 21 | MEDIUM | Layout | `src/web-app/app.tsx:53-96`, `src/web-app/partials/app-hero-banner.tsx`, `src/features/braindump/brain-dump-input/brain-dump-input.tsx` | First viewport at 1200–1440px = header, hero card with marketing copy, banner, composer with three pill rows, and two filter strips. The task list is only reachable after scrolling past all of it | Demote the hero to a compact stat line, move the composer behind a toggle or below the list, and let the task list own the first viewport | The artifact the user opens the app for sits behind a pitch. This is composition, not polish: the instrument is buried under chrome. |
-| 22 | MEDIUM | Color | `app-header.tsx:44-78`, `app-nav.tsx`, `brain-dump-energy-control.tsx`, `brain-dump-area-filter.tsx`, `brain-dump-sparks.tsx`, `brain-dump-footer.tsx`, `category-filter-strip.tsx` | Amber carries the active nav item, Unstick Me, the hero eyebrow, the selected battery pill, the selected area pill, the selected spark, two section headers, and the primary submit — ~9 amber elements visible at once | Give amber one job, the single primary action per screen; move selection state to a neutral fill with an amber border or check | Accent should be roughly 10% of the surface. Nine simultaneous accents is why the page reads busy despite genuinely good text contrast. |
+| 22 | MEDIUM | Color | `app-header.tsx:44-78`, `app-nav.tsx`, `brain-dump-energy-control.tsx`, `brain-dump-area-filter.tsx`, `brain-dump-sparks.tsx`, `brain-dump-footer.tsx`, `category-filter-strip.tsx` | Amber carries the active nav state, the Unstick Me action, the hero eyebrow, two section headers, every selection pill, and the primary submit. Measured on the full-page capture, pure amber occupies **0.18% of the page** with two substantial fills, the largest 114×28 (the Unstick button) | Give amber one job: the single primary action per screen. Move selection state and section headings to neutral treatments | **Role dilution, not area excess.** The measurement rules out a coverage problem, so the earlier "accent should be ~10% of the surface" prescription was wrong; amber is nowhere near 10%. The cost is that one colour simultaneously means *selection*, *action*, and *heading*, so it signals nothing in particular. |
 | 23 | LOW | Interaction | `unstick-me-modal.tsx:186-192` | "Pick Another" is `text-neutral-400` on `neutral-900` beside a solid amber primary | Raise to `text-neutral-200` with a visible border, matching secondary buttons elsewhere | The retreat action is materially weaker than the commit action, so the design nudges the user into the primary by contrast rather than by choice. |
 | 24 | MEDIUM | Surface | `src/data/categories.ts:58-68`, rendered in `category-filter-strip.tsx` and `dopamine-tracker.tsx` | AI output produced categories outside the taxonomy ("Quick Win", "Focus Project"); both fall through `getCategoryStyle` to the neutral fallback and render with a gray dot and no hue | Constrain generated categories to the known taxonomy, or extend the palette deliberately and document it | Two of six categories in the momentum breakdown were unbranded, so the color-coding that carries the product's meaning silently stopped working. Corroborates the web task-validation work already planned. |
 
@@ -172,6 +174,7 @@ Web **25 / 60** · Native **50 / 60**. Six vitals × 10 points (Healthy 10 / Wat
 - **Native: four simulator captures examined** (main screen, sort sheet, boot state, OAuth error).
 - **Web: seven browser captures examined** at ~1200–1440px (workspace at two task counts, task list with momentum ledger, Focus modal, Unstick modal in both states).
 - Read `assets/icon.png` and `assets/splash-icon.png` directly to identify the 6:50 capture.
+- For the final full-page capture the vision tool was unavailable (repeated timeouts at every size and format), so its geometry was measured programmatically instead: per-row trim bounds to locate the content column, and connected-component analysis on a pure-amber colour mask. That measurement is what corrected finding 22.
 
 **Not verified**
 
@@ -179,6 +182,7 @@ Web **25 / 60** · Native **50 / 60**. Six vitals × 10 points (Healthy 10 / Wat
 - **Focus visibility.** No capture has a focused element, so finding 2 is unreproduced visually.
 - **Web states**: empty, loading, and error states below the fold were not captured.
 - Native runtime behaviour was not exercised: VoiceOver/TalkBack output and live-region behaviour remain gaps.
+- The final full-page capture was never read visually. Its measurements are sound (content column, accent coverage), but no text, control, or state in it was confirmed by eye.
 
 ---
 

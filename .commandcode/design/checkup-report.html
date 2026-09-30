@@ -257,8 +257,8 @@
 				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
 					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; COLOR</div>
 					<h2 class="mb-2 text-lg font-semibold">The accent has stopped being an accent</h2>
-					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">Roughly nine amber elements are visible at once in a single viewport: active nav, Unstick Me, the hero eyebrow, the selected battery pill, the selected area pill, the selected spark, two section headers, and the primary submit.</p>
-					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Give amber one job, the single primary action per screen. Move selection state to a neutral fill with an amber border or check. Accent should be roughly 10% of the surface.</div>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">Amber carries the active nav state, the Unstick Me action, the hero eyebrow, two section headers, every selection pill, and the primary submit. <span class="text-[#fafafa]">Measured on the full-page capture, pure amber is 0.18% of the page</span> with two substantial fills, the largest 114&times;28 (the Unstick button).</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Give amber one job, the single primary action per screen. Move selection state and section headings to neutral treatments. <span class="text-[#fafafa]">Role dilution, not area excess</span> &mdash; the measurement rules out a coverage problem, so the earlier "accent should be ~10% of the surface" prescription was wrong. The cost is that one colour means selection, action and heading at once, so it signals nothing in particular.</div>
 				</article>
 			</div>
 		</section>
@@ -441,6 +441,7 @@
 						<li><span class="text-[#fafafa]">Native: four simulator captures examined</span> (main screen, sort sheet, boot state, OAuth error). Palette, contrast, tap targets, list composition, and the parity gap confirmed by eye at device size.</li>
 						<li><span class="text-[#fafafa]">Web: seven browser captures examined</span> at ~1200&ndash;1440px (workspace at two task counts, task list plus momentum ledger, Focus modal, Unstick modal in both states).</li>
 						<li>Read <span class="mono">assets/icon.png</span> and <span class="mono">assets/splash-icon.png</span> directly to identify the 6:50 capture.</li>
+						<li>For the final full-page capture the vision tool was unavailable (repeated timeouts at every size and format), so its geometry was measured programmatically: per-row trim bounds for the content column, and connected-component analysis on a pure-amber colour mask. That measurement corrected finding 22.</li>
 					</ul>
 				</div>
 				<div>
@@ -450,6 +451,7 @@
 						<li><span class="text-[#fafafa]">Focus visibility.</span> No capture has a focused element, so finding 2 is unreproduced visually. A static screenshot cannot show a focus ring either way.</li>
 						<li>Web empty, loading, and error states below the fold were not captured.</li>
 						<li>Native runtime behaviour was not exercised: VoiceOver/TalkBack output and live-region behaviour remain gaps.</li>
+						<li>The final full-page capture was never read visually. Its measurements are sound (content column, accent coverage), but no text, control, or state in it was confirmed by eye.</li>
 					</ul>
 				</div>
 			</div>
