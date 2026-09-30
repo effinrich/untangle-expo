@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Redirect, Stack, useRouter } from "expo-router"
+import { LoadingScreen } from "../../components/loading-screen/loading-screen"
 import { Screen } from "../../components/screen/screen"
 import { StatusBanner } from "../../components/status-banner/status-banner"
 import { useAppState } from "../../hooks/app-context"
@@ -34,8 +35,9 @@ export default function MainScreen() {
     setArrival(arrivalGreetingFor(tasks))
   }, [tasks, app.dataReady])
 
-  if (app.onboardingComplete === null) return null
+  if (app.onboardingComplete === null) return <LoadingScreen />
   if (!app.onboardingComplete) return <Redirect href="/onboarding" />
+  if (!app.dataReady) return <LoadingScreen />
 
   const untangling = dump.status.state === "untangling"
   const hasTasks = tasks.length > 0
