@@ -349,6 +349,16 @@
 						</tr>
 						<tr class="border-b border-[#1a1a1e] align-top">
 							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">Checking a task off races its own reward: the chime and confetti fire, then the same tick re-sorts the card to the bottom with no transition, so it leaves the viewport before the celebration lands. Completed items then sit at the bottom indefinitely with no hide/show control.</td>
+							<td class="py-3 mono text-xs text-[#777]">task-list/utils.ts:85, task-list.tsx:135, task-list/hooks.ts:104-110</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">No enforced rhythm or hierarchy: 14 distinct spacing values in use, and 90 of ~124 text-size declarations are <span class="mono">text-xs</span>.</td>
+							<td class="py-3 mono text-xs text-[#777]">src/** (measured) vs DESIGN_SYSTEM.md:44-52</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
 							<td class="py-3 pr-4">AI output escaped the category taxonomy: "Quick Win" and "Focus Project" render with the neutral fallback and no hue.</td>
 							<td class="py-3 mono text-xs text-[#777]">data/categories.ts:58-68, category-filter-strip.tsx, dopamine-tracker.tsx</td>
 						</tr>
