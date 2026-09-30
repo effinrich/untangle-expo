@@ -80,6 +80,11 @@ export default function App() {
         <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-9 space-y-9">
           <AppStatusLine tasks={tasks} isSynced={!!currentUser} />
 
+          {/* Stable live region. Its text changes when a dump is untangled, so
+              the result is announced without moving focus. <output> carries
+              role="status" natively, so no ARIA is needed. */}
+          <output className="sr-only">{aiSummary ?? ""}</output>
+
           {aiSummary && <UntangleSummary summary={aiSummary} onDismiss={clearAiSummary} />}
 
           {(activeView === "all" || activeView === "tasks") && (

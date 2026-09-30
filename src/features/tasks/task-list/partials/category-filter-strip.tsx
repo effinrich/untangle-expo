@@ -40,7 +40,7 @@ export const CategoryFilterStrip: React.FC<CategoryFilterStripProps> = ({
         <button
           type="button"
           onClick={() => onSelectCategory("all")}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 min-h-[36px] ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 min-h-11 ${
             selectedCategory === "all"
               ? "bg-neutral-800 text-neutral-100 border border-neutral-700 shadow-sm"
               : "text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900"
@@ -60,7 +60,7 @@ export const CategoryFilterStrip: React.FC<CategoryFilterStripProps> = ({
               key={catName}
               type="button"
               onClick={() => onSelectCategory(isSelected ? "all" : catName)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 border min-h-[36px] ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 border min-h-11 ${
                 isSelected
                   ? `${style.bgLight} ${style.borderColor} ${style.textColor} font-semibold ring-1 ring-amber-400/30`
                   : "bg-neutral-950/80 border-neutral-800 text-neutral-400 hover:text-neutral-200 hover:border-neutral-700"

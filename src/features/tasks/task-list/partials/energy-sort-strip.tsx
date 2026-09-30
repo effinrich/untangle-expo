@@ -44,7 +44,7 @@ export const EnergySortStrip: React.FC<EnergySortStripProps> = ({
               key={opt.id}
               type="button"
               onClick={() => onSelectSort(opt.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 border min-h-[38px] active:scale-95 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 border min-h-11 active:scale-95 ${
                 isSelected
                   ? "bg-amber-400/15 border-amber-400/50 text-amber-300 font-semibold shadow-sm"
                   : "bg-neutral-950/70 border-neutral-800 text-neutral-400 hover:text-neutral-200 hover:border-neutral-700"
