@@ -14,7 +14,7 @@ export const FocusTaskSpark: React.FC<FocusTaskSparkProps> = ({ task }) => {
       </h2>
 
       <div className="w-full max-w-md bg-neutral-950/80 border border-amber-400/30 rounded-xl p-3.5 mb-6 text-left">
-        <span className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider block">
+        <span className="text-xs font-semibold text-amber-400 block">
           Your First Physical Action Right Now:
         </span>
         <p className="text-sm text-neutral-200 mt-1 font-medium leading-relaxed">

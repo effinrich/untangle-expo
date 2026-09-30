@@ -21,7 +21,7 @@ export const SortModal: React.FC<SortModalProps> = ({ sortBy, onSelectSort, onCl
         event.preventDefault()
         onClose()
       }}
-      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-end justify-center border-0 bg-neutral-950/80 p-0 text-neutral-100 backdrop-blur-sm sm:items-center sm:p-4 open:flex"
+      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-end justify-center border-0 bg-neutral-950/80 p-0 text-neutral-100 sm:items-center sm:p-4 open:flex"
     >
       <div className="w-full sm:max-w-md bg-neutral-900 border border-neutral-800 rounded-t-2xl sm:rounded-2xl p-5 shadow-2xl max-h-[85vh] overflow-y-auto no-scrollbar">
         {/* Sheet header */}

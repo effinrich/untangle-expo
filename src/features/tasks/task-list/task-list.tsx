@@ -10,15 +10,12 @@ import {
   getCategoryCounts,
   sortTasks,
 } from "./utils"
-import { CategoryFilterStrip } from "./partials/category-filter-strip"
-import { EnergySortStrip } from "./partials/energy-sort-strip"
 import { QuickAddForm } from "./partials/quick-add-form"
 import { SortModal } from "./partials/sort-modal"
-import { StatusFilterTabs } from "./partials/status-filter-tabs"
 import { TaskCard } from "./partials/task-card"
+import { TaskFilterBar } from "./partials/task-filter-bar"
 import { TaskListEmptyState } from "./partials/task-list-empty-state"
 import { TaskListFooter } from "./partials/task-list-footer"
-import { TaskSearchControls } from "./partials/task-search-controls"
 
 export const TaskList: React.FC<TaskListProps> = ({
   tasks,
@@ -72,41 +69,24 @@ export const TaskList: React.FC<TaskListProps> = ({
 
   return (
     <div className="w-full space-y-4">
-      {/* Priority Area / Category Tabs Strip */}
-      <CategoryFilterStrip
+      <TaskFilterBar
+        filterTab={filterTab}
+        activeCount={activeCount}
+        completedCount={completedCount}
+        onFilterTabChange={setFilterTab}
         categoryNames={allCategoryNames}
         categoryCounts={categoryCounts}
-        activeCount={activeCount}
         selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
-      />
-
-      {/* Mobile-First Energy Sorting & Mental State Quick-Switch Strip */}
-      <EnergySortStrip
-        sortBy={sortBy}
+        onCategoryChange={setSelectedCategory}
+        selectedPriority={selectedPriority}
+        onPriorityChange={setSelectedPriority}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
         activeSortOption={activeSortOption}
-        onSelectSort={handleSelectSort}
         onOpenSortModal={() => setIsSortModalOpen(true)}
+        onToggleAddForm={() => setIsAddingNew(!isAddingNew)}
       />
 
-      {/* Main Filter & Search Controls Bar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-neutral-900/60 border border-neutral-800 p-3.5 rounded-xl backdrop-blur-sm">
-        <StatusFilterTabs
-          filterTab={filterTab}
-          activeCount={activeCount}
-          completedCount={completedCount}
-          onChange={setFilterTab}
-        />
-        <TaskSearchControls
-          selectedPriority={selectedPriority}
-          onPriorityChange={setSelectedPriority}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onToggleAddForm={() => setIsAddingNew(!isAddingNew)}
-        />
-      </div>
-
-      {/* Manual Quick Add Form */}
       {isAddingNew && (
         <QuickAddForm
           form={quickAddForm}
@@ -115,11 +95,10 @@ export const TaskList: React.FC<TaskListProps> = ({
         />
       )}
 
-      {/* Task List Items */}
       {sortedTasks.length === 0 ? (
         <TaskListEmptyState selectedCategory={selectedCategory} filterTab={filterTab} />
       ) : (
-        <div className="space-y-3">
+        <ul className="divide-y divide-neutral-800">
           {sortedTasks.map((task) => (
             <TaskCard
               key={task.id}
@@ -131,19 +110,17 @@ export const TaskList: React.FC<TaskListProps> = ({
               onUpdateTask={onUpdateTask}
             />
           ))}
-        </div>
+        </ul>
       )}
 
       <TaskListFooter
         activeCount={activeCount}
         completedCount={completedCount}
-        sortLabel={activeSortOption.label}
         copiedNotification={copiedNotification}
         onExportMarkdown={handleExportMarkdown}
         onClearCompleted={onClearCompleted}
       />
 
-      {/* Mobile-First Bottom Sheet / Sort Drawer Modal */}
       {isSortModalOpen && (
         <SortModal
           sortBy={sortBy}

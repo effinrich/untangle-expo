@@ -15,7 +15,7 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
     dump.recorder
 
   return (
-    <div className="w-full bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 md:p-6 backdrop-blur-sm shadow-xl">
+    <div className="w-full bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 md:p-6">
       <BrainDumpHeader
         energyPreference={dump.energyPreference}
         onChangeEnergy={dump.setEnergyPreference}

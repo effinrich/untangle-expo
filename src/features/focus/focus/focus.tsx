@@ -34,7 +34,7 @@ export const Focus: React.FC<FocusProps> = ({
         event.preventDefault()
         session.close()
       }}
-      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-neutral-950/95 p-4 text-neutral-100 backdrop-blur-md open:flex"
+      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-neutral-950/95 p-4 text-neutral-100 open:flex"
     >
       <div className="relative w-full max-w-2xl bg-neutral-900 border border-neutral-800 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col items-center text-center">
         <h2 id="focus-dialog-title" className="sr-only">

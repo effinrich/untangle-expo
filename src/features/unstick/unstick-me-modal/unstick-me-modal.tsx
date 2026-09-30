@@ -67,11 +67,11 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
         event.preventDefault()
         onClose()
       }}
-      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-neutral-950/90 p-4 text-neutral-100 backdrop-blur-md open:flex"
+      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-neutral-950/90 p-4 text-neutral-100 open:flex"
     >
       <div className="relative w-full max-w-lg bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-amber-400 text-sm font-semibold">
             <Zap className="w-4 h-4 fill-amber-400" aria-hidden="true" />
             <span id="unstick-dialog-title">ADHD Unstick Assistant</span>
           </div>
@@ -146,7 +146,7 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
         ) : (
           <div className="space-y-4">
             <div className="p-3.5 bg-neutral-950 border border-neutral-800 rounded-xl">
-              <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-neutral-500 block">
                 Decision Made For You:
               </span>
               <h4 className="text-base font-bold text-neutral-100 mt-1">{chosenTask.title}</h4>
@@ -154,7 +154,7 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
             </div>
 
             <div className="p-3.5 bg-amber-400/10 border border-amber-400/30 rounded-xl">
-              <span className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-amber-400 block">
                 The 2-Minute Spark Contract:
               </span>
               <p className="text-xs text-neutral-200 mt-1 font-medium leading-relaxed">
