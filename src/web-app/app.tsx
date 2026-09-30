@@ -16,8 +16,8 @@ import { useAuth, useFirestoreConnectionTest } from "./hooks"
 import { AppAuthErrorBanner } from "./partials/app-auth-error-banner"
 import { AppFooter } from "./partials/app-footer"
 import { AppHeader } from "./partials/app-header"
-import { AppHeroBanner } from "./partials/app-hero-banner"
 import { AppRootErrorFallback } from "./partials/app-root-error-fallback"
+import { AppStatusLine } from "./partials/app-status-line"
 import { AppWriteErrorBanner } from "./partials/app-write-error-banner"
 import { ActiveView } from "./types"
 
@@ -75,20 +75,12 @@ export default function App() {
 
         {writeError && <AppWriteErrorBanner onDismiss={clearWriteError} />}
 
-        {/* Main Content Viewport */}
-        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 md:py-8 space-y-6">
-          <AppHeroBanner tasks={tasks} isSynced={!!currentUser} />
+        {/* The list is the instrument, so it leads. The composer is a tool and
+            the ledger is a footnote; neither earns a panel above the work. */}
+        <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-9 space-y-9">
+          <AppStatusLine tasks={tasks} isSynced={!!currentUser} />
 
           {aiSummary && <UntangleSummary summary={aiSummary} onDismiss={clearAiSummary} />}
-
-          {/* Dynamic Section Layout based on active view */}
-          {(activeView === "all" || activeView === "dump") && (
-            <section id="braindump-section">
-              <ErrorBoundary>
-                <BrainDumpInput onUntangle={handleUntangle} isLoading={isUntangling} />
-              </ErrorBoundary>
-            </section>
-          )}
 
           {(activeView === "all" || activeView === "tasks") && (
             <section id="tasks-section" className="space-y-4">
@@ -104,6 +96,14 @@ export default function App() {
                   onClearCompleted={clearCompleted}
                   onOpenUnstick={() => setIsUnstickOpen(true)}
                 />
+              </ErrorBoundary>
+            </section>
+          )}
+
+          {(activeView === "all" || activeView === "dump") && (
+            <section id="braindump-section">
+              <ErrorBoundary>
+                <BrainDumpInput onUntangle={handleUntangle} isLoading={isUntangling} />
               </ErrorBoundary>
             </section>
           )}
