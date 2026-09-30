@@ -47,7 +47,9 @@ export default function App() {
     resetToSeed,
   } = useTasks(currentUser)
   const { parkingLot, addParkingLotItem, deleteParkingLotItem } = useParkingLot(currentUser)
-  const { aiSummary, clearAiSummary, handleUntangle, isUntangling } = useUntangle(addUntangledTasks)
+  const { aiSummary, untangleError, clearAiSummary, handleUntangle, isUntangling } = useUntangle(
+    addUntangledTasks,
+  )
 
   const [focusTask, setFocusTask] = useState<MicroTask | null>(null)
   const [isUnstickOpen, setIsUnstickOpen] = useState(false)
@@ -129,7 +131,15 @@ export default function App() {
           )}
 
           {(activeView === "all" || activeView === "dump") && (
-            <section id="braindump-section">
+            <section id="braindump-section" className="space-y-4">
+              {untangleError && (
+                <p
+                  role="alert"
+                  className="rounded-md border border-rose-500/40 bg-rose-950/40 p-3 text-sm text-rose-300"
+                >
+                  {untangleError}
+                </p>
+              )}
               <ErrorBoundary>
                 <BrainDumpInput onUntangle={handleUntangle} isLoading={isUntangling} />
               </ErrorBoundary>
