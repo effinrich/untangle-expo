@@ -124,6 +124,18 @@ service cloud.firestore {
           && incoming().createdAt == existing().createdAt;
         allow delete: if isOwner(userId) && isValidId(userId) && isValidId(itemId);
       }
+
+      // One-time native seed migration marker; immutable once created.
+      match /migrationState/{stateId} {
+        allow get: if isOwner(userId) && isValidId(userId) && stateId == 'native-seeds';
+        allow list: if false;
+        allow create: if isOwner(userId)
+          && isValidId(userId)
+          && stateId == 'native-seeds'
+          && incoming().keys().hasOnly(['seeded'])
+          && incoming().seeded == true;
+        allow update, delete: if false;
+      }
     }
   }
 }

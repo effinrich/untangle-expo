@@ -152,4 +152,11 @@ describe("profiles", () => {
       setDoc(doc(alice.liteDb, `users/${alice.uid}`), profile(alice, new Date().toISOString()), { merge: true }),
     ).rejects.toThrow()
   })
+
+  test("native seed migration marker is owner-only and immutable", async () => {
+    const ref = doc(alice.liteDb, `users/${alice.uid}/migrationState/native-seeds`)
+    await setDoc(ref, { seeded: true })
+    await expect(setDoc(ref, { seeded: false })).rejects.toThrow()
+    await expect(getDoc(doc(bob.liteDb, `users/${alice.uid}/migrationState/native-seeds`))).rejects.toThrow()
+  })
 })

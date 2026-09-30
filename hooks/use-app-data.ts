@@ -70,21 +70,43 @@ export function useAppData(user: User | null, authReady: boolean) {
     const tasks = createUserTasksCollection(userId, onError)
     const parkingLot = createUserParkingLotCollection(userId, onError)
     const outbox = startUserOutbox(userId, tasks, parkingLot)
-    setSource({ tasks, parkingLot, outbox })
+    setSource(GUEST_SOURCE)
+    const userSource = { tasks, parkingLot, outbox }
+    let collectionsReady = false
+    let migrationComplete = false
+    const activateUserSource = () => {
+      if (!cancelled && collectionsReady && migrationComplete) setSource(userSource)
+    }
 
-    Promise.all([tasks.preload(), parkingLot.preload(), outbox.waitForInit()])
+    Promise.all([
+      tasks.preload(),
+      parkingLot.preload(),
+      outbox.waitForInit(),
+      guestTasksCollection.preload(),
+      guestParkingLotCollection.preload(),
+    ])
       .catch(onError)
       .finally(() => {
-        if (!cancelled) setDataReady(true)
+        if (!cancelled) {
+          collectionsReady = true
+          setDataReady(true)
+          activateUserSource()
+        }
       })
     let retryTimer: ReturnType<typeof setTimeout> | undefined
     const migrate = (attempt: number) => {
-      moveGuestToAccount(userId, () => !cancelled).catch((error) => {
-        if (cancelled) return
-        const delay = Math.min(MIGRATION_RETRY_MS * 2 ** attempt, MIGRATION_RETRY_MAX_MS)
-        console.warn(`Guest data migration failed; retrying in ${delay / 1000}s:`, error)
-        retryTimer = setTimeout(() => migrate(attempt + 1), delay)
-      })
+      moveGuestToAccount(userId, () => !cancelled)
+        .then((completed) => {
+          if (cancelled || !completed) return
+          migrationComplete = true
+          activateUserSource()
+        })
+        .catch((error) => {
+          if (cancelled) return
+          const delay = Math.min(MIGRATION_RETRY_MS * 2 ** attempt, MIGRATION_RETRY_MAX_MS)
+          console.warn(`Guest data migration failed; retrying in ${delay / 1000}s:`, error)
+          retryTimer = setTimeout(() => migrate(attempt + 1), delay)
+        })
     }
     migrate(0)
 
