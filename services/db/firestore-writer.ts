@@ -17,7 +17,7 @@ const PERMANENT_CODES = new Set([
   "out-of-range",
 ])
 
-// Firestore caps a write batch at 500 operations; only larger transactions span batches.
+// Firestore caps a write batch at 500 operations; larger transactions cannot stay atomic.
 const BATCH_LIMIT = 500
 
 /** Outbox mutation function: writes a transaction's mutations to Firestore as one batch. */
@@ -32,20 +32,25 @@ export function firestoreMutationFn(
       return { mutation, writer, ref: doc(firestore, writer.path(String(mutation.key))) }
     })
 
-    for (let start = 0; start < writes.length; start += BATCH_LIMIT) {
-      const batch = writeBatch(firestore)
-      for (const { mutation, writer, ref } of writes.slice(start, start + BATCH_LIMIT)) {
-        if (mutation.type === "delete") batch.delete(ref)
-        else batch.set(ref, writer.toDoc(mutation.modified))
+    if (writes.length > BATCH_LIMIT) {
+      throw new NonRetriableError(
+        `This change has ${writes.length} writes; Firestore allows at most ${BATCH_LIMIT} writes per atomic change.`,
+      )
+    }
+    if (writes.length === 0) return
+
+    const batch = writeBatch(firestore)
+    for (const { mutation, writer, ref } of writes) {
+      if (mutation.type === "delete") batch.delete(ref)
+      else batch.set(ref, writer.toDoc(mutation.modified))
+    }
+    try {
+      await batch.commit()
+    } catch (error) {
+      if (error instanceof FirebaseError && PERMANENT_CODES.has(error.code)) {
+        throw new NonRetriableError(error.message)
       }
-      try {
-        await batch.commit()
-      } catch (error) {
-        if (error instanceof FirebaseError && PERMANENT_CODES.has(error.code)) {
-          throw new NonRetriableError(error.message)
-        }
-        throw error
-      }
+      throw error
     }
   }
 }

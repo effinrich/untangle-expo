@@ -5,6 +5,7 @@ import {
   limit,
   query,
   runTransaction,
+  setDoc,
   type DocumentData,
   type Firestore,
 } from "firebase/firestore"
@@ -14,8 +15,10 @@ import { toParkingDoc, toTaskDoc } from "./doc-shapes"
 import type { ParkedThought } from "./types"
 
 const TRANSACTION_CHUNK = 200
+const SEED_MARKER_PATH = "metadata/seed-status"
 
 type DocEntry = [path: string, data: DocumentData]
+type SeedStatus = "pending" | "complete"
 
 function seedFingerprint(task: MicroTask): string {
   return JSON.stringify([
@@ -49,9 +52,25 @@ async function createMissing(firestore: Firestore, entries: DocEntry[]): Promise
   }
 }
 
+async function getSeedStatus(
+  firestore: Firestore,
+  userId: string,
+  accountHasTasks: boolean,
+): Promise<SeedStatus> {
+  const marker = doc(firestore, `users/${userId}/${SEED_MARKER_PATH}`)
+  return runTransaction(firestore, async (transaction) => {
+    const snapshot = await transaction.get(marker)
+    if (snapshot.exists()) return snapshot.data().seedStatus === "pending" ? "pending" : "complete"
+
+    const status: SeedStatus = accountHasTasks ? "complete" : "pending"
+    transaction.set(marker, { seedStatus: status })
+    return status
+  })
+}
+
 /**
  * Copies guest data into the user's collections. Unedited sample tasks only go to brand-new
- * accounts, so signing in on a new device doesn't bring back samples the user already deleted.
+ * accounts; an account marker keeps deleted samples from returning on a new device.
  */
 export async function migrateGuestData(
   firestore: Firestore,
@@ -60,7 +79,8 @@ export async function migrateGuestData(
 ): Promise<void> {
   const tasksPath = `users/${userId}/tasks`
   const existing = await getDocs(query(collection(firestore, tasksPath), limit(1)))
-  const tasks = existing.empty ? guest.tasks : guest.tasks.filter((task) => !isUntouchedSeed(task))
+  const seedStatus = await getSeedStatus(firestore, userId, !existing.empty)
+  const tasks = seedStatus === "pending" ? guest.tasks : guest.tasks.filter((task) => !isUntouchedSeed(task))
 
   await createMissing(firestore, [
     ...tasks.map((task): DocEntry => [`${tasksPath}/${task.id}`, toTaskDoc(task, userId)]),
@@ -69,4 +89,8 @@ export async function migrateGuestData(
       toParkingDoc(thought, userId),
     ]),
   ])
+
+  if (seedStatus === "pending") {
+    await setDoc(doc(firestore, `users/${userId}/${SEED_MARKER_PATH}`), { seedStatus: "complete" })
+  }
 }

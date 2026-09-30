@@ -153,3 +153,21 @@ describe("profiles", () => {
     ).rejects.toThrow()
   })
 })
+
+describe("account metadata", () => {
+  test("seed marker is owner-only and accepts only supported states", async () => {
+    const marker = doc(alice.liteDb, `users/${alice.uid}/metadata/seed-status`)
+    await setDoc(marker, { seedStatus: "pending" })
+    expect((await getDoc(marker)).data()?.seedStatus).toBe("pending")
+    await setDoc(marker, { seedStatus: "complete" })
+    await expect(setDoc(marker, { seedStatus: "unknown" })).rejects.toThrow()
+    await expect(setDoc(marker, { seedStatus: "pending" })).rejects.toThrow()
+    await expect(deleteDoc(marker)).rejects.toThrow()
+    await expect(
+      getDoc(doc(bob.liteDb, `users/${alice.uid}/metadata/seed-status`)),
+    ).rejects.toThrow()
+    await expect(
+      setDoc(doc(bob.liteDb, `users/${alice.uid}/metadata/seed-status`), { seedStatus: "complete" }),
+    ).rejects.toThrow()
+  })
+})

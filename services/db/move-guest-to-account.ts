@@ -13,16 +13,25 @@ export async function moveGuestToAccount(userId: string, isSessionActive: () => 
   await Promise.all([guestTasksCollection.preload(), guestParkingLotCollection.preload()])
   const tasks = guestTasksCollection.toArray
   const thoughts = guestParkingLotCollection.toArray
-  if (tasks.length === 0 && thoughts.length === 0) return
 
   await migrateGuestData(db, userId, { tasks, thoughts })
   if (!isSessionActive()) return
+
+  const unchangedTasks = tasks.filter((task) => {
+    const current = guestTasksCollection.get(task.id)
+    return current !== undefined && JSON.stringify(current) === JSON.stringify(task)
+  })
+  const unchangedThoughts = thoughts.filter((thought) => {
+    const current = guestParkingLotCollection.get(thought.id)
+    return current !== undefined && JSON.stringify(current) === JSON.stringify(thought)
+  })
+
   const deletions: Promise<unknown>[] = []
-  if (tasks.length > 0) {
-    deletions.push(guestTasksCollection.delete(tasks.map((task) => task.id)).isPersisted.promise)
+  if (unchangedTasks.length > 0) {
+    deletions.push(guestTasksCollection.delete(unchangedTasks.map((task) => task.id)).isPersisted.promise)
   }
-  if (thoughts.length > 0) {
-    deletions.push(guestParkingLotCollection.delete(thoughts.map((thought) => thought.id)).isPersisted.promise)
+  if (unchangedThoughts.length > 0) {
+    deletions.push(guestParkingLotCollection.delete(unchangedThoughts.map((thought) => thought.id)).isPersisted.promise)
   }
   await Promise.all(deletions)
 }

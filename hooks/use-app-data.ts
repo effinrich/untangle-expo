@@ -51,11 +51,19 @@ export function useAppData(user: User | null, authReady: boolean) {
     setDataReady(false)
     setSyncError(null)
 
+    const prepareGuestData = async () => {
+      await importLegacyGuestData()
+      await Promise.all([
+        ensureGuestSeeded(),
+        guestTasksCollection.preload(),
+        guestParkingLotCollection.preload(),
+      ])
+    }
+
     if (!userId) {
       removeDeviceKeys(STORAGE_KEYS.userPrefix)
       setSource(GUEST_SOURCE)
-      importLegacyGuestData()
-        .then(() => Promise.all([ensureGuestSeeded(), guestParkingLotCollection.preload()]))
+      prepareGuestData()
         .catch((error) => setSyncError(errorMessage(error)))
         .finally(() => {
           if (!cancelled) setDataReady(true)
@@ -70,23 +78,31 @@ export function useAppData(user: User | null, authReady: boolean) {
     const tasks = createUserTasksCollection(userId, onError)
     const parkingLot = createUserParkingLotCollection(userId, onError)
     const outbox = startUserOutbox(userId, tasks, parkingLot)
-    setSource({ tasks, parkingLot, outbox })
+    const userSource = { tasks, parkingLot, outbox }
+    setSource(GUEST_SOURCE)
 
-    Promise.all([tasks.preload(), parkingLot.preload(), outbox.waitForInit()])
+    Promise.all([guestTasksCollection.preload(), guestParkingLotCollection.preload()])
       .catch(onError)
       .finally(() => {
         if (!cancelled) setDataReady(true)
       })
+    const userReady = Promise.all([tasks.preload(), parkingLot.preload(), outbox.waitForInit()]).catch(onError)
     let retryTimer: ReturnType<typeof setTimeout> | undefined
-    const migrate = (attempt: number) => {
-      moveGuestToAccount(userId, () => !cancelled).catch((error) => {
+    const migrate = async (attempt: number) => {
+      try {
+        await prepareGuestData()
+        if (cancelled) return
+        await moveGuestToAccount(userId, () => !cancelled)
+        await userReady
+        if (!cancelled) setSource(userSource)
+      } catch (error) {
         if (cancelled) return
         const delay = Math.min(MIGRATION_RETRY_MS * 2 ** attempt, MIGRATION_RETRY_MAX_MS)
         console.warn(`Guest data migration failed; retrying in ${delay / 1000}s:`, error)
-        retryTimer = setTimeout(() => migrate(attempt + 1), delay)
-      })
+        retryTimer = setTimeout(() => void migrate(attempt + 1), delay)
+      }
     }
-    migrate(0)
+    void migrate(0)
 
     return () => {
       cancelled = true
