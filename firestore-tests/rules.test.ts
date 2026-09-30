@@ -153,3 +153,17 @@ describe("profiles", () => {
     ).rejects.toThrow()
   })
 })
+
+describe("migration metadata", () => {
+  test("the owner can set the seed marker, but cannot delete it or write another account's marker", async () => {
+    const marker = doc(alice.liteDb, `users/${alice.uid}/metadata/initial-seeds`)
+    await setDoc(marker, { seedsHandled: true })
+    await expect(deleteDoc(marker)).rejects.toThrow()
+    await expect(
+      setDoc(doc(bob.liteDb, `users/${alice.uid}/metadata/initial-seeds`), { seedsHandled: true }),
+    ).rejects.toThrow()
+    await expect(
+      setDoc(doc(alice.liteDb, `users/${alice.uid}/metadata/other`), { seedsHandled: true }),
+    ).rejects.toThrow()
+  })
+})

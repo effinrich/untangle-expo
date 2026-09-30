@@ -6,7 +6,7 @@ import {
   type OnlineDetector,
   type StorageAdapter,
 } from "@tanstack/offline-transactions"
-import { deleteDoc, doc, getDoc, getDocs, collection, setDoc } from "firebase/firestore"
+import { deleteDoc, disableNetwork, doc, enableNetwork, getDoc, getDocs, collection, setDoc } from "firebase/firestore"
 import type { MicroTask } from "../services/api"
 import { INITIAL_SEED_TASKS } from "../src/data/seed-data"
 import { fromParkingDoc, fromTaskDoc, toParkingDoc, toTaskDoc } from "../services/db/doc-shapes"
@@ -168,6 +168,22 @@ describe("firestore collection", () => {
     await waitFor(() => !tasks.has("cached_only"))
     await tasks.cleanup()
   })
+
+  test("an empty cache-only snapshot preserves the device cache", async () => {
+    const cache = memoryStorage()
+    cache.setItem("tasks", JSON.stringify([task("offline_cached")]))
+    const { tasks } = userCollections(user.uid, cache)
+    await disableNetwork(user.db)
+    try {
+      await tasks.preload()
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      expect(tasks.has("offline_cached")).toBe(true)
+      expect(JSON.parse(cache.data.get("tasks") ?? "[]")).toEqual([task("offline_cached")])
+    } finally {
+      await tasks.cleanup()
+      await enableNetwork(user.db)
+    }
+  })
 })
 
 describe("offline outbox", () => {
@@ -214,6 +230,27 @@ describe("offline outbox", () => {
     expect(collections.tasks.has("bad id!")).toBe(true)
     await expect(insert.commit()).rejects.toBeInstanceOf(NonRetriableError)
     await waitFor(() => !collections.tasks.has("bad id!"))
+    outbox.dispose()
+    await collections.tasks.cleanup()
+  })
+
+  test("an oversized offline transaction is rejected before any Firestore write", async () => {
+    const collections = userCollections(user.uid, memoryStorage())
+    await collections.tasks.preload()
+    const outbox = outboxFor(user.uid, collections, toggleableOnline(true))
+    await outbox.waitForInit()
+
+    const tx = outbox.createOfflineTransaction({
+      mutationFnName: "firestoreWrite",
+      autoCommit: false,
+    })
+    tx.mutate(() =>
+      collections.tasks.insert(Array.from({ length: 501 }, (_, index) => task(`batch_${index}`))),
+    )
+    await expect(tx.commit()).rejects.toBeInstanceOf(NonRetriableError)
+    const savedTasks = await getDocs(collection(user.db, `users/${user.uid}/tasks`))
+    expect(savedTasks.docs.some((snapshot) => snapshot.id.startsWith("batch_"))).toBe(false)
+
     outbox.dispose()
     await collections.tasks.cleanup()
   })
@@ -278,5 +315,35 @@ describe("guest migration", () => {
     await deleteDoc(doc(fresh.db, `users/${fresh.uid}/tasks/seed-task-1`))
     await migrateGuestData(fresh.db, fresh.uid, guest)
     expect((await getDoc(doc(fresh.db, `users/${fresh.uid}/tasks/seed-task-1`))).exists()).toBe(false)
+
+    await Promise.all(
+      seeds.map((seed) => deleteDoc(doc(fresh.db, `users/${fresh.uid}/tasks/${seed.id}`))),
+    )
+    await migrateGuestData(fresh.db, fresh.uid, guest)
+    const afterDeletes = await getDocs(collection(fresh.db, `users/${fresh.uid}/tasks`))
+    expect(afterDeletes.docs.map((snapshot) => snapshot.id)).toEqual(["guest_own"])
+  })
+
+  test("does not seed samples when the account already has tasks", async () => {
+    const existingAccount = await signedInUser("migrate-existing")
+    await setDoc(
+      doc(existingAccount.db, `users/${existingAccount.uid}/tasks/created_before_migration`),
+      toTaskDoc(task("created_before_migration"), existingAccount.uid),
+    )
+    await migrateGuestData(existingAccount.db, existingAccount.uid, {
+      tasks: INITIAL_SEED_TASKS.map((seed) => ({ ...seed })),
+      thoughts: [],
+    })
+    const tasks = await getDocs(
+      collection(existingAccount.db, `users/${existingAccount.uid}/tasks`),
+    )
+    expect(tasks.docs.map((snapshot) => snapshot.id)).toEqual(["created_before_migration"])
+    expect(
+      (
+        await getDoc(doc(existingAccount.db, `users/${existingAccount.uid}/metadata/initial-seeds`))
+      ).data(),
+    ).toEqual({
+      seedsHandled: true,
+    })
   })
 })

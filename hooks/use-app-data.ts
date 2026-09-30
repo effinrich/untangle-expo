@@ -65,12 +65,12 @@ export function useAppData(user: User | null, authReady: boolean) {
       }
     }
 
+    setSource(GUEST_SOURCE)
     removeDeviceKeys(STORAGE_KEYS.userPrefix, `${STORAGE_KEYS.userPrefix}${userId}.`)
     const onError = (error: unknown) => setSyncError(errorMessage(error))
     const tasks = createUserTasksCollection(userId, onError)
     const parkingLot = createUserParkingLotCollection(userId, onError)
     const outbox = startUserOutbox(userId, tasks, parkingLot)
-    setSource({ tasks, parkingLot, outbox })
 
     Promise.all([tasks.preload(), parkingLot.preload(), outbox.waitForInit()])
       .catch(onError)
@@ -79,12 +79,16 @@ export function useAppData(user: User | null, authReady: boolean) {
       })
     let retryTimer: ReturnType<typeof setTimeout> | undefined
     const migrate = (attempt: number) => {
-      moveGuestToAccount(userId, () => !cancelled).catch((error) => {
-        if (cancelled) return
-        const delay = Math.min(MIGRATION_RETRY_MS * 2 ** attempt, MIGRATION_RETRY_MAX_MS)
-        console.warn(`Guest data migration failed; retrying in ${delay / 1000}s:`, error)
-        retryTimer = setTimeout(() => migrate(attempt + 1), delay)
-      })
+      moveGuestToAccount(userId, () => !cancelled)
+        .then(() => {
+          if (!cancelled) setSource({ tasks, parkingLot, outbox })
+        })
+        .catch((error) => {
+          if (cancelled) return
+          const delay = Math.min(MIGRATION_RETRY_MS * 2 ** attempt, MIGRATION_RETRY_MAX_MS)
+          console.warn(`Guest data migration failed; retrying in ${delay / 1000}s:`, error)
+          retryTimer = setTimeout(() => migrate(attempt + 1), delay)
+        })
     }
     migrate(0)
 

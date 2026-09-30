@@ -2,9 +2,11 @@ import {
   collection,
   doc,
   getDocs,
+  getDoc,
   limit,
   query,
   runTransaction,
+  setDoc,
   type DocumentData,
   type Firestore,
 } from "firebase/firestore"
@@ -29,7 +31,9 @@ function seedFingerprint(task: MicroTask): string {
   ])
 }
 
-const SEED_FINGERPRINTS = new Map(INITIAL_SEED_TASKS.map((task) => [task.id, seedFingerprint(task)]))
+const SEED_FINGERPRINTS = new Map(
+  INITIAL_SEED_TASKS.map((task) => [task.id, seedFingerprint(task)]),
+)
 
 export function isUntouchedSeed(task: MicroTask): boolean {
   return SEED_FINGERPRINTS.get(task.id) === seedFingerprint(task)
@@ -59,8 +63,13 @@ export async function migrateGuestData(
   guest: { tasks: MicroTask[]; thoughts: ParkedThought[] },
 ): Promise<void> {
   const tasksPath = `users/${userId}/tasks`
-  const existing = await getDocs(query(collection(firestore, tasksPath), limit(1)))
-  const tasks = existing.empty ? guest.tasks : guest.tasks.filter((task) => !isUntouchedSeed(task))
+  const seedMarker = doc(firestore, `users/${userId}/metadata/initial-seeds`)
+  const [marker, existing] = await Promise.all([
+    getDoc(seedMarker),
+    getDocs(query(collection(firestore, tasksPath), limit(1))),
+  ])
+  const shouldSeed = !marker.exists() && existing.empty
+  const tasks = shouldSeed ? guest.tasks : guest.tasks.filter((task) => !isUntouchedSeed(task))
 
   await createMissing(firestore, [
     ...tasks.map((task): DocEntry => [`${tasksPath}/${task.id}`, toTaskDoc(task, userId)]),
@@ -69,4 +78,5 @@ export async function migrateGuestData(
       toParkingDoc(thought, userId),
     ]),
   ])
+  if (!marker.exists()) await setDoc(seedMarker, { seedsHandled: true })
 }

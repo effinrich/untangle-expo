@@ -87,6 +87,18 @@ service cloud.firestore {
       allow update: if isOwner(userId) && isValidId(userId) && incoming().userId == userId && isValidUserProfile(incoming()) && incoming().createdAt == existing().createdAt;
       allow delete: if isOwner(userId) && isValidId(userId);
 
+      // Persists whether initial sample tasks have already been handled for this account.
+      match /metadata/{metadataId} {
+        allow get: if isOwner(userId) && isValidId(userId) && metadataId == 'initial-seeds';
+        allow list: if false;
+        allow create, update: if isOwner(userId)
+          && isValidId(userId)
+          && metadataId == 'initial-seeds'
+          && incoming().keys().hasOnly(['seedsHandled'])
+          && incoming().seedsHandled == true;
+        allow delete: if false;
+      }
+
       // Micro-tasks subcollection
       match /tasks/{taskId} {
         allow get, list: if isOwner(userId) && isValidId(userId);
