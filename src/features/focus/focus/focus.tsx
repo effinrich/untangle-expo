@@ -36,7 +36,7 @@ export const Focus: React.FC<FocusProps> = ({
       }}
       className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-neutral-950/95 p-4 text-neutral-100 open:flex"
     >
-      <div className="relative w-full max-w-2xl bg-neutral-900 border border-neutral-800 rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col items-center text-center">
+      <div className="relative w-full max-w-2xl rounded-lg border border-neutral-800 bg-neutral-900 p-6 md:p-8 flex flex-col items-center text-center">
         <h2 id="focus-dialog-title" className="sr-only">
           One Thing Radar: {task.title}
         </h2>
@@ -64,14 +64,14 @@ export const Focus: React.FC<FocusProps> = ({
           onChangeVolume={session.changeVolume}
         />
 
-        {/* Mark Done / Finish button */}
+        {/* The one action that matters here. Success colour, because it means done. */}
         <button
           type="button"
           onClick={session.complete}
-          className="w-full max-w-md py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-[0.99]"
+          className="w-full max-w-md min-h-11 rounded-md bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-semibold text-base transition-colors flex items-center justify-center gap-2"
         >
-          <CheckCircle2 className="w-4 h-4" />
-          <span>I Finished This! (Claim Dopamine)</span>
+          <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
+          <span>I finished this</span>
         </button>
 
         {showParkingLot && (

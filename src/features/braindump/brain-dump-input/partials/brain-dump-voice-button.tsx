@@ -30,7 +30,7 @@ export const BrainDumpVoiceButton: React.FC<BrainDumpVoiceButtonProps> = ({
         disabled={isTranscribing}
         className={`p-2.5 rounded-lg border transition-all ${
           isRecording
-            ? "bg-rose-500 text-white border-rose-400 animate-pulse motion-reduce:animate-none shadow-lg shadow-rose-500/30 ring-2 ring-rose-400/40"
+            ? "bg-rose-500 text-white border-rose-400 animate-pulse motion-reduce:animate-none ring-2 ring-rose-400/40"
             : isTranscribing
               ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
               : "bg-neutral-900 border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800"

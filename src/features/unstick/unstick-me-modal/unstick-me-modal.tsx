@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { ArrowRight, BatteryCharging, Check, Sparkles, Wand2, X, Zap } from "lucide-react"
+import { ArrowRight, Check, Loader2, X } from "lucide-react"
 import { useModalDialog } from "../../../shared/hooks/use-modal-dialog"
 import { MicroTask, UnstickResult } from "../../../types"
 import { apiUnstickMe } from "../../../services/api"
@@ -53,7 +53,7 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
     if (chosenTask) {
       onStartFocus({
         ...chosenTask,
-        estimatedMinutes: 2, // 2-minute micro challenge
+        estimatedMinutes: 2,
       })
       onClose()
     }
@@ -67,120 +67,114 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
         event.preventDefault()
         onClose()
       }}
-      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-neutral-950/90 p-4 text-neutral-100 open:flex"
+      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-neutral-950/95 p-4 text-neutral-100 open:flex"
     >
-      <div className="relative w-full max-w-lg bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-2xl">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-amber-400 text-sm font-semibold">
-            <Zap className="w-4 h-4 fill-amber-400" aria-hidden="true" />
-            <span id="unstick-dialog-title">ADHD Unstick Assistant</span>
-          </div>
+      <div className="relative w-full max-w-lg rounded-lg border border-neutral-800 bg-neutral-900 p-6">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <h2 id="unstick-dialog-title" className="text-lg text-neutral-100">
+            Let Untangle pick
+          </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close unstick assistant"
-            className="p-1 rounded-lg text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 transition-colors"
+            className="shrink-0 w-11 h-11 -mt-2 -mr-2 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-100 transition-colors"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {incompleteTasks.length === 0 ? (
-          <div className="text-center py-8">
-            <Check className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-            <h3 className="text-sm font-semibold text-neutral-100">All tasks completed!</h3>
-            <p className="text-xs text-neutral-400 mt-1">
-              You are completely clear. Add a new brain dump or take a well-deserved rest.
+          <div className="py-8 text-center">
+            <p className="text-base text-neutral-200">Nothing left to pick from</p>
+            <p className="mt-2 text-sm text-neutral-500">
+              Every step is done. Add a brain dump, or take the rest.
             </p>
           </div>
         ) : !result ? (
           <div>
-            <h3 className="text-base font-semibold text-neutral-100 tracking-tight">
-              Executive Dysfunction Reset
-            </h3>
-            <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
-              When ADHD paralysis hits, making decisions burns all your remaining dopamine. Let AI
-              remove the decision burden and pick the single lowest-barrier action for you.
+            <p className="text-sm text-neutral-400">
+              Deciding costs energy you may not have. Say how your brain feels and this picks the
+              lowest-effort way in.
             </p>
 
-            <div className="my-4 space-y-2">
-              <label className="text-xs font-medium text-neutral-300 block">
+            <fieldset className="mt-4">
+              <legend className="text-sm text-neutral-500 mb-2">
                 How does your brain feel right now?
-              </label>
-              {moodOptions.map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => setMood(opt)}
-                  className={`w-full text-left p-2.5 rounded-lg border text-xs transition-colors flex items-center justify-between ${
-                    mood === opt
-                      ? "bg-amber-400/10 border-amber-400/40 text-amber-300"
-                      : "bg-neutral-950 border-neutral-800 text-neutral-300 hover:border-neutral-700"
-                  }`}
-                >
-                  <span>{opt}</span>
-                  {mood === opt && <Zap className="w-3.5 h-3.5 fill-amber-300" />}
-                </button>
-              ))}
-            </div>
+              </legend>
+              <div className="space-y-1">
+                {moodOptions.map((opt) => {
+                  const isSelected = mood === opt
+                  return (
+                    <label
+                      key={opt}
+                      className={`flex items-center gap-3 min-h-11 px-3 rounded-md cursor-pointer transition-colors ${
+                        isSelected ? "bg-neutral-800 text-neutral-100" : "text-neutral-300"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="mood"
+                        value={opt}
+                        checked={isSelected}
+                        onChange={() => setMood(opt)}
+                        className="peer sr-only"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 peer-focus-visible:ring-2 peer-focus-visible:ring-amber-400 ${
+                          isSelected
+                            ? "border-neutral-100 bg-neutral-100 text-neutral-900"
+                            : "border-neutral-600 text-transparent"
+                        }`}
+                      >
+                        <Check className="w-3 h-3 stroke-[3]" />
+                      </span>
+                      <span className="text-sm">{opt}</span>
+                    </label>
+                  )
+                })}
+              </div>
+            </fieldset>
 
             <button
               type="button"
               onClick={handleDiagnose}
               disabled={loading}
-              className="w-full py-2.5 rounded-xl bg-amber-400 text-neutral-950 font-semibold text-xs hover:bg-amber-300 transition-colors flex items-center justify-center gap-2 mt-2 shadow-md shadow-amber-500/10"
+              className="w-full min-h-11 mt-4 rounded-md bg-amber-400 text-neutral-950 font-semibold text-base hover:bg-amber-300 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
             >
-              {loading ? (
-                <>
-                  <Wand2 className="w-4 h-4 animate-spin" />
-                  <span>Picking the Single Easiest Spark...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  <span>Pick For Me (Remove Decision Fatigue)</span>
-                </>
-              )}
+              {loading && <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />}
+              <span>Pick one for me</span>
             </button>
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="p-3.5 bg-neutral-950 border border-neutral-800 rounded-xl">
-              <span className="text-xs font-semibold text-neutral-500 block">
-                Decision Made For You:
-              </span>
-              <h4 className="text-base font-bold text-neutral-100 mt-1">{chosenTask.title}</h4>
-              <p className="text-xs text-neutral-400 mt-1 leading-relaxed">{result.reasoning}</p>
+            <div className="rounded-md border border-neutral-800 p-4">
+              <p className="text-sm text-neutral-500">Picked for you</p>
+              <h3 className="mt-1 text-lg text-neutral-100">{chosenTask.title}</h3>
+              <p className="mt-1 text-sm text-neutral-400">{result.reasoning}</p>
             </div>
 
-            <div className="p-3.5 bg-amber-400/10 border border-amber-400/30 rounded-xl">
-              <span className="text-xs font-semibold text-amber-400 block">
-                The 2-Minute Spark Contract:
-              </span>
-              <p className="text-xs text-neutral-200 mt-1 font-medium leading-relaxed">
-                &ldquo;{result.sparkChallenge}&rdquo;
-              </p>
-              <div className="text-[11px] text-amber-400/80 mt-2 italic">
-                *Neuro-rule: If you still want to quit after 120 seconds, you are 100% free to stop.
-                No guilt.
-              </div>
+            <div className="rounded-md border border-neutral-800 p-4">
+              <p className="text-sm text-neutral-500">Two minutes, then you are free</p>
+              <p className="mt-1 text-base text-neutral-200">{result.sparkChallenge}</p>
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-1">
               <button
                 type="button"
                 onClick={() => setResult(null)}
-                className="px-4 py-2.5 rounded-xl border border-neutral-800 text-neutral-400 hover:text-neutral-200 text-xs"
+                className="min-h-11 px-4 rounded-md border border-neutral-800 text-sm text-neutral-300 hover:text-neutral-100 transition-colors"
               >
-                Pick Another
+                Pick again
               </button>
               <button
                 type="button"
                 onClick={handleAcceptSpark}
-                className="flex-1 py-2.5 rounded-xl bg-amber-400 text-neutral-950 font-bold text-xs hover:bg-amber-300 transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/10"
+                className="flex-1 min-h-11 rounded-md bg-amber-400 text-neutral-950 font-semibold text-base hover:bg-amber-300 transition-colors flex items-center justify-center gap-2"
               >
-                <span>Accept 2-Minute Challenge</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Start the two minutes</span>
+                <ArrowRight className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
           </div>

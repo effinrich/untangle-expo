@@ -34,8 +34,6 @@ export interface TaskCardProps {
 export interface SortOptionConfig {
   id: SortOption
   label: string
-  shortLabel: string
-  icon: string
   description: string
   mentalState: string
 }

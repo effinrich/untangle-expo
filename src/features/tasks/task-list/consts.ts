@@ -5,43 +5,33 @@ import { SortOptionConfig } from "./types"
 export const SORT_OPTIONS: SortOptionConfig[] = [
   {
     id: "energy-asc",
-    label: "Low to High Energy",
-    shortLabel: "🔋 Low Energy First",
-    icon: "🔋",
-    description: "Start with lowest friction steps requiring almost zero willpower.",
+    label: "Low to high energy",
+    description: "Start with the lowest-friction steps, requiring almost no willpower.",
     mentalState: "Brain is tired, foggy, or facing strong initiation resistance.",
   },
   {
     id: "energy-desc",
-    label: "High to Low Energy",
-    shortLabel: "🚀 Hyperfocus First",
-    icon: "🚀",
-    description: "Tackle heavy cognitive challenges while dopamine is surging.",
+    label: "High to low energy",
+    description: "Tackle the heavy cognitive work while it is available.",
     mentalState: "Riding a hyperfocus wave or high morning motivation.",
   },
   {
     id: "time-asc",
-    label: "Shortest Duration",
-    shortLabel: "⚡ Quick Wins First",
-    icon: "⚡",
-    description: "Knock out 2-5 minute micro-tasks to trigger immediate momentum.",
+    label: "Shortest first",
+    description: "Knock out the 2 to 5 minute steps to build momentum.",
     mentalState: "Need rapid positive reinforcement to unblock inertia.",
   },
   {
     id: "priority-desc",
-    label: "Highest Priority",
-    shortLabel: "🔥 Priority First",
-    icon: "🔥",
+    label: "Highest priority",
     description: "Surface critical commitments and deadline-sensitive items.",
-    mentalState: "Clear goal orientation without getting distracted by busywork.",
+    mentalState: "Clear goal orientation without getting pulled into busywork.",
   },
   {
     id: "newest",
-    label: "Recently Added",
-    shortLabel: "🕒 Newest First",
-    icon: "🕒",
-    description: "Most recently untangled thoughts from your brain dump.",
-    mentalState: "Working through your freshest stream of consciousness.",
+    label: "Recently added",
+    description: "The freshest thoughts from your last brain dump.",
+    mentalState: "Working through your most recent stream of consciousness.",
   },
 ]
 
@@ -64,9 +54,9 @@ export const energyColors: Record<EnergyLevel, string> = {
 }
 
 export const priorityStyles: Record<PriorityLevel, { text: string; label: string }> = {
-  high: { text: "text-rose-400", label: "High Priority" },
-  medium: { text: "text-amber-400", label: "Med Priority" },
-  low: { text: "text-neutral-500", label: "Low Priority" },
+  high: { text: "text-rose-400", label: "High priority" },
+  medium: { text: "text-amber-400", label: "Medium priority" },
+  low: { text: "text-neutral-500", label: "Low priority" },
 }
 
 export const priorityCycle: Record<PriorityLevel, PriorityLevel> = {

@@ -7,28 +7,28 @@ interface BrainDumpEnergyControlProps {
   onChange: (level: EnergyLevel) => void
 }
 
-// Energy preference segmented control
+// A select, not a pill row. Same information, one control, no emoji.
 export const BrainDumpEnergyControl: React.FC<BrainDumpEnergyControlProps> = ({
   energyPreference,
   onChange,
 }) => {
   return (
-    <div className="flex items-center gap-1.5 p-1 bg-neutral-950 border border-neutral-800 rounded-lg text-xs self-start md:self-auto">
-      <span className="text-neutral-500 px-2 py-1 select-none">Battery:</span>
-      {ENERGY_LEVELS.map((level) => (
-        <button
-          key={level}
-          type="button"
-          onClick={() => onChange(level)}
-          className={`px-2.5 py-1 font-medium rounded-md transition-colors whitespace-nowrap ${
-            energyPreference === level
-              ? "bg-neutral-800 text-amber-300 shadow-sm border border-neutral-700/60"
-              : "text-neutral-400 hover:text-neutral-200"
-          }`}
-        >
-          {ENERGY_LABELS[level]}
-        </button>
-      ))}
+    <div className="flex items-center gap-2">
+      <label htmlFor="dump-energy" className="text-sm text-neutral-500">
+        Battery
+      </label>
+      <select
+        id="dump-energy"
+        value={energyPreference}
+        onChange={(e) => onChange(e.target.value as EnergyLevel)}
+        className="min-h-11 rounded-md border border-neutral-800 bg-neutral-950 px-3 text-base text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
+      >
+        {ENERGY_LEVELS.map((level) => (
+          <option key={level} value={level}>
+            {ENERGY_LABELS[level]}
+          </option>
+        ))}
+      </select>
     </div>
   )
 }

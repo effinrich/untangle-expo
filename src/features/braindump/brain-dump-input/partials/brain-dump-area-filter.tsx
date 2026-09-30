@@ -1,5 +1,5 @@
 import React from "react"
-import { RotateCcw, Tag } from "lucide-react"
+import { RotateCcw } from "lucide-react"
 import { ALL_AREAS, TARGET_AREA_CATEGORIES } from "../consts"
 
 interface BrainDumpAreaFilterProps {
@@ -9,7 +9,6 @@ interface BrainDumpAreaFilterProps {
   onClear: () => void
 }
 
-// Priority area focus filter plus the clear button
 export const BrainDumpAreaFilter: React.FC<BrainDumpAreaFilterProps> = ({
   selectedFocusCategory,
   onSelectCategory,
@@ -17,48 +16,34 @@ export const BrainDumpAreaFilter: React.FC<BrainDumpAreaFilterProps> = ({
   onClear,
 }) => {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 text-xs">
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
-        <span className="text-neutral-500 whitespace-nowrap flex items-center gap-1">
-          <Tag className="w-3 h-3 text-neutral-400" />
-          <span>Target Area:</span>
-        </span>
-        <button
-          type="button"
-          onClick={() => onSelectCategory(ALL_AREAS)}
-          className={`px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap transition-colors ${
-            selectedFocusCategory === ALL_AREAS
-              ? "bg-neutral-800 border-neutral-600 text-amber-300 font-medium"
-              : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200"
-          }`}
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <label htmlFor="dump-area" className="text-sm text-neutral-500">
+          Target area
+        </label>
+        <select
+          id="dump-area"
+          value={selectedFocusCategory}
+          onChange={(e) => onSelectCategory(e.target.value)}
+          className="min-h-11 rounded-md border border-neutral-800 bg-neutral-950 px-3 text-base text-neutral-200 focus-visible:ring-2 focus-visible:ring-amber-400"
         >
-          Auto-Detect All
-        </button>
-        {TARGET_AREA_CATEGORIES.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            onClick={() => onSelectCategory(cat.name)}
-            className={`px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap transition-colors flex items-center gap-1 ${
-              selectedFocusCategory === cat.name
-                ? `${cat.bgLight} ${cat.borderColor} ${cat.textColor} font-semibold`
-                : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-neutral-200"
-            }`}
-          >
-            <span>{cat.name}</span>
-          </button>
-        ))}
+          <option value={ALL_AREAS}>Auto-detect</option>
+          {TARGET_AREA_CATEGORIES.map((cat) => (
+            <option key={cat.id} value={cat.name}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {hasText && (
         <button
           type="button"
           onClick={onClear}
-          className="text-neutral-500 hover:text-neutral-300 text-xs flex items-center gap-1 transition-colors self-end sm:self-auto"
-          title="Clear text"
+          className="min-h-11 flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-200 transition-colors"
         >
-          <RotateCcw className="w-3 h-3" />
-          <span>Clear Dump</span>
+          <RotateCcw className="w-4 h-4" aria-hidden="true" />
+          <span>Clear</span>
         </button>
       )}
     </div>

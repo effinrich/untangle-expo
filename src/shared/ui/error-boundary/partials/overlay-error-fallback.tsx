@@ -10,11 +10,11 @@ export function OverlayErrorFallback({ onClose }: OverlayErrorFallbackProps) {
     <div className="fixed inset-0 z-50 grid place-items-center bg-neutral-950/90 p-4">
       <div
         role="alert"
-        className="w-full max-w-sm rounded-2xl border border-neutral-800 bg-neutral-900 p-6 text-center shadow-2xl"
+        className="w-full max-w-sm rounded-lg border border-neutral-800 bg-neutral-900 p-6 text-center"
       >
         <h2 className="text-sm font-bold text-neutral-100">This view stopped working</h2>
         <p className="mt-1 text-xs leading-relaxed text-neutral-400">
-          Close it and try again — the rest of the app is fine.
+          Close it and try again. The rest of the app is fine.
         </p>
         <button
           type="button"

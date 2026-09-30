@@ -1,5 +1,5 @@
 import React from "react"
-import { Layers, X, Zap } from "lucide-react"
+import { Layers, X } from "lucide-react"
 
 interface FocusTopBarProps {
   showParkingLot: boolean
@@ -15,31 +15,31 @@ export const FocusTopBar: React.FC<FocusTopBarProps> = ({
   onClose,
 }) => {
   return (
-    <div className="w-full flex items-center justify-between mb-6">
-      <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-amber-400">
-        <Zap className="w-3.5 h-3.5 fill-amber-400" />
-        <span>ONE THING RADAR</span>
+    <div className="w-full flex items-center justify-between gap-4 mb-6">
+      <div className="flex items-center gap-2 text-sm text-neutral-500">
+        <Layers className="w-4 h-4" aria-hidden="true" />
+        <span>Focus</span>
       </div>
 
       <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={onToggleParkingLot}
-          className={`px-3 py-1 text-xs rounded-lg border transition-colors flex items-center gap-1.5 ${
+          aria-expanded={showParkingLot}
+          className={`min-h-11 px-3 rounded-md border text-sm transition-colors flex items-center gap-2 ${
             showParkingLot
-              ? "bg-amber-400/20 border-amber-400/40 text-amber-300"
-              : "bg-neutral-800/80 border-neutral-700 text-neutral-300 hover:text-white"
+              ? "border-neutral-600 text-neutral-100"
+              : "border-neutral-800 text-neutral-300 hover:text-neutral-100"
           }`}
         >
-          <Layers className="w-3.5 h-3.5" />
-          <span>Thought Parking Lot ({parkingLotCount})</span>
+          <span>Parked thoughts ({parkingLotCount})</span>
         </button>
 
         <button
           type="button"
           onClick={onClose}
           aria-label="Close focus session"
-          className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 transition-colors"
+          className="w-11 h-11 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-100 transition-colors"
         >
           <X className="w-5 h-5" aria-hidden="true" />
         </button>
