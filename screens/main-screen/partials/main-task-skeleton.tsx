@@ -7,11 +7,13 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated"
+import { useAccessibleAnnouncement } from "../../../hooks/use-accessible-announcement"
 import { SKELETON_ROWS } from "../consts"
 
 export function MainTaskSkeleton() {
   const reduceMotion = useReducedMotion()
   const opacity = useSharedValue(1)
+  useAccessibleAnnouncement("Untangling your thoughts")
 
   useEffect(() => {
     if (!reduceMotion) opacity.set(withRepeat(withTiming(0.45, { duration: 700 }), -1, true))

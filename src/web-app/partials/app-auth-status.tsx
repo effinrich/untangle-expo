@@ -50,10 +50,11 @@ export const AppAuthStatus: React.FC<AppAuthStatusProps> = ({
       <button
         type="button"
         onClick={onSignOut}
+        aria-label="Sign out"
         className="text-neutral-500 hover:text-rose-400 transition-colors ml-1 p-0.5"
         title="Sign Out"
       >
-        <LogOut className="w-3.5 h-3.5" />
+        <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
       </button>
     </div>
   )

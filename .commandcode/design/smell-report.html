@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Untangle - Smell Report</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+		.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+		.report-section { border: 1px solid #222226; background: #0a0a0b; position: relative; }
+		.corner-box { position: absolute; width: 20px; height: 20px; border: 1px solid #222226; background: #000; }
+	</style>
+</head>
+<body class="bg-black text-[#fafafa]">
+	<main class="mx-auto w-full max-w-6xl px-5 py-8 md:px-10 md:py-12">
+		<header class="report-section mb-8 p-6 md:p-8">
+			<div class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"></div>
+			<div class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"></div>
+			<div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+				<div>
+					<div class="mono mb-2 text-xs tracking-widest text-[#666]">// SMELL &middot; PASS 2</div>
+					<h1 class="text-4xl font-bold tracking-tight md:text-6xl">Untangle</h1>
+				</div>
+				<div class="mono text-left text-xs text-[#666] md:text-right">
+					<div>COMMANDCODE REPORT</div>
+					<div class="text-[#444]">2026-09-29</div>
+					<div class="mt-1 text-[#444]">WEB + NATIVE</div>
+				</div>
+			</div>
+		</header>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"></div>
+			<div class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"></div>
+			<div class="grid gap-8 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+				<div>
+					<div class="mono mb-2 text-xs tracking-widest text-[#666]">// SCORE (INVERTED)</div>
+					<div class="text-6xl font-bold tracking-tight md:text-7xl">2</div>
+					<div class="mt-1 text-lg text-[#666]">/ 10</div>
+					<div class="mono mt-2 text-xs text-[#444]">10 = CLEAN &middot; 0 = ALL ODORS</div>
+					<div class="mt-4 inline-flex border border-[#f43f5e]/30 bg-[#f43f5e]/10 px-3 py-1 text-sm text-[#f43f5e]">IDENTITY FAILURE</div>
+				</div>
+				<div>
+					<div class="mono mb-3 text-xs tracking-widest text-[#666]">// WHAT CHANGED ON THIS PASS</div>
+					<p class="text-sm leading-6 text-[#a0a0a0]">The score is unchanged, because it was already in the bottom band. The <span class="text-[#fafafa]">count of distinct tells went from 7 to 11</span>: the first pass missed the hero imagery, the pill saturation, the uppercase micro-label reflex and the vendor name-dropping, and it <span class="text-[#fafafa]">understated the type problem by roughly half</span>.</p>
+					<p class="mt-4 text-sm leading-6 text-[#a0a0a0]"><span class="text-[#fafafa]">Dominant smell:</span> the median generated dashboard. A centred column of equal rounded panels, one type size almost everywhere, unfocused depth applied as blur, and every concept given its own card, its own proper noun, and its own row of pills.</p>
+					<p class="mt-3 text-sm leading-6 text-[#a0a0a0]"><span class="text-[#fafafa]">Root reflex:</span> enumeration instead of composition. If there is a feature it gets a rounded panel and a label. The page substitutes listing for structure, which is why nothing is subordinate and there is no rhythm to find.</p>
+					<p class="mt-3 text-sm leading-6 text-[#a0a0a0]"><span class="text-[#fafafa]">Counterweight, still true:</span> the palette and the copy voice are real decisions. Obsidian plus one amber accent is not the domain's reflex, there is no blue-violet, and the no-guilt ADHD voice belongs to this product alone. Two of the seven decisions the catalog asks for are present; five default.</p>
+					<p class="mt-4 text-sm leading-6 text-[#fbbf24]">Recommended: <span class="mono">/design redesign</span>, not repair. Composition, type, depth and imagery default at once.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// TRACKED ODORS &mdash; 1 = ABSENT, 0 = DETECTED</div>
+			<div class="overflow-x-auto">
+				<table class="w-full min-w-[760px] border-collapse text-sm">
+					<thead>
+						<tr class="border-b border-[#222226] text-left mono text-xs text-[#666]">
+							<th class="py-3 pr-4 font-normal">#</th>
+							<th class="py-3 pr-4 font-normal">ODOR</th>
+							<th class="py-3 pr-4 font-normal">SCORE</th>
+							<th class="py-3 font-normal">EVIDENCE</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-4 pr-4 text-[#555]">1</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Tech gradient</td>
+							<td class="py-4 pr-4 text-[#34d399]">1</td>
+							<td class="py-4 text-[#a0a0a0]">One gradient in the whole app, a neutral scrim. No blue-violet, no purple-to-teal.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-4 pr-4 text-[#555]">2</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Generic tech hue</td>
+							<td class="py-4 pr-4 text-[#34d399]">1</td>
+							<td class="py-4 text-[#a0a0a0]">Identity is amber on obsidian. The blue/purple/cyan in the category set is coding, not identity.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-4 pr-4 text-[#555]">3</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Feature tile grid</td>
+							<td class="py-4 pr-4 text-[#f43f5e]">0</td>
+							<td class="py-4 text-[#a0a0a0]">The momentum triptych: three equal icon + label + number cards in <span class="mono">grid-cols-3</span>, then the same card again per category below.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-4 pr-4 text-[#555]">4</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Accent rail</td>
+							<td class="py-4 pr-4 text-[#34d399]">1</td>
+							<td class="py-4 text-[#a0a0a0]">No side stripes. Every border is a full perimeter.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-4 pr-4 text-[#555]">5</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Unearned blur</td>
+							<td class="py-4 pr-4 text-[#f43f5e]">0</td>
+							<td class="py-4 text-[#a0a0a0]"><span class="text-[#fafafa]">Nine</span> <span class="mono">backdrop-blur</span> panels on a flat canvas with nothing behind them to blur.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-4 pr-4 text-[#555]">6</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Stat monument</td>
+							<td class="py-4 pr-4 text-[#f43f5e]">0</td>
+							<td class="py-4 text-[#a0a0a0]">The hero "Quick Stats" block: three oversized numbers filling the right half of the hero.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-4 pr-4 text-[#555]">7</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Icon topper</td>
+							<td class="py-4 pr-4 text-[#f43f5e]">0</td>
+							<td class="py-4 text-[#a0a0a0]">A 112px rounded icon badge above every onboarding title, same reflex at 40px in the empty state.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-4 pr-4 text-[#555]">8</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Bounce everywhere</td>
+							<td class="py-4 pr-4 text-[#34d399]">1</td>
+							<td class="py-4 text-[#a0a0a0]">No elastic or spring easing. Five press-scales total. Marked as a suspicion, not counted.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-4 pr-4 text-[#555]">9</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Default type</td>
+							<td class="py-4 pr-4 text-[#f43f5e]">0</td>
+							<td class="py-4 text-[#a0a0a0]">Declared face never renders; two families load for nothing. No scale: <span class="text-[#fafafa]">131 of ~165 size declarations are 12px or smaller</span> &mdash; 90 <span class="mono">text-xs</span>, plus 30 at <span class="mono">text-[11px]</span> and 11 at <span class="mono">text-[10px]</span>. Plus 8 uppercase tracked micro-labels and 5 radii across 100 declarations.</td>
+						</tr>
+						<tr class="align-top">
+							<td class="py-4 pr-4 text-[#555]">10</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Center stack</td>
+							<td class="py-4 pr-4 text-[#f43f5e]">0</td>
+							<td class="py-4 text-[#a0a0a0]">One centred <span class="mono">max-w-6xl</span> column of full-width stacked panels, header to footer.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<p class="mono mt-6 text-xs text-[#666]">6 TRACKED ODORS + 5 ADDITIONAL TELLS = <span class="text-[#f43f5e]">11 TELLS</span></p>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// PRIORITY ISSUES &mdash; HIGH (ESCALATION TRIGGERS)</div>
+			<div class="space-y-5">
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Placeholder is doing the label's job</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">brain-dump-input.tsx:38-41</span>, <span class="mono">task-search-controls.tsx:37-42</span>, <span class="mono">focus-parking-lot.tsx:32-36</span>. Placeholder colour &asymp; <span class="mono">2.5:1</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Visible <span class="mono">&lt;label&gt;</span>; placeholder at <span class="mono">neutral-400</span> (~7:1).</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Seven icon buttons with no name</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">task-card-actions.tsx:72</span>, <span class="mono">focus-parking-lot.tsx:61</span>, <span class="mono">app-auth-status.tsx:55</span>, <span class="mono">app-header.tsx:75</span>, <span class="mono">focus-top-bar.tsx:54</span>, <span class="mono">unstick-me-modal.tsx:83</span>, <span class="mono">sort-modal.tsx:34</span> &mdash; each named only by <span class="mono">title</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: <span class="mono">aria-label</span> on each.</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Focus ring stripped with nothing in its place</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">quick-add-form.tsx:81</span> removes the outline outright; nine more fields swap in a border tint only.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: <span class="mono">focus-visible:ring-2 focus-visible:ring-amber-400</span>.</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">A clickable div pretending to be a checkbox</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">task-card-substeps.tsx:16-33</span>: <span class="mono">&lt;div onClick&gt;</span> wrapping an unnamed icon <span class="mono">&lt;button&gt;</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: One <span class="mono">&lt;button role="checkbox" aria-checked&gt;</span> named by the step text.</div>
+				</article>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// PRIORITY ISSUES &mdash; MEDIUM (THE ODORS)</div>
+			<div class="space-y-5">
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; COMPOSITION &middot; NEW</div>
+					<h2 class="mb-2 text-lg font-semibold">Pill saturation</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">13 <span class="mono">rounded-full</span> declarations, but each sits inside a <span class="mono">.map()</span>, so a first load renders roughly <span class="text-[#fafafa]">30 pill-shaped controls</span> of near-identical weight before a single task appears: category strip, energy strip, status tabs, sparks, target areas, battery.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Replace the chip rows with one real filter surface &mdash; a single control holding state, count and selection &mdash; instead of five rows of equally-weighted pills. The main skill is explicit that pill buttons are not a house style, only a valid answer when the pattern suits the work.</div>
+				</article>
+
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; IMAGERY &middot; NEW</div>
+					<h2 class="mb-2 text-lg font-semibold">Abstract stock photograph in the hero</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">app-hero-banner.tsx:14-24</span>, <span class="mono">public/images/calm-focus-ambient.jpg</span>: an abstract 1376 &times; 768 smoky stock photograph, <span class="text-[#fafafa]">561 KB</span>, behind the hero at 20% opacity and unreadable.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Cut it, or replace it with material that belongs to the domain: the shape of a task coming apart, the actual artifact. The catalog asks for "imagery tied to the subject"; this says nothing about ADHD decomposition, and half a megabyte of decoration loads before the first task.</div>
+				</article>
+
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; TYPE &middot; REVISED</div>
+					<h2 class="mb-2 text-lg font-semibold">Default type, and no scale at all</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">app/+html.tsx:12</span>, all of <span class="mono">src/</span>. <span class="text-[#fafafa]">131 of ~165 size declarations are 12px or smaller</span>: 90 <span class="mono">text-xs</span> plus 41 hand-rolled (30 at 11px, 11 at 10px) that no scale governs. Also 8 uppercase tracked micro-labels, 5 radii across 100 declarations, 14 spacing values.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: One family applied; real steps so hierarchy comes from size; one radius per role; retire the uppercase micro-label. The catalog asks for "type with a reason".</div>
+				</article>
+
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; LAYOUT</div>
+					<h2 class="mb-2 text-lg font-semibold">Feature tile grid</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">dopamine-tracker.tsx:65-105,120-150</span>: three metric cards of identical weight, then the same card repeated per category.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: One dominant list; metrics subordinate and compact; breakdown as data rather than as more cards.</div>
+				</article>
+
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; DEPTH</div>
+					<h2 class="mb-2 text-lg font-semibold">Unearned blur, nine times</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">app-header.tsx:2</span>, <span class="mono">brain-dump-input.tsx:23</span>, <span class="mono">category-filter-strip.tsx</span>, <span class="mono">energy-sort-strip.tsx</span>, <span class="mono">sort-modal.tsx:14</span>, <span class="mono">focus.tsx:28</span>, <span class="mono">unstick-me-modal.tsx:61</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Remove where nothing is behind it. One elevation treatment: border or shadow, not blur as a substitute.</div>
+				</article>
+
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; LAYOUT</div>
+					<h2 class="mb-2 text-lg font-semibold">Stat monument, icon toppers, center stack</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">app-hero-banner.tsx:49-72</span> (three numbers filling half the hero); <span class="mono">onboarding-page.tsx:24-30</span> and <span class="mono">task-list-empty-state.tsx:16-20</span> (icon badge above every heading); <span class="mono">app.tsx:41-104</span> (one centred column, header to footer).</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Fold the counts into the list header or cut them; drop the badges; choose a composition where the list owns the first viewport and chrome subordinates.</div>
+				</article>
+
+				<article class="border border-[#1f1f24] p-5">
+					<div class="mono mb-2 text-xs text-[#666]">LOW &middot; VOICE</div>
+					<h2 class="mb-2 text-lg font-semibold">Emoji as icon, and inside labels</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">8 distinct strings, including "Low &#128267;", "Hyperfocus &#128640;", "&#128293; Priority First", "&#128336; Newest First".</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Plain labels; keep emoji to real icon slots or drop them.</div>
+				</article>
+
+				<article class="border border-[#1f1f24] p-5">
+					<div class="mono mb-2 text-xs text-[#666]">LOW &middot; WRITING &middot; NEW</div>
+					<h2 class="mb-2 text-lg font-semibold">Vendor names sold as product story</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">Six sites including <span class="mono">app-footer.tsx:12</span> ("Gemini 3.8 Flash &amp; Gemini 3.5 Transcribe"), <span class="mono">app-hero-banner.tsx:43</span>, <span class="mono">brain-dump-header.tsx:20</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Say what it does, not what it runs on. The version pairing is also inconsistent between footer and hero, which is what invented version numbers look like.</div>
+				</article>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// WHAT IS GENUINELY NOT A SMELL</div>
+			<div class="overflow-x-auto">
+				<table class="w-full min-w-[720px] border-collapse text-sm">
+					<thead>
+						<tr class="border-b border-[#222226] text-left mono text-xs text-[#666]">
+							<th class="py-3 pr-4 font-normal">CANDIDATE</th>
+							<th class="py-3 font-normal">JUDGEMENT</th>
+						</tr>
+					</thead>
+					<tbody class="text-[#a0a0a0]">
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fafafa]">Obsidian canvas + single amber accent</td>
+							<td class="py-3"><span class="text-[#34d399]">A real decision.</span> Not the domain's reflex, which would be white and teal for wellbeing or blue-violet for software.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fafafa]">The no-guilt ADHD copy voice</td>
+							<td class="py-3"><span class="text-[#34d399]">A real decision.</span> "Claim Dopamine", "Zero Guilt Guarantee", "if you still want to quit after 120 seconds you are free to stop". Impossible on a generic task app.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fafafa]">No blue-violet, no indigo-cyan gradient, no accent rails</td>
+							<td class="py-3">Absent, confirmed by grep rather than assumed. Credited.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fafafa]">The <span class="mono">&middot;</span> middot metadata separators</td>
+							<td class="py-3"><span class="text-[#34d399]">Not a smell.</span> <span class="mono">DESIGN_SYSTEM.md</span> calls for zero-pill metadata deliberately and it reads cleanly. A real decision with a reason.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fafafa]">Universal press-scale feedback</td>
+							<td class="py-3"><span class="text-[#fbbf24]">Suspicion only.</span> No elastic easing anywhere, five occurrences. Not counted.</td>
+						</tr>
+						<tr class="align-top">
+							<td class="py-3 pr-4 text-[#fafafa]">Proper-noun inflation</td>
+							<td class="py-3"><span class="text-[#fbbf24]">Suspected, not confirmed.</span> ~10 branded names for ordinary concepts is naming doing work structure should do. Flagged, not scored.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// VERIFICATION &amp; NEXT MODES</div>
+			<div class="grid gap-6 md:grid-cols-2">
+				<div>
+					<div class="mb-3 text-sm font-semibold text-[#34d399]">Checks run</div>
+					<ul class="space-y-2 text-sm leading-6 text-[#a0a0a0]">
+						<li>Audited against all ten tracked odors, twice.</li>
+						<li><span class="mono">grep</span> gradients: <span class="text-[#fafafa]">1</span>, a neutral scrim.</li>
+						<li><span class="mono">grep</span> backdrop-blur: <span class="text-[#fafafa]">9</span>.</li>
+						<li><span class="mono">grep</span> rounded-*: <span class="text-[#fafafa]">100</span> across <span class="text-[#fafafa]">5</span> radii; rounded-full: <span class="text-[#fafafa]">13</span>.</li>
+						<li><span class="mono">grep</span> uppercase tracking: <span class="text-[#fafafa]">8</span>.</li>
+						<li><span class="mono">grep</span> arbitrary type sizes: <span class="text-[#fafafa]">30</span> at 11px, <span class="text-[#fafafa]">11</span> at 10px.</li>
+						<li>Interactive elements: <span class="text-[#fafafa]">61</span> button, 7 input, 4 select, 1 textarea.</li>
+						<li><span class="mono">sips</span> on the hero image: <span class="text-[#fafafa]">1376 &times; 768, 561 KB</span>.</li>
+					</ul>
+					<div class="mt-5 mb-3 text-sm font-semibold text-[#fbbf24]">Not verified</div>
+					<ul class="space-y-2 text-sm leading-6 text-[#a0a0a0]">
+						<li>Web at narrow widths was never rendered.</li>
+						<li>The vision tool was unavailable for the last capture; no smell here rests on its appearance.</li>
+						<li>The ~30 pill count derives from loop sizes over seed data, not a rendered count. The shape of the finding does not depend on the exact number.</li>
+					</ul>
+				</div>
+				<div>
+					<div class="mono mb-3 text-xs tracking-widest text-[#666]">// NEXT MODES</div>
+					<div class="flex flex-wrap gap-2">
+						<span class="border border-[#fbbf24]/40 bg-[#fbbf24]/10 px-3 py-1 text-sm text-[#fbbf24]">/redesign</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/relayout</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/typeset</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/a11y</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/interaction</span>
+					</div>
+					<p class="mt-4 text-sm leading-6 text-[#a0a0a0]"><span class="text-[#fafafa]">/redesign</span> is primary: composition, type, depth and imagery default together, and clustered smell is a direction change rather than a patch. <span class="mono">/relayout</span> and <span class="mono">/typeset</span> sit inside it. <span class="mono">/a11y</span> clears the four HIGH triggers regardless of direction.</p>
+					<p class="mt-3 text-sm leading-6 text-[#666]">Deliberately not recommended: <span class="mono">/recolor</span>. Colour is the one system already making a project-specific decision.</p>
+				</div>
+			</div>
+		</section>
+
+		<footer class="mono py-8 text-center text-xs tracking-widest text-[#444]">
+			Generated with CommandCode &middot; 2026-09-29 &middot; VERDICT: IDENTITY FAILURE (2/10, 11 tells)
+		</footer>
+	</main>
+</body>
+</html>

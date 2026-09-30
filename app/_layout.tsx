@@ -10,6 +10,8 @@ import { AppProvider } from "../components/app-provider/app-provider"
 import { NativeStack } from "../components/native-stack/native-stack"
 import "../global.css"
 
+export { RouteErrorBoundary as ErrorBoundary } from "../components/route-error-boundary/route-error-boundary"
+
 if (Platform.OS !== "web") SplashScreen.preventAutoHideAsync().catch(() => {})
 
 const queryClient = new QueryClient()

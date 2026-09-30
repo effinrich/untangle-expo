@@ -2,6 +2,7 @@ import React from "react"
 import { useBrainDump } from "./hooks"
 import { BrainDumpAreaFilter } from "./partials/brain-dump-area-filter"
 import { BrainDumpAudioStatus } from "./partials/brain-dump-audio-status"
+import { BrainDumpEnergyControl } from "./partials/brain-dump-energy-control"
 import { BrainDumpFooter } from "./partials/brain-dump-footer"
 import { BrainDumpHeader } from "./partials/brain-dump-header"
 import { BrainDumpSparks } from "./partials/brain-dump-sparks"
@@ -15,38 +16,42 @@ export const BrainDumpInput: React.FC<BrainDumpInputProps> = ({ onUntangle, isLo
     dump.recorder
 
   return (
-    <div className="w-full bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 md:p-6 backdrop-blur-sm shadow-xl">
-      <BrainDumpHeader
-        energyPreference={dump.energyPreference}
-        onChangeEnergy={dump.setEnergyPreference}
-      />
+    <div className="w-full border-t border-neutral-800 pt-6">
+      <BrainDumpHeader />
 
-      <BrainDumpAreaFilter
-        selectedFocusCategory={dump.selectedFocusCategory}
-        onSelectCategory={dump.setSelectedFocusCategory}
-        hasText={!!dump.text}
-        onClear={dump.clearText}
-      />
-
-      <BrainDumpSparks activeTemplate={dump.activeTemplate} onApplyTemplate={dump.applyTemplate} />
-
-      {/* Input Textarea & Voice Button */}
-      <form onSubmit={dump.handleSubmit} className="relative">
-        <div className="relative rounded-lg border border-neutral-800 bg-neutral-950/90 focus-within:border-amber-500/50 transition-colors">
+      <form onSubmit={dump.handleSubmit} className="mt-4">
+        <div className="relative rounded-md border border-neutral-800 bg-neutral-950 focus-within:border-neutral-600 transition-colors">
           <textarea
             value={dump.text}
             onChange={(e) => dump.editText(e.target.value)}
-            placeholder="What's floating in your head right now? e.g. Need to pay the electric bill before Friday, cat needs medication, finish the budget report for Sarah, clean the laundry mountain off the chair..."
+            aria-label="Brain dump"
+            placeholder="Whatever is in your head, in any order."
             rows={4}
-            className="w-full bg-transparent p-4 pr-16 text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none resize-y min-h-[110px] leading-relaxed"
+            className="w-full bg-transparent p-4 pr-16 text-base text-neutral-200 placeholder-neutral-500 resize-y min-h-[110px] leading-relaxed"
           />
-
           <BrainDumpVoiceButton
             isRecording={isRecording}
             isTranscribing={isTranscribing}
             recordingSeconds={recordingSeconds}
             onStart={startRecording}
             onStop={stopRecording}
+          />
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <BrainDumpEnergyControl
+            energyPreference={dump.energyPreference}
+            onChange={dump.setEnergyPreference}
+          />
+          <BrainDumpAreaFilter
+            selectedFocusCategory={dump.selectedFocusCategory}
+            onSelectCategory={dump.setSelectedFocusCategory}
+            hasText={!!dump.text}
+            onClear={dump.clearText}
+          />
+          <BrainDumpSparks
+            activeTemplate={dump.activeTemplate}
+            onApplyTemplate={dump.applyTemplate}
           />
         </div>
 

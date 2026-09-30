@@ -1,5 +1,38 @@
 @import "tailwindcss-v4";
 
+/* Untangle web system: "one lamp on a dark desk".
+   Most of the surface stays unlit. Exactly one thing is lit at a time, and
+   everything else is separated by hairlines and typography rather than by
+   blur, glow or shadow.
+
+   Rhythm is the 1-4-9 system: 4px micro, 16px component, 36px section. In
+   Tailwind's 4px base that is spacing 1, 4 and 9 (8 and 32 are legal multiples). */
+@theme {
+  /* Type. Steps widen as they grow so a heading can never be mistaken for body
+     copy: 13 / 14 / 16 / 20 / 26 / 34 / 44, neighbours >= 1.3 at the top end. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.25rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.375rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.625rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.625rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 2.125rem;
+  --text-2xl--line-height: 2.5rem;
+  --text-3xl: 2.75rem;
+  --text-3xl--line-height: 3rem;
+
+  /* One radius for the whole product. Shape does not differentiate here. */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.375rem;
+  --radius-2xl: 0.375rem;
+}
+
 @layer utilities {
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
@@ -10,6 +43,14 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+}
+
+/* Focus is one treatment everywhere: a 2px amber outline, offset. Deliberately
+   unlayered so it outranks the `focus:outline-none` utilities that were
+   stripping the platform ring off ten fields. */
+:focus-visible {
+  outline: 2px solid var(--color-amber-400);
+  outline-offset: 2px;
 }
 
 /* Custom subtle scrollbar */
@@ -26,4 +67,16 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
+}
+
+/* Honor the OS motion preference for any animation that slips through */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

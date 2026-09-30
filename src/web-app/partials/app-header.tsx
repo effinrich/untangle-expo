@@ -16,7 +16,7 @@ interface AppHeaderProps {
   onResetToSeed: () => void
 }
 
-// Top Bar Contract: Zone 1 (Brand) - Zone 2 (Nav Links) - Zone 3 (Auth & Actions)
+// Command bar: wordmark, view switch, then account and the one amber action.
 export const AppHeader: React.FC<AppHeaderProps> = ({
   activeView,
   onChangeView,
@@ -28,23 +28,15 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   onResetToSeed,
 }) => {
   return (
-    <header className="sticky top-0 z-40 bg-neutral-950/90 border-b border-neutral-800/80 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        {/* Zone 1: Single text element wordmark */}
-        <div className="flex items-center gap-2">
-          <span className="text-base sm:text-lg font-bold tracking-tight text-neutral-100 select-none">
-            Untangle
-          </span>
-          <span className="text-xs text-neutral-500 font-normal hidden sm:inline">
-            · ADHD Brain Dump & Priority Areas
-          </span>
-        </div>
+    <header className="sticky top-0 z-40 bg-neutral-950 border-b border-neutral-800">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+        <span className="text-lg font-semibold tracking-tight text-neutral-100 select-none">
+          Untangle
+        </span>
 
-        {/* Zone 2: 4-6 clean text navigation links */}
         <AppNav activeView={activeView} onChangeView={onChangeView} />
 
-        {/* Zone 3: Auth & Primary Action */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-4">
           <AppAuthStatus
             currentUser={currentUser}
             authLoading={authLoading}
@@ -55,19 +47,20 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           <button
             type="button"
             onClick={onOpenUnstick}
-            className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-amber-400 text-neutral-950 hover:bg-amber-300 transition-all flex items-center gap-1.5 shadow-sm active:scale-95 whitespace-nowrap"
+            className="px-4 py-2 text-sm font-semibold rounded-md bg-amber-400 text-neutral-950 hover:bg-amber-300 transition-colors flex items-center gap-2 whitespace-nowrap"
           >
-            <Zap className="w-3.5 h-3.5 fill-neutral-950" />
-            <span>Unstick Me</span>
+            <Zap className="w-4 h-4 fill-neutral-950" aria-hidden="true" />
+            <span>Unstick me</span>
           </button>
 
           <button
             type="button"
             onClick={onResetToSeed}
-            className="p-1.5 text-neutral-500 hover:text-neutral-300 transition-colors rounded-lg hover:bg-neutral-900"
+            aria-label="Reset sample tasks"
             title="Reset sample tasks"
+            className="p-2 text-neutral-500 hover:text-neutral-200 transition-colors rounded-md"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>

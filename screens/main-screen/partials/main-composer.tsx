@@ -4,6 +4,7 @@ import { Mic, Sparkles, Square } from "../../../theme/icons"
 import { Button } from "../../../components/button/button"
 import { StatusBanner } from "../../../components/status-banner/status-banner"
 import { TextField } from "../../../components/text-field/text-field"
+import { useAccessibleAnnouncement } from "../../../hooks/use-accessible-announcement"
 import { UntangleStatus } from "../types"
 
 interface MainComposerProps {
@@ -32,6 +33,7 @@ export function MainComposer({
   onSubmit,
 }: MainComposerProps) {
   const untangling = status.state === "untangling"
+  useAccessibleAnnouncement(isRecording ? "Listening. Tap Stop when you're done." : "")
 
   return (
     <View className="bg-surface rounded-2xl p-4 gap-4">

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Untangle - Checkup Report</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+		.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+		.report-section { border: 1px solid #222226; background: #0a0a0b; position: relative; }
+		.corner-box { position: absolute; width: 20px; height: 20px; border: 1px solid #222226; background: #000; }
+	</style>
+</head>
+<body class="bg-black text-[#fafafa]">
+	<main class="mx-auto w-full max-w-6xl px-5 py-8 md:px-10 md:py-12">
+		<header class="report-section mb-8 p-6 md:p-8">
+			<div class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"></div>
+			<div class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"></div>
+			<div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+				<div>
+					<div class="mono mb-2 text-xs tracking-widest text-[#666]">// CHECKUP</div>
+					<h1 class="text-4xl font-bold tracking-tight md:text-6xl">Untangle</h1>
+				</div>
+				<div class="mono text-left text-xs text-[#666] md:text-right">
+					<div>COMMANDCODE REPORT</div>
+					<div class="text-[#444]">2026-09-29</div>
+					<div class="mt-1 text-[#444]">WEB + NATIVE</div>
+				</div>
+			</div>
+		</header>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"></div>
+			<div class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"></div>
+			<div class="grid gap-8 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+				<div>
+					<div class="mono mb-2 text-xs tracking-widest text-[#666]">// WEB</div>
+					<div class="text-6xl font-bold tracking-tight md:text-7xl">25</div>
+					<div class="mt-1 text-lg text-[#666]">/ 60</div>
+					<div class="mt-4 inline-flex border border-[#f43f5e]/30 bg-[#f43f5e]/10 px-3 py-1 text-sm text-[#f43f5e]">BLOCK</div>
+					<div class="mono mt-6 mb-2 text-xs tracking-widest text-[#666]">// NATIVE</div>
+					<div class="text-4xl font-bold tracking-tight">50</div>
+					<div class="mt-1 text-sm text-[#666]">/ 60</div>
+					<div class="mt-3 inline-flex border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-3 py-1 text-sm text-[#fbbf24]">NEEDS CHANGES</div>
+				</div>
+				<div>
+					<div class="mono mb-3 text-xs tracking-widest text-[#666]">// TL;DR</div>
+					<p class="text-sm leading-6 text-[#a0a0a0]">Untangle is a genuinely authored product: obsidian canvas, one solar-amber accent, an ADHD-first copy voice, and a dump &rarr; slice &rarr; focus composition that matches the work. Both surfaces carry it.</p>
+					<p class="mt-3 text-sm leading-6 text-[#a0a0a0]"><span class="text-[#fafafa]">Web is blocked</span> by an access layer that was never designed: three overlays with no dialog semantics, focus trap, Escape, or restore; controls focusable with nothing visible to show focus landed, or mouse-only; delete with no undo; a placeholder doing a label's job; looping motion ignoring reduced motion.</p>
+					<p class="mt-3 text-sm leading-6 text-[#a0a0a0]"><span class="text-[#fafafa]">And the composition does not serve the work.</span> At desktop width the first viewport is header, hero card with marketing copy, banner, composer with three pill rows, then two filter strips. The task list a user opened the app for only appears after scrolling past all of it. Logged as finding 21.</p>
+					<p class="mt-3 text-sm leading-6 text-[#a0a0a0]"><span class="text-[#fafafa]">Native is much healthier.</span> Its gaps: live regions are Android-only, web-only features are amputated, an offline banner styled as an error, a blank-screen edge on boot, a checkmark drawn inside a radio, and a placeholder app icon.</p>
+					<p class="mt-4 text-sm leading-6 text-[#fbbf24]">Run <span class="mono">/design a11y</span> first, scoped to web. It clears every escalation trigger at once.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// VITALS &mdash; WEB / NATIVE</div>
+			<div class="overflow-x-auto">
+				<table class="w-full min-w-[720px] border-collapse text-sm">
+					<thead>
+						<tr class="border-b border-[#222226] text-left mono text-xs text-[#666]">
+							<th class="py-3 pr-4 font-normal">#</th>
+							<th class="py-3 pr-4 font-normal">VITAL</th>
+							<th class="py-3 pr-4 font-normal">WEB</th>
+							<th class="py-3 pr-4 font-normal">NATIVE</th>
+							<th class="py-3 font-normal">KEY FINDING</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">1</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Intentionality</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">5 / 10</td>
+							<td class="py-4 pr-4 text-[#34d399]">10 / 10</td>
+							<td class="py-4 text-[#a0a0a0]">Web: coherent palette and voice, but the composition buries the work and the accent is spread across nine elements per viewport. Native: chosen and well-composed.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">2</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Readability</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">5 / 10</td>
+							<td class="py-4 pr-4 text-[#34d399]">10 / 10</td>
+							<td class="py-4 text-[#a0a0a0]">Web: placeholder ~2.5:1, micro-labels ~4.2:1, declared typeface never renders. Native: HIG ramp, documented contrast, tabular numerals.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">3</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Usability</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">5 / 10</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">5 / 10</td>
+							<td class="py-4 text-[#a0a0a0]">Web has no undo. Native confirms deletes but amputates web-only features.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">4</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Responsiveness</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">5 / 10</td>
+							<td class="py-4 pr-4 text-[#34d399]">10 / 10</td>
+							<td class="py-4 text-[#a0a0a0]">Web: nav hidden below md, sub-16px inputs zoom on iOS. Native: safe areas, insets, keyboard handling, 44pt targets.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">5</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Speed</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">5 / 10</td>
+							<td class="py-4 pr-4 text-[#34d399]">10 / 10</td>
+							<td class="py-4 text-[#a0a0a0]">Web: two unused render-blocking font families, eager confetti import. Native: skeleton loaders, live queries.</td>
+						</tr>
+						<tr>
+							<td class="py-4 pr-4 text-[#555]">6</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Accessibility</td>
+							<td class="py-4 pr-4 text-[#ef4444]">0 / 10</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">5 / 10</td>
+							<td class="py-4 text-[#a0a0a0]">Web: multiple standing escalation triggers. Native: strong, but live regions never fire on iOS.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// COGNITIVE LOAD / RISK</div>
+			<div class="grid gap-6 md:grid-cols-2">
+				<div>
+					<div class="mb-3 text-xl font-semibold">Blocked on web, close on native</div>
+					<ul class="space-y-3 text-sm text-[#a0a0a0]">
+						<li><span class="mono mr-2 text-[#34d399]">PASS</span>Composition fits the work on both surfaces: brain dump &rarr; AI slice &rarr; micro-task list &rarr; focus sprint.</li>
+						<li><span class="mono mr-2 text-[#34d399]">PASS</span>Category meaning is never color-only; every hue sits beside a text label.</li>
+						<li><span class="mono mr-2 text-[#34d399]">PASS</span>Native reduced motion is sound &mdash; including Reanimated layout animations, verified in the installed source.</li>
+						<li><span class="mono mr-2 text-[#34d399]">PASS</span>Native destructive actions are confirmed with <span class="mono">Alert.alert</span> on a destructive style.</li>
+						<li><span class="mono mr-2 text-[#fbbf24]">WATCH</span>Web runs on 12&ndash;14px text; fine for a dense instrument, but it compounds the contrast failures.</li>
+						<li><span class="mono mr-2 text-[#ef4444]">FAIL</span>Web's access layer: semantics, focus rings, names, and modal behavior are largely absent.</li>
+					</ul>
+				</div>
+				<div>
+					<div class="mono mb-3 text-xs tracking-widest text-[#666]">// NEXT MODES</div>
+					<div class="flex flex-wrap gap-2">
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">1. fix sign-in</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">2. /a11y</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">3. /smell</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">4. /redesign</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">5. /surface</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">6. /finish</span>
+					</div>
+					<div class="mono mt-6 mb-3 text-xs tracking-widest text-[#666]">// SCORE REVISION</div>
+					<p class="text-sm leading-6 text-[#a0a0a0]">Web Intentionality moved 10 &rarr; 5, taking the web total 30 &rarr; 25. The earlier 10 measured only whether the surface looked authored rather than assembled, which it does. The renders raised a second question, whether the composition serves the work, and on web it does not.</p>
+					<div class="mono mt-6 mb-3 text-xs tracking-widest text-[#666]">// SCOPE</div>
+					<p class="text-sm leading-6 text-[#a0a0a0]">Web <span class="mono">src/</span> (React DOM + Tailwind v4) and native <span class="mono">screens/</span> + <span class="mono">components/</span> (React Native + NativeWind). <span class="mono">mobile/</span> is absent on any branch. Both surfaces observed: four simulator captures, seven browser captures at ~1200&ndash;1440px. Report only: no fixes applied.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// OBSERVED RENDERS</div>
+			<p class="mb-6 text-sm leading-6 text-[#a0a0a0]">Eleven captures supplied by the user: four from the iOS simulator (iPhone 17 / 16e, 6:32&ndash;6:52) and seven from the browser at ~1200&ndash;1440px. Together these close most of the verification gap on both surfaces.</p>
+			<div class="grid gap-4 md:grid-cols-3">
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold text-[#34d399]">Confirmed against the audit</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">The main screen matches the source read: large title, returning-user line, composer with visible label + helper, "Next steps (5)", Stuck card, task card with meta and the amber "First step" block. Contrast, tap targets, and the palette read correctly at device size.</p>
+				</article>
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold text-[#34d399]">Parity gap is now visible</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">Finding 17 was inferred from source; the render confirms it. The card shows title, meta, and first step &mdash; no substep checklist, no "Break down further". The sort sheet also draws radios as a checkmark in a circle (new finding 20).</p>
+				</article>
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold text-[#34d399]">The 6:50 square, explained</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">That capture is the <span class="text-[#fafafa]">app icon</span>, not a render bug. <span class="mono">assets/icon.png</span> and <span class="mono">adaptive-icon.png</span> are both 628 bytes, and the icon is a flat #F5B800 square with no mark. Nothing in the app draws a sharp-cornered full-bleed amber block. Logged as native finding 21.</p>
+				</article>
+			</div>
+			<div class="mt-6 border border-[#2a1d22] bg-[#110b0d] p-5">
+				<div class="mono mb-2 text-xs text-[#f43f5e]">FUNCTIONAL BLOCKER &middot; OUTSIDE DESIGN SCOPE</div>
+				<h2 class="mb-2 text-lg font-semibold">Google sign-in is broken</h2>
+				<p class="text-sm leading-6 text-[#a0a0a0]"><span class="mono">accounts.google.com</span> returns <span class="mono">Error 400: invalid_request</span>: "You can't sign in to this app because it doesn't comply with Google's OAuth 2.0 policy for keeping apps secure." An OAuth client configuration problem, not a design defect. It gates testing everything behind auth on both platforms, so it outranks every aesthetic item in this report.</p>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// WHAT'S WORKING</div>
+			<div class="grid gap-4 md:grid-cols-3">
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold">Native is the reference build</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">Real <span class="mono">accessibilityRole</span> / <span class="mono">Label</span> / <span class="mono">State</span> / <span class="mono">Hint</span>, <span class="mono">hitSlop</span>, 44pt targets, safe-area insets, visible field labels, and <span class="mono">Alert</span> confirmations. Web should copy it.</p>
+				</article>
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold">Authored visual identity</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">Obsidian canvas and a single solar-amber accent, applied consistently across both platforms. It reads as chosen, not templated.</p>
+				</article>
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold">States exist</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">Empty, loading, and error states are built on both surfaces: skeleton pulses, empty states, error banners, offline banners, and disabled/loading buttons.</p>
+				</article>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// PRIORITY ISSUES (HIGH &mdash; WEB)</div>
+			<div class="space-y-5">
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Overlays are not dialogs</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">focus.tsx:28</span>, <span class="mono">unstick-me-modal.tsx:61</span>, <span class="mono">sort-modal.tsx:14</span> are bare <span class="mono">&lt;div class="fixed inset-0 z-50"&gt;</span>: no <span class="mono">role</span>, no key handler, background not inert. Escape does nothing and screen readers are never told a dialog opened.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: <span class="mono">role="dialog" aria-modal="true" aria-labelledby</span>, <span class="mono">inert</span> on &lt;main&gt;, close on Escape, move focus in on open and return it to the trigger on close.</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Focus lands with nothing visible</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">quick-add-form.tsx:81</span> removes the outline with no replacement; nine other fields swap in a 1px border-color change only.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: <span class="mono">focus-visible:ring-2 focus-visible:ring-amber-400</span> &mdash; the pattern already used at <span class="mono">task-card.tsx:48</span>.</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Operable row that never says what it is</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">task-card-substeps.tsx:16-33</span>: a <span class="mono">&lt;div onClick&gt;</span> wraps a <span class="mono">&lt;button&gt;</span> whose only child is a <span class="mono">text-transparent</span> icon.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: One <span class="mono">&lt;button role="checkbox" aria-checked&gt;</span> named by the step text.</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Icon buttons named only by <span class="mono">title</span></h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">Seven icon-only controls across <span class="mono">task-card-actions</span>, <span class="mono">focus-parking-lot</span>, <span class="mono">app-auth-status</span>, <span class="mono">app-header</span>, <span class="mono">focus-top-bar</span>, <span class="mono">unstick-me-modal</span>, <span class="mono">sort-modal</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Add <span class="mono">aria-label</span> to each.</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Placeholder is the label, and it is too faint</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">brain-dump-input.tsx:38-41</span>, <span class="mono">task-search-controls.tsx:37-42</span>, <span class="mono">focus-parking-lot.tsx:32-36</span> have no visible label. Placeholder is <span class="mono">placeholder-neutral-600</span> (#525252) on #0a0a0a &asymp; <span class="mono">2.5:1</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Add a visible (or visually hidden) <span class="mono">&lt;label&gt;</span>; lift placeholder to <span class="mono">placeholder-neutral-400</span> (~7:1).</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Looping motion ignores reduced motion</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">app-hero-banner.tsx:34</span>, <span class="mono">brain-dump-voice-button.tsx:23,33</span>, <span class="mono">brain-dump-audio-status.tsx:25</span> run <span class="mono">animate-pulse</span> / <span class="mono">animate-ping</span> unconditionally.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: <span class="mono">motion-reduce:animate-none</span>, plus a global <span class="mono">prefers-reduced-motion</span> rule.</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">HIGH &middot; INTERACTION</div>
+					<h2 class="mb-2 text-lg font-semibold">Irreversible delete with no undo</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">task-card-actions.tsx:72</span>, <span class="mono">task-list-footer.tsx:44</span>, <span class="mono">focus-parking-lot.tsx:61</span> fire immediately. Native already confirms via <span class="mono">Alert</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Undo toast ("Task removed &middot; Undo"); confirm sheet for Clear Completed.</div>
+				</article>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// PRIORITY ISSUES (MEDIUM &mdash; WEB, FROM RENDERS)</div>
+			<div class="space-y-5">
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; LAYOUT</div>
+					<h2 class="mb-2 text-lg font-semibold">The work is below the fold</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">At 1200&ndash;1440px the opening screen is header, hero card with marketing copy, an error banner, the composer with three pill rows, then two filter strips (<span class="mono">app.tsx:53-96</span>, <span class="mono">app-hero-banner.tsx</span>, <span class="mono">brain-dump-input.tsx</span>). The task list only appears after scrolling past all of it.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Demote the hero to a compact stat line, move the composer behind a toggle or below the list, and let the task list own the first viewport. This is composition, not polish: the instrument is buried under chrome.</div>
+				</article>
+
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; COLOR</div>
+					<h2 class="mb-2 text-lg font-semibold">The accent has stopped being an accent</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">Amber carries the active nav state, the Unstick Me action, the hero eyebrow, two section headers, every selection pill, and the primary submit. <span class="text-[#fafafa]">Measured on the full-page capture, pure amber is 0.18% of the page</span> with two substantial fills, the largest 114&times;28 (the Unstick button).</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Give amber one job, the single primary action per screen. Move selection state and section headings to neutral treatments. <span class="text-[#fafafa]">Role dilution, not area excess</span> &mdash; the measurement rules out a coverage problem, so the earlier "accent should be ~10% of the surface" prescription was wrong. The cost is that one colour means selection, action and heading at once, so it signals nothing in particular.</div>
+				</article>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// PRIORITY ISSUES (NATIVE)</div>
+			<div class="space-y-5">
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; ACCESSIBILITY</div>
+					<h2 class="mb-2 text-lg font-semibold">Live regions never fire on iOS</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">status-banner.tsx:26</span>, <span class="mono">main-composer.tsx:51</span>, <span class="mono">text-field.tsx:50</span>, <span class="mono">focus-timer.tsx:40</span>, <span class="mono">main-task-skeleton.tsx:23</span> rely on <span class="mono">accessibilityLiveRegion</span>, which RN declares in <span class="mono">AccessibilityPropsAndroid</span>. The codebase already knows the iOS path and uses it for success paths (<span class="mono">main-screen/hooks.ts:46</span>, <span class="mono">unstick/hooks.ts:30</span>, <span class="mono">onboarding/hooks.ts:18</span>).</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Pair each live region with <span class="mono">AccessibilityInfo.announceForAccessibility(...)</span> for the error, inline-validation, and listening states.</div>
+				</article>
+
+				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; SURFACE</div>
+					<h2 class="mb-2 text-lg font-semibold">Native amputates web-only features</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">task-card-mobile.tsx</span> has complete + Start focus + delete, but no substep checklist and no "Break down further". <span class="mono">main-screen.tsx</span> has no momentum view and no manual quick-add. Confirmed by search across <span class="mono">screens/</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Port the substep checklist and breakdown action; add the momentum ledger and quick-add. Adapt the interface, never amputate the feature.</div>
+				</article>
+
+				<article class="border border-[#1f1f24] p-5">
+					<div class="mono mb-2 text-xs text-[#666]">LOW &middot; VOICE</div>
+					<h2 class="mb-2 text-lg font-semibold">Offline banner styled as a failure</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">status-banner.tsx:27,32</span>: <span class="mono">tone="offline"</span> still renders <span class="mono">bg-danger-muted border-danger text-danger-text</span>.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Give offline a neutral or amber tone; keep red for real errors.</div>
+				</article>
+
+				<article class="border border-[#1f1f24] p-5">
+					<div class="mono mb-2 text-xs text-[#666]">LOW &middot; INTERACTION</div>
+					<h2 class="mb-2 text-lg font-semibold">Blank screen if boot hangs</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">main-screen.tsx:36</span> returns <span class="mono">null</span> while <span class="mono">onboardingComplete === null</span>, and <span class="mono">app-provider.tsx:23</span> force-hides the splash after <span class="mono">SPLASH_MAX_MS</span> (4000ms).</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Render a minimal loading state instead of <span class="mono">null</span>.</div>
+				</article>
+
+				<article class="border border-[#1f1f24] p-5">
+					<div class="mono mb-2 text-xs text-[#666]">LOW &middot; INTERACTION</div>
+					<h2 class="mb-2 text-lg font-semibold">Radio drawn with a checkmark</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">option-row.tsx:31,35</span>: a selected radio renders a filled amber circle containing a <span class="mono">&lt;Check&gt;</span> glyph. Visible in both groups of the sort sheet.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Draw a dot for <span class="mono">role="radio"</span>; keep the check glyph for <span class="mono">role="checkbox"</span>. The circle says "radio", the check says "confirmed".</div>
+				</article>
+
+				<article class="border border-[#1f1f24] p-5">
+					<div class="mono mb-2 text-xs text-[#666]">LOW &middot; SURFACE</div>
+					<h2 class="mb-2 text-lg font-semibold">The app icon is a placeholder</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]"><span class="mono">assets/icon.png</span> and <span class="mono">assets/adaptive-icon.png</span> are both 628 bytes; the icon is a flat #F5B800 square with no mark, no text, and square corners. <span class="mono">splash-icon.png</span> is properly designed by comparison, so the mark exists but was never applied to the icon. This is the 6:50 capture.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Design the app icon and the adaptive foreground to match the splash mark.</div>
+				</article>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// ALSO FOUND (MED / LOW &mdash; WEB)</div>
+			<div class="overflow-x-auto">
+				<table class="w-full min-w-[720px] border-collapse text-sm">
+					<thead>
+						<tr class="border-b border-[#222226] text-left mono text-xs text-[#666]">
+							<th class="py-3 pr-4 font-normal">SEV</th>
+							<th class="py-3 pr-4 font-normal">FINDING</th>
+							<th class="py-3 font-normal">LOCATION</th>
+						</tr>
+					</thead>
+					<tbody class="text-[#a0a0a0]">
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">View navigation hidden below md with no replacement.</td>
+							<td class="py-3 mono text-xs text-[#777]">app-nav.tsx:12</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">Inputs under 16px trigger iOS Safari focus-zoom.</td>
+							<td class="py-3 mono text-xs text-[#777]">brain-dump-input.tsx:41, quick-add-form.tsx:27-90, task-search-controls.tsx:25,42, focus-parking-lot.tsx:36</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">Touch targets at 36&ndash;38px, below the 44px floor.</td>
+							<td class="py-3 mono text-xs text-[#777]">status-filter-tabs.tsx, category-filter-strip.tsx, energy-sort-strip.tsx, task-search-controls.tsx</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">Plus Jakarta Sans loaded but never applied; token says Inter.</td>
+							<td class="py-3 mono text-xs text-[#777]">app/+html.tsx:12, DESIGN_SYSTEM.md:56</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">Category palette in code disagrees with the design doc.</td>
+							<td class="py-3 mono text-xs text-[#777]">data/categories.ts:6-56 vs DESIGN_SYSTEM.md:40-46</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">Checking a task off races its own reward: the chime and confetti fire, then the same tick re-sorts the card to the bottom with no transition, so it leaves the viewport before the celebration lands. Completed items then sit at the bottom indefinitely with no hide/show control.</td>
+							<td class="py-3 mono text-xs text-[#777]">task-list/utils.ts:85, task-list.tsx:135, task-list/hooks.ts:104-110</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">No enforced rhythm or hierarchy: 14 distinct spacing values in use, and 90 of ~124 text-size declarations are <span class="mono">text-xs</span>.</td>
+							<td class="py-3 mono text-xs text-[#777]">src/** (measured) vs DESIGN_SYSTEM.md:44-52</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#fbbf24]">MED</td>
+							<td class="py-3 pr-4">AI output escaped the category taxonomy: "Quick Win" and "Focus Project" render with the neutral fallback and no hue.</td>
+							<td class="py-3 mono text-xs text-[#777]">data/categories.ts:58-68, category-filter-strip.tsx, dopamine-tracker.tsx</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#666]">LOW</td>
+							<td class="py-3 pr-4">"Pick Another" is materially weaker than "Accept" in the Unstick result.</td>
+							<td class="py-3 mono text-xs text-[#777]">unstick-me-modal.tsx:186-192</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#666]">LOW</td>
+							<td class="py-3 pr-4">Emoji inside labels.</td>
+							<td class="py-3 mono text-xs text-[#777]">brain-dump-input/consts.ts:9-11, status-filter-tabs.tsx:41,64</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 text-[#666]">LOW</td>
+							<td class="py-3 pr-4"><span class="mono">animate-in fade-in</span> never runs (plugin not installed).</td>
+							<td class="py-3 mono text-xs text-[#777]">sort-modal.tsx:14</td>
+						</tr>
+						<tr class="align-top">
+							<td class="py-3 pr-4 text-[#666]">LOW</td>
+							<td class="py-3 pr-4">Active nav button has no programmatic state.</td>
+							<td class="py-3 mono text-xs text-[#777]">app-nav.tsx:15-24</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// CONSIDERED BUT REJECTED</div>
+			<div class="overflow-x-auto">
+				<table class="w-full min-w-[720px] border-collapse text-sm">
+					<thead>
+						<tr class="border-b border-[#222226] text-left mono text-xs text-[#666]">
+							<th class="py-3 pr-4 font-normal">LOCATION</th>
+							<th class="py-3 pr-4 font-normal">CANDIDATE</th>
+							<th class="py-3 font-normal">REJECTED BECAUSE</th>
+						</tr>
+					</thead>
+					<tbody class="text-[#a0a0a0]">
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 mono text-xs text-[#777]">main-task-list.tsx:35-37,65</td>
+							<td class="py-3 pr-4">Ungated list motion disregarding reduced motion</td>
+							<td class="py-3"><span class="text-[#34d399]">Verified false.</span> Reanimated's <span class="mono">BaseAnimationBuilder</span> defaults to <span class="mono">ReduceMotion.System</span> (<span class="mono">BaseAnimationBuilder.js:8</span>) and <span class="mono">getReduceMotionFromConfig</span> resolves it to the live system value (<span class="mono">animation/util.js:71-75</span>).</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 mono text-xs text-[#777]">focus-timer.tsx:30</td>
+							<td class="py-3 pr-4">Invalid <span class="mono">accessibilityRole="timer"</span></td>
+							<td class="py-3"><span class="text-[#34d399]">Verified valid.</span> <span class="mono">timer</span> is in RN 0.76's union (<span class="mono">ViewAccessibility.d.ts:216</span>).</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 mono text-xs text-[#777]">task-card-mobile.tsx:47</td>
+							<td class="py-3 pr-4">Done card bounded only by decorative divider</td>
+							<td class="py-3">Done is also carried by line-through, tertiary text, and an accessible <span class="mono">", done"</span> label.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 mono text-xs text-[#777]">categories.ts, dopamine-tracker.tsx</td>
+							<td class="py-3 pr-4">Meaning carried by color</td>
+							<td class="py-3">Every hue sits beside a text label or a completed/total (%) figure.</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e] align-top">
+							<td class="py-3 pr-4 mono text-xs text-[#777]">task-list/consts.ts:83, focus/consts.ts</td>
+							<td class="py-3 pr-4">Confetti as decorative motion</td>
+							<td class="py-3">Already guarded with <span class="mono">disableForReducedMotion: true</span>.</td>
+						</tr>
+						<tr class="align-top">
+							<td class="py-3 pr-4 mono text-xs text-[#777]">All web body copy</td>
+							<td class="py-3 pr-4">12&ndash;14px base text</td>
+							<td class="py-3">Consistent with the dense instrument register; the real defects are contrast and zoom.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// VERIFICATION</div>
+			<div class="grid gap-6 md:grid-cols-2">
+				<div>
+					<div class="mb-3 text-sm font-semibold text-[#34d399]">Checks run</div>
+					<ul class="space-y-2 text-sm leading-6 text-[#a0a0a0]">
+						<li>Read the full web UI (shell, header/nav/footer, hero, brain dump, task list and partials, focus, unstick, momentum, tokens) and the full native UI (<span class="mono">screens/*</span>, <span class="mono">components/*</span>, <span class="mono">app/*</span> routes, app-provider, app.json).</li>
+						<li><span class="mono">grep</span> reduced-motion / <span class="mono">animate-*</span>: web 7 unconditional, 0 guards; native guards in skeleton + onboarding pager.</li>
+						<li><span class="mono">grep</span> focus-outline / <span class="mono">aria-*</span> / <span class="mono">role=</span> / keydown / Escape: web 10 outline removals, 1 focus-visible ring, 0 dialog roles, 0 key handlers.</li>
+						<li><span class="mono">grep</span> native live regions vs <span class="mono">AccessibilityInfo</span>: 5 vs 3.</li>
+						<li>Read <span class="mono">ViewAccessibility.d.ts</span>: <span class="mono">accessibilityLiveRegion</span> is Android-only; <span class="mono">timer</span> is a valid role.</li>
+						<li>Read Reanimated internals (<span class="mono">BaseAnimationBuilder.js</span>, <span class="mono">animation/util.js</span>, <span class="mono">ReducedMotion.js</span>) for the reduce-motion default.</li>
+						<li><span class="mono">grep</span> substeps / breakdown / momentum / quick-add across <span class="mono">screens/</span>: confirmed absent.</li>
+						<li>Computed WCAG contrast for flagged web tokens.</li>
+						<li><span class="text-[#fafafa]">Native: four simulator captures examined</span> (main screen, sort sheet, boot state, OAuth error). Palette, contrast, tap targets, list composition, and the parity gap confirmed by eye at device size.</li>
+						<li><span class="text-[#fafafa]">Web: seven browser captures examined</span> at ~1200&ndash;1440px (workspace at two task counts, task list plus momentum ledger, Focus modal, Unstick modal in both states).</li>
+						<li>Read <span class="mono">assets/icon.png</span> and <span class="mono">assets/splash-icon.png</span> directly to identify the 6:50 capture.</li>
+						<li>For the final full-page capture the vision tool was unavailable (repeated timeouts at every size and format), so its geometry was measured programmatically: per-row trim bounds for the content column, and connected-component analysis on a pure-amber colour mask. That measurement corrected finding 22.</li>
+					</ul>
+				</div>
+				<div>
+					<div class="mb-3 text-sm font-semibold text-[#fbbf24]">Not verified</div>
+					<ul class="space-y-2 text-sm leading-6 text-[#a0a0a0]">
+						<li><span class="text-[#fafafa]">Web at narrow widths.</span> No capture below ~1200px, so findings 8, 9, and 10 remain source-only: the <span class="mono">md</span> nav breakpoint, the sub-16px iOS focus-zoom, and the sub-44px targets have not been seen rendered.</li>
+						<li><span class="text-[#fafafa]">Focus visibility.</span> No capture has a focused element, so finding 2 is unreproduced visually. A static screenshot cannot show a focus ring either way.</li>
+						<li>Web empty, loading, and error states below the fold were not captured.</li>
+						<li>Native runtime behaviour was not exercised: VoiceOver/TalkBack output and live-region behaviour remain gaps.</li>
+						<li>The final full-page capture was never read visually. Its measurements are sound (content column, accent coverage), but no text, control, or state in it was confirmed by eye.</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<footer class="mono py-8 text-center text-xs tracking-widest text-[#444]">
+			Generated with CommandCode - 2026-09-29 &middot; WEB: BLOCK &middot; NATIVE: NEEDS CHANGES
+		</footer>
+	</main>
+</body>
+</html>

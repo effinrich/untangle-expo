@@ -105,12 +105,18 @@ Move code as-is; renames and logic rewrites belong in a separate change.
 
 ## Refactoring an existing app
 
-Migrate incrementally: the file you touch moves toward the layout; everything else stays put.
+Migrate structure incrementally: the file you touch moves toward the layout; everything else stays put.
 
 1. Touching a large or rule-breaking file? Extract from that file using the steps above, and update its importers.
 2. Untouched files keep their location, even when they predate the layout. Exception: turning on the kebab-case lint rule means renaming every file it flags, each component into its like-named folder.
 3. Finish one feature before starting the next. Moves across many features need the user's go-ahead.
 4. Validate the features you migrated; report pre-existing violations in untouched files instead of fixing them.
+
+### Visual work is exempt
+
+This incremental rule governs structure, not surface. Refactoring UI, look and feel, and aesthetics is a different kind of change: do it in broad strokes, across the repo when warranted, especially when the current state is bad. Surface work is loosely coupled and cheaply swappable, like a VS Code theme rather than a routing layer, so neither the "leave untouched files alone" rule nor the over-engineering guard applies to it. Over-engineering constrains functionality, the how and by what means, not visual design.
+
+Keep the two kinds of change distinct and call each what it is: moving and restructuring code is structural, restyling it is visual.
 
 ## Exposing the rules to agents
 

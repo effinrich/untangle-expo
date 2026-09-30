@@ -5,22 +5,15 @@ interface FocusTaskSparkProps {
   task: MicroTask
 }
 
-// Task title plus the first physical step: the spark
 export const FocusTaskSpark: React.FC<FocusTaskSparkProps> = ({ task }) => {
   return (
     <>
-      <h2 className="text-xl md:text-2xl font-bold text-neutral-100 max-w-lg mb-3 tracking-tight">
-        {task.title}
-      </h2>
+      <h2 className="text-2xl text-neutral-100 max-w-lg mb-4">{task.title}</h2>
 
-      <div className="w-full max-w-md bg-neutral-950/80 border border-amber-400/30 rounded-xl p-3.5 mb-6 text-left">
-        <span className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider block">
-          Your First Physical Action Right Now:
-        </span>
-        <p className="text-sm text-neutral-200 mt-1 font-medium leading-relaxed">
-          {task.firstPhysicalStep}
-        </p>
-      </div>
+      <p className="w-full max-w-md mb-6 text-left text-base text-neutral-200">
+        <span className="text-neutral-500">First step: </span>
+        {task.firstPhysicalStep}
+      </p>
     </>
   )
 }

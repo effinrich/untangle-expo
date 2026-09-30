@@ -10,7 +10,6 @@ interface FocusParkingLotProps {
   onDeleteItem: (id: string) => void
 }
 
-// Thought parking lot drawer
 export const FocusParkingLot: React.FC<FocusParkingLotProps> = ({
   parkingLot,
   parkingThought,
@@ -19,54 +18,52 @@ export const FocusParkingLot: React.FC<FocusParkingLotProps> = ({
   onDeleteItem,
 }) => {
   return (
-    <div className="w-full mt-6 pt-5 border-t border-neutral-800 text-left">
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-xs font-semibold text-neutral-300">Mental Parking Lot</div>
-        <span className="text-[11px] text-neutral-500">
-          Dump random thoughts here so you don’t derail
-        </span>
-      </div>
+    <div className="w-full mt-6 pt-6 border-t border-neutral-800 text-left">
+      <h3 className="text-base text-neutral-100">Parked thoughts</h3>
+      <p className="mt-1 text-sm text-neutral-500">
+        Get it out of your head. It will be here when you are done.
+      </p>
 
-      <form onSubmit={onAddThought} className="flex gap-2 mb-3">
+      <form onSubmit={onAddThought} className="flex gap-2 mt-4">
+        <label htmlFor="parking-thought" className="sr-only">
+          Park a thought
+        </label>
         <input
+          id="parking-thought"
           type="text"
           value={parkingThought}
           onChange={(e) => onChangeThought(e.target.value)}
-          placeholder="e.g. Remember to buy milk, check text from mom..."
-          className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-1.5 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-amber-400"
+          placeholder="Buy milk, reply to mum"
+          className="flex-1 min-h-11 bg-neutral-950 border border-neutral-800 rounded-md px-3 text-base text-neutral-200 placeholder-neutral-500"
         />
         <button
           type="submit"
           disabled={!parkingThought.trim()}
-          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-800 text-neutral-200 hover:bg-neutral-700 disabled:opacity-40"
+          className="min-h-11 px-4 rounded-md border border-neutral-800 text-sm text-neutral-300 hover:text-neutral-100 disabled:opacity-40 transition-colors"
         >
-          Park Thought
+          Park
         </button>
       </form>
 
-      <div className="max-h-36 overflow-y-auto space-y-1.5 no-scrollbar">
+      <ul className="mt-3 max-h-40 overflow-y-auto no-scrollbar divide-y divide-neutral-800">
         {parkingLot.length === 0 ? (
-          <div className="text-xs text-neutral-600 text-center py-2">
-            No parked thoughts yet. Whenever your mind wanders, type it here.
-          </div>
+          <li className="py-3 text-sm text-neutral-500">Nothing parked yet.</li>
         ) : (
           parkingLot.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center justify-between p-2 rounded-md bg-neutral-950/70 border border-neutral-800 text-xs text-neutral-300"
-            >
-              <span>{item.text}</span>
+            <li key={item.id} className="flex items-center gap-3 py-1">
+              <span className="flex-1 py-2 text-base text-neutral-300">{item.text}</span>
               <button
                 type="button"
                 onClick={() => onDeleteItem(item.id)}
-                className="text-neutral-500 hover:text-rose-400 ml-2"
+                aria-label={`Remove parked thought "${item.text}"`}
+                className="shrink-0 w-11 h-11 flex items-center justify-center rounded-md text-neutral-500 hover:text-rose-400 transition-colors"
               >
-                <Trash2 className="w-3 h-3" />
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>
-            </div>
+            </li>
           ))
         )}
-      </div>
+      </ul>
     </div>
   )
 }
