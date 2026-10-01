@@ -27,9 +27,14 @@ export default function RootLayout() {
         <Head>
           <title>{TITLE}</title>
           <meta name="description" content={DESCRIPTION} />
+          <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+          <link rel="icon" type="image/png" href="/favicon.png" />
+          <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+          <meta name="theme-color" content="#0a0a0a" />
           <meta property="og:title" content={TITLE} />
           <meta property="og:description" content={DESCRIPTION} />
           <meta property="og:type" content="website" />
+          <meta property="og:image" content="/og.png" />
           <meta name="twitter:card" content="summary_large_image" />
         </Head>
         <Slot />

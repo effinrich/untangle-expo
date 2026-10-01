@@ -4,6 +4,7 @@ import { User } from "firebase/auth"
 import { ActiveView } from "../types"
 import { AppAuthStatus } from "./app-auth-status"
 import { AppNav } from "./app-nav"
+import { BrandMark } from "./brand-mark"
 
 interface AppHeaderProps {
   activeView: ActiveView
@@ -31,8 +32,9 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   return (
     <header className="sticky top-0 z-40 bg-neutral-950 border-b border-neutral-800">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-        <span className="text-lg font-semibold tracking-tight text-neutral-100 select-none">
-          Untangle
+        <span className="flex items-center gap-2 select-none">
+          <BrandMark className="w-5 h-5 text-amber-400" />
+          <span className="text-lg font-semibold tracking-tight text-neutral-100">Untangle</span>
         </span>
 
         <div className="flex items-center gap-4">
