@@ -251,7 +251,7 @@
 					<div class="mono mb-2 text-xs text-[#fbbf24]">MEDIUM &middot; LAYOUT</div>
 					<h2 class="mb-2 text-lg font-semibold">The work is below the fold</h2>
 					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">At 1200&ndash;1440px the opening screen is header, hero card with marketing copy, an error banner, the composer with three pill rows, then two filter strips (<span class="mono">app.tsx:53-96</span>, <span class="mono">app-hero-banner.tsx</span>, <span class="mono">brain-dump-input.tsx</span>). The task list only appears after scrolling past all of it.</p>
-					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Demote the hero to a compact stat line, move the composer behind a toggle or below the list, and let the task list own the first viewport. This is composition, not polish: the instrument is buried under chrome.</div>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Demote the hero to a compact status line, keep the composer <span class="text-[#fafafa]">above</span> the list but collapsed to one row, and let the task list own the first viewport. <span class="text-[#fafafa]">Corrected after implementation:</span> this row first prescribed moving the composer <em>below</em> the list. Built that way it broke the primary loop &mdash; new steps and the untangle summary render above the composer, so hitting Untangle showed nothing and the list appeared to form nowhere. Lesson: an audit prescription about order must be checked against the flow that consumes that order.</div>
 				</article>
 
 				<article class="border border-[#221d10] bg-[#0d0b06] p-5">
