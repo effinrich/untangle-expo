@@ -20,6 +20,7 @@ import { AppRootErrorFallback } from "./partials/app-root-error-fallback"
 import { AppStatusLine } from "./partials/app-status-line"
 import { AppUndoBar } from "./partials/app-undo-bar"
 import { AppWriteErrorBanner } from "./partials/app-write-error-banner"
+import { FirstRunEntry } from "./partials/first-run-entry"
 import { ActiveView } from "./types"
 
 export default function App() {
@@ -93,6 +94,8 @@ export default function App() {
     clearAiSummary()
   }
 
+  const hasTasks = tasks.length > 0
+
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-amber-400 selection:text-neutral-950">
       <ErrorBoundary fallback={({ reset }) => <AppRootErrorFallback onRetry={reset} />}>
@@ -116,7 +119,14 @@ export default function App() {
             your viewport. It stays collapsed to one row so the list still owns
             the first screen. The ledger is a footnote. */}
         <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-9 space-y-9">
-          <AppStatusLine tasks={tasks} isSynced={!!currentUser} />
+          {/* Nothing to count yet, so the status readout would just say zero.
+              A first-run visitor gets the context instead; everyone else gets
+              the instrument with no pitch in front of it. */}
+          {hasTasks ? (
+            <AppStatusLine tasks={tasks} isSynced={!!currentUser} />
+          ) : (
+            <FirstRunEntry />
+          )}
 
           {/* Stable live region. Its text changes when a dump is untangled, so
               the result is announced without moving focus. <output> carries
@@ -147,7 +157,7 @@ export default function App() {
             </div>
           )}
 
-          {(activeView === "all" || activeView === "tasks") && (
+          {hasTasks && (activeView === "all" || activeView === "tasks") && (
             <section id="tasks-section" className="space-y-4">
               <ErrorBoundary>
                 <TaskList
@@ -165,7 +175,7 @@ export default function App() {
             </section>
           )}
 
-          {(activeView === "all" || activeView === "momentum") && (
+          {hasTasks && (activeView === "all" || activeView === "momentum") && (
             <section id="momentum-section">
               <ErrorBoundary>
                 <DopamineTracker tasks={tasks} />
