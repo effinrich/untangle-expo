@@ -15,6 +15,7 @@ export const Focus: React.FC<FocusProps> = ({
   onClose,
   onCompleteTask,
   parkingLot,
+  parkingLotError,
   onAddParkingLotItem,
   onDeleteParkingLotItem,
 }) => {
@@ -77,6 +78,7 @@ export const Focus: React.FC<FocusProps> = ({
         {showParkingLot && (
           <FocusParkingLot
             parkingLot={parkingLot}
+            error={parkingLotError}
             parkingThought={parkingThought}
             onChangeThought={setParkingThought}
             onAddThought={handleAddThought}

@@ -4,6 +4,7 @@ import { ParkingLotItem } from "../../../../types"
 
 interface FocusParkingLotProps {
   parkingLot: ParkingLotItem[]
+  error?: string | null
   parkingThought: string
   onChangeThought: (value: string) => void
   onAddThought: (e: React.FormEvent) => void
@@ -12,6 +13,7 @@ interface FocusParkingLotProps {
 
 export const FocusParkingLot: React.FC<FocusParkingLotProps> = ({
   parkingLot,
+  error,
   parkingThought,
   onChangeThought,
   onAddThought,
@@ -23,6 +25,12 @@ export const FocusParkingLot: React.FC<FocusParkingLotProps> = ({
       <p className="mt-1 text-sm text-neutral-500">
         Get it out of your head. It will be here when you are done.
       </p>
+
+      {error && (
+        <p role="alert" className="mt-2 text-sm text-rose-300">
+          {error}
+        </p>
+      )}
 
       <form onSubmit={onAddThought} className="flex gap-2 mt-4">
         <label htmlFor="parking-thought" className="sr-only">

@@ -22,6 +22,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     isExpanded,
     setIsExpanded,
     isBreakingDown,
+    breakdownError,
     isCategoryMenuOpen,
     setIsCategoryMenuOpen,
     handleComplete,
@@ -83,6 +84,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         <TaskCardActions
           task={task}
           isBreakingDown={isBreakingDown}
+          breakdownError={breakdownError}
           isExpanded={isExpanded}
           completedSubstepsCount={completedSubstepsCount}
           totalSubsteps={totalSubsteps}

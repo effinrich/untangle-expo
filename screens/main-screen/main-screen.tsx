@@ -104,15 +104,19 @@ export default function MainScreen() {
           <MainStuckCard onPress={() => router.push("/unstick")} />
         ) : null}
 
-        <MainTaskList
-          openTasks={view.openTasks}
-          doneTasks={view.doneTasks}
-          showDone={view.showDone}
-          onToggleDone={view.toggleDone}
-          onSetCompleted={app.setCompleted}
-          onStartFocus={(task) => router.push(focusHref(task.id))}
-          onDelete={app.deleteTask}
-        />
+        {/* The list owns its own empty case (a filter that matches nothing, or
+            every step done), so it only renders once there is something to list. */}
+        {hasTasks ? (
+          <MainTaskList
+            openTasks={view.openTasks}
+            doneTasks={view.doneTasks}
+            showDone={view.showDone}
+            onToggleDone={view.toggleDone}
+            onSetCompleted={app.setCompleted}
+            onStartFocus={(task) => router.push(focusHref(task.id))}
+            onDelete={app.deleteTask}
+          />
+        ) : null}
       </Screen>
 
       <MainFilterSheet

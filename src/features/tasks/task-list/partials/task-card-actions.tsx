@@ -5,6 +5,7 @@ import { MicroTask } from "../../../../types"
 interface TaskCardActionsProps {
   task: MicroTask
   isBreakingDown: boolean
+  breakdownError?: string | null
   isExpanded: boolean
   completedSubstepsCount: number
   totalSubsteps: number
@@ -20,6 +21,7 @@ const ACTION =
 export const TaskCardActions: React.FC<TaskCardActionsProps> = ({
   task,
   isBreakingDown,
+  breakdownError,
   isExpanded,
   completedSubstepsCount,
   totalSubsteps,
@@ -70,6 +72,12 @@ export const TaskCardActions: React.FC<TaskCardActionsProps> = ({
       >
         <Trash2 className="w-4 h-4" aria-hidden="true" />
       </button>
+
+      {breakdownError && (
+        <p role="alert" className="w-full text-sm text-rose-300">
+          {breakdownError}
+        </p>
+      )}
     </div>
   )
 }

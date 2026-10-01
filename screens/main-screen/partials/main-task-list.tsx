@@ -29,21 +29,29 @@ export function MainTaskList({
 
   return (
     <View className="gap-3">
-      {openTasks.map((task, index) => (
-        <Animated.View
-          key={task.id}
-          entering={FadeInDown.delay(Math.min(index, 5) * 40)}
-          exiting={FadeOut}
-          layout={LinearTransition}
-        >
-          <TaskCardMobile
-            task={task}
-            onSetCompleted={onSetCompleted}
-            onStartFocus={onStartFocus}
-            onDelete={onDelete}
-          />
-        </Animated.View>
-      ))}
+      {openTasks.length === 0 ? (
+        <Text className="px-4 py-6 text-center text-callout text-text-secondary">
+          {doneTasks.length > 0
+            ? "Everything in this view is done. Nice."
+            : "No steps match this view. Try a different sort or area."}
+        </Text>
+      ) : (
+        openTasks.map((task, index) => (
+          <Animated.View
+            key={task.id}
+            entering={FadeInDown.delay(Math.min(index, 5) * 40)}
+            exiting={FadeOut}
+            layout={LinearTransition}
+          >
+            <TaskCardMobile
+              task={task}
+              onSetCompleted={onSetCompleted}
+              onStartFocus={onStartFocus}
+              onDelete={onDelete}
+            />
+          </Animated.View>
+        ))
+      )}
 
       {doneTasks.length > 0 ? (
         <Pressable

@@ -65,6 +65,7 @@ export function useTaskCardActions({
   const [isExpanded, setIsExpanded] = useState(false)
   const [isBreakingDown, setIsBreakingDown] = useState(false)
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
+  const [breakdownError, setBreakdownError] = useState<string | null>(null)
 
   const handleComplete = () => {
     if (!task.completed) {
@@ -83,6 +84,7 @@ export function useTaskCardActions({
 
   const handleBreakdownFurther = async () => {
     setIsBreakingDown(true)
+    setBreakdownError(null)
     try {
       const result = await apiBreakdownTask(task.title, task.firstPhysicalStep)
       const newSubsteps = result.microSteps.map((stepText, idx) => ({
@@ -99,6 +101,12 @@ export function useTaskCardActions({
       setIsExpanded(true)
     } catch (err) {
       console.error(err)
+      const status = (err as { status?: number } | null)?.status
+      setBreakdownError(
+        status === 503
+          ? "Untangle's model is busy right now. Try again in a moment."
+          : "Couldn't break that down right now. Try again in a moment.",
+      )
     } finally {
       setIsBreakingDown(false)
     }
@@ -124,6 +132,7 @@ export function useTaskCardActions({
     isExpanded,
     setIsExpanded,
     isBreakingDown,
+    breakdownError,
     isCategoryMenuOpen,
     setIsCategoryMenuOpen,
     handleComplete,

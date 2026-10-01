@@ -38,19 +38,25 @@ export function FocusParkingLot({
       />
       <Button label="Park it" variant="secondary" onPress={onPark} disabled={!draft.trim()} />
 
-      {thoughts.map((thought) => (
-        <View key={thought.id} className="flex-row items-center gap-2 pl-4 rounded-xl bg-raised">
-          <Text className="flex-1 py-3 text-callout text-text-primary">{thought.text}</Text>
-          <Pressable
-            onPress={() => onRemove(thought.id)}
-            accessibilityRole="button"
-            accessibilityLabel={`Remove "${thought.text}"`}
-            className="w-11 h-11 items-center justify-center active:opacity-70"
-          >
-            <X size={18} color={colors["text-secondary"]} accessible={false} />
-          </Pressable>
-        </View>
-      ))}
+      {thoughts.length === 0 ? (
+        <Text className="text-callout text-text-secondary">
+          Nothing parked yet. Anything that pulls at you goes here and waits.
+        </Text>
+      ) : (
+        thoughts.map((thought) => (
+          <View key={thought.id} className="flex-row items-center gap-2 pl-4 rounded-xl bg-raised">
+            <Text className="flex-1 py-3 text-callout text-text-primary">{thought.text}</Text>
+            <Pressable
+              onPress={() => onRemove(thought.id)}
+              accessibilityRole="button"
+              accessibilityLabel={`Remove "${thought.text}"`}
+              className="w-11 h-11 items-center justify-center active:opacity-70"
+            >
+              <X size={18} color={colors["text-secondary"]} accessible={false} />
+            </Pressable>
+          </View>
+        ))
+      )}
     </View>
   )
 }

@@ -46,7 +46,8 @@ export default function App() {
     clearCompleted,
     resetToSeed,
   } = useTasks(currentUser)
-  const { parkingLot, addParkingLotItem, deleteParkingLotItem } = useParkingLot(currentUser)
+  const { parkingLot, parkingLotError, addParkingLotItem, deleteParkingLotItem } =
+    useParkingLot(currentUser)
   const { aiSummary, untangleError, clearAiSummary, handleUntangle, isUntangling } = useUntangle(
     addUntangledTasks,
   )
@@ -138,7 +139,9 @@ export default function App() {
             </section>
           )}
 
-          {aiSummary && (
+          {/* The result belongs to the composer, so it hides with the composer
+              rather than lingering over a view that did not produce it. */}
+          {(activeView === "all" || activeView === "dump") && aiSummary && (
             <div ref={untangleResultRef}>
               <UntangleSummary summary={aiSummary} onDismiss={clearAiSummary} />
             </div>
@@ -185,6 +188,7 @@ export default function App() {
                 setFocusTask(null)
               }}
               parkingLot={parkingLot}
+              parkingLotError={parkingLotError}
               onAddParkingLotItem={addParkingLotItem}
               onDeleteParkingLotItem={deleteParkingLotItem}
             />
