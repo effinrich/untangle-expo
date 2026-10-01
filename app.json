@@ -3,6 +3,7 @@
     "name": "Untangle",
     "slug": "untangle-adhd",
     "version": "1.0.0",
+    "description": "Turn a chaotic brain dump into short steps you can start in two minutes. An energy level on every step, a two-minute focus timer, and no streaks, no guilt. Mobile first; the same app runs in the browser.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "untangle",
@@ -38,7 +39,7 @@
       [
         "expo-av",
         {
-          "microphonePermission": "Allow Untangle to record your voice to transcribe brain dumps into micro-tasks."
+          "microphonePermission": "Allow Untangle to record your voice to transcribe brain dumps into steps."
         }
       ],
       [
