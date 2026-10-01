@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       // Graceful fallback for offline / mock dev mode if API key is not present
       const fallbackTasks = generateFallbackUntangle(rawDump)
       return Response.json({
-        summary: "Parsed from your thoughts into quick micro-actions.",
+        summary: "Parsed from your thoughts into quick steps.",
         tasks: fallbackTasks,
       })
     }
@@ -34,14 +34,14 @@ export async function POST(request: Request) {
     const prompt = `You are an expert ADHD Executive Function coach and productivity architect.
 The user just provided a chaotic, overwhelming "brain dump" of thoughts, tasks, worries, or to-dos.
 ADHD brains get paralyzed by ambiguous, large tasks. Your job is to:
-1. Untangle this into concrete, bite-sized MICRO-TASKS (ideally 3 to 20 minutes each).
+1. Untangle this into concrete, bite-sized steps (ideally 3 to 20 minutes each).
 2. For each task, extract the EXACT "First Physical Step" (the frictionless spark action, e.g. "Pick up your phone and open the banking app", "Open Chrome and search for John's email", "Stand up and grab a trash bag").
 3. Assign realistic estimatedMinutes (e.g., 3, 5, 10, 15, 20, 25).
 4. Assign energyLevel: "low" (brain fried/lazy), "medium" (standard), or "high" (requires hyperfocus/deep creativity).
 5. Assign a concise priority category (e.g. Work, Personal, Health, Finance / Admin, Errands, Creative).
 6. Assign priority: "high", "medium", or "low".
 7. Give a 1-sentence "whyItMatters" that gives a quick dopamine reason or removes anxiety.
-8. Break down any medium/larger task into 2-3 microscopic sequential substeps.
+8. Break down any medium/larger task into 2-3 tiny sequential steps.
 
 User's current state/energy preference: ${userEnergyPreference || "all"}
 User's raw brain dump:
@@ -54,7 +54,7 @@ ${rawDump}
       contents: prompt,
       config: {
         systemInstruction:
-          "You transform chaotic ADHD thoughts into actionable, non-intimidating, high-clarity micro-steps.",
+          "You transform chaotic ADHD thoughts into actionable, non-intimidating, high-clarity steps.",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -76,7 +76,7 @@ ${rawDump}
                   },
                   firstPhysicalStep: {
                     type: Type.STRING,
-                    description: "The immediate physical micro-movement to start",
+                    description: "The immediate physical movement to start",
                   },
                   estimatedMinutes: {
                     type: Type.INTEGER,
@@ -102,7 +102,7 @@ ${rawDump}
                   substeps: {
                     type: Type.ARRAY,
                     items: { type: Type.STRING },
-                    description: "2-3 micro mini-steps",
+                    description: "2-3 tiny steps",
                   },
                 },
                 required: [
@@ -143,7 +143,7 @@ ${rawDump}
     // Fallback if API call hits quota or fails
     const fallbackTasks = generateFallbackUntangle(body.rawDump || "")
     return Response.json({
-      summary: "I've structured your brain dump into clean micro-steps.",
+      summary: "I've structured your brain dump into clean steps.",
       tasks: fallbackTasks,
     })
   }
