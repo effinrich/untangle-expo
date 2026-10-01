@@ -15,3 +15,7 @@ coverage/
 
 expo-env.d.ts
 # @end expo-cli
+
+# Per-machine agent/session state: churns every run, meaningless on another machine
+.cursor/hooks/state/
+.omc/state/
