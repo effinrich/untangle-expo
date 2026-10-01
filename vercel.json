@@ -4,7 +4,7 @@
   "outputDirectory": "dist/client",
   "functions": {
     "api/index.js": {
-      "runtime": "@vercel/node@5.1.8",
+      "runtime": "@vercel/node@latest",
       "includeFiles": "dist/server/**"
     }
   },
