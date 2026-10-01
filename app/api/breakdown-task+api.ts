@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const prompt = `The user with ADHD is stuck on this task: "${taskTitle}".
 Current first step: "${currentFirstStep || ""}".
 The task still feels too intimidating or huge.
-Break it down into 3-4 ridiculously tiny, friction-free micro-steps that require almost zero willpower to start.
+Break it down into 3-4 ridiculously tiny, friction-free steps that require almost zero willpower to start.
 Also provide an even easier physical first step.`
 
     const response = await ai.models.generateContent({
