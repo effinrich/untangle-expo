@@ -7,11 +7,14 @@ interface AppNavProps {
   onChangeView: (view: ActiveView) => void
 }
 
-// Quiet text nav. The active state is carried by weight and a neutral rule, not
-// by amber, so amber means one thing on this screen: the primary action.
+// The nav is its own hairline row, not a third occupant of the wordmark row.
+// It scrolls horizontally before it ever cramps, so it is always reachable.
 export const AppNav: React.FC<AppNavProps> = ({ activeView, onChangeView }) => {
   return (
-    <nav aria-label="Views" className="hidden md:flex items-center gap-5 text-sm text-neutral-400">
+    <nav
+      aria-label="Views"
+      className="max-w-3xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-5 overflow-x-auto text-sm text-neutral-400"
+    >
       {NAV_ITEMS.map(({ view, label }) => {
         const isActive = activeView === view
         return (
@@ -20,7 +23,7 @@ export const AppNav: React.FC<AppNavProps> = ({ activeView, onChangeView }) => {
             type="button"
             onClick={() => onChangeView(view)}
             aria-current={isActive ? "page" : undefined}
-            className={`transition-colors hover:text-neutral-100 ${
+            className={`whitespace-nowrap transition-colors hover:text-neutral-100 ${
               isActive
                 ? "text-neutral-100 font-medium underline underline-offset-4 decoration-neutral-600"
                 : ""

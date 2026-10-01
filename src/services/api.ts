@@ -1,5 +1,15 @@
 import { MicroTask, UnstickResult } from "../types"
 
+type FetchFailure = Error & { status?: number }
+
+// Web API failures carry the HTTP status so a caller can say something true
+// about a 503 (model busy) rather than a generic "something broke".
+function apiError(detail: string, res: Response): FetchFailure {
+  const error = new Error(detail) as FetchFailure
+  error.status = res.status
+  return error
+}
+
 export interface UntangleResponse {
   summary: string
   tasks: MicroTask[]
@@ -17,7 +27,7 @@ export async function apiUntangleBrainDump(
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}))
-    throw new Error(errorData.error || "Failed to untangle brain dump")
+    throw apiError(errorData.error || "Failed to untangle brain dump", res)
   }
 
   const data = await res.json()
@@ -71,7 +81,7 @@ export async function apiTranscribeAudio(
 
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}))
-    throw new Error(errData.error || "Failed to transcribe audio with Gemini 3.5")
+    throw apiError(errData.error || "Failed to transcribe audio with Gemini 3.5", res)
   }
 
   return res.json()
@@ -88,7 +98,7 @@ export async function apiBreakdownTask(
   })
 
   if (!res.ok) {
-    throw new Error("Failed to break down task")
+    throw apiError("Failed to break down task", res)
   }
 
   return res.json()
@@ -105,7 +115,7 @@ export async function apiUnstickMe(
   })
 
   if (!res.ok) {
-    throw new Error("Failed to get unstick advice")
+    throw apiError("Failed to get unstick advice", res)
   }
 
   return res.json()

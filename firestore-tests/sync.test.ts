@@ -6,7 +6,16 @@ import {
   type OnlineDetector,
   type StorageAdapter,
 } from "@tanstack/offline-transactions"
-import { deleteDoc, doc, getDoc, getDocs, collection, setDoc } from "firebase/firestore"
+import {
+  deleteDoc,
+  disableNetwork,
+  doc,
+  enableNetwork,
+  getDoc,
+  getDocs,
+  collection,
+  setDoc,
+} from "firebase/firestore"
 import type { MicroTask } from "../services/api"
 import { INITIAL_SEED_TASKS } from "../src/data/seed-data"
 import { fromParkingDoc, fromTaskDoc, toParkingDoc, toTaskDoc } from "../services/db/doc-shapes"
@@ -167,6 +176,22 @@ describe("firestore collection", () => {
     expect(tasks.has("cached_only")).toBe(true)
     await waitFor(() => !tasks.has("cached_only"))
     await tasks.cleanup()
+  })
+
+  test("an empty cache-only snapshot preserves the device cache", async () => {
+    const cache = memoryStorage()
+    cache.setItem("tasks", JSON.stringify([task("offline_cached")]))
+    const { tasks } = userCollections(user.uid, cache)
+    await disableNetwork(user.db)
+    try {
+      await tasks.preload()
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      expect(tasks.has("offline_cached")).toBe(true)
+      expect(JSON.parse(cache.data.get("tasks") ?? "[]")).toEqual([task("offline_cached")])
+    } finally {
+      await tasks.cleanup()
+      await enableNetwork(user.db)
+    }
   })
 })
 

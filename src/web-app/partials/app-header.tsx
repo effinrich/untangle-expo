@@ -16,7 +16,8 @@ interface AppHeaderProps {
   onResetToSeed: () => void
 }
 
-// Command bar: wordmark, view switch, then account and the one amber action.
+// Command bar: wordmark and the one amber action on the top row, the view
+// switch on its own row below. Two jobs, two rows, no cramping.
 export const AppHeader: React.FC<AppHeaderProps> = ({
   activeView,
   onChangeView,
@@ -33,8 +34,6 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         <span className="text-lg font-semibold tracking-tight text-neutral-100 select-none">
           Untangle
         </span>
-
-        <AppNav activeView={activeView} onChangeView={onChangeView} />
 
         <div className="flex items-center gap-4">
           <AppAuthStatus
@@ -63,6 +62,10 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             <RotateCcw className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
+      </div>
+
+      <div className="border-t border-neutral-800">
+        <AppNav activeView={activeView} onChangeView={onChangeView} />
       </div>
     </header>
   )

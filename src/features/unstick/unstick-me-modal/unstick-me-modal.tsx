@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { ArrowRight, Check, Loader2, X } from "lucide-react"
 import { useModalDialog } from "../../../shared/hooks/use-modal-dialog"
 import { MicroTask, UnstickResult } from "../../../types"
@@ -20,7 +20,13 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
   const [mood, setMood] = useState("Paralyzed / cannot pick where to start")
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<UnstickResult | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const dialogRef = useModalDialog<HTMLDialogElement>(isOpen)
+
+  // A failed attempt must not follow the user into the next open.
+  useEffect(() => {
+    if (!isOpen) setError(null)
+  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -35,12 +41,19 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
 
   const handleDiagnose = async () => {
     if (incompleteTasks.length === 0) return
+    setError(null)
     setLoading(true)
     try {
       const res = await apiUnstickMe(incompleteTasks, mood)
       setResult(res)
     } catch (err) {
       console.error(err)
+      const status = (err as { status?: number } | null)?.status
+      setError(
+        status === 503
+          ? "Untangle's model is busy right now. Try again in a moment."
+          : "Couldn't reach Untangle right now. Try again in a moment.",
+      )
     } finally {
       setLoading(false)
     }
@@ -136,6 +149,20 @@ export const UnstickMeModal: React.FC<UnstickMeModalProps> = ({
                 })}
               </div>
             </fieldset>
+
+            {error && (
+              <div role="alert" className="mt-4 rounded-md border border-rose-500/40 bg-rose-950/40 p-3">
+                <p className="text-sm text-rose-300">{error}</p>
+                <button
+                  type="button"
+                  onClick={handleDiagnose}
+                  disabled={loading}
+                  className="mt-2 text-sm text-rose-300 underline underline-offset-2 hover:text-rose-200"
+                >
+                  Try again
+                </button>
+              </div>
+            )}
 
             <button
               type="button"
