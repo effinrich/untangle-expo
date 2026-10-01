@@ -19,6 +19,9 @@ const queryClient = new QueryClient()
 const TITLE = "Untangle - ADHD Brain Dump & Next Steps"
 const DESCRIPTION =
   "Turn chaotic thoughts and ADHD brain dumps into short, bite-sized steps with energy levels, dopamine rewards, and one-thing-at-a-time focus."
+// Social scrapers require an absolute URL here; a relative path renders no card.
+// Point this at the production domain once one is attached.
+const OG_IMAGE = "https://untangle-expo-app-silk.vercel.app/og.png"
 
 export default function RootLayout() {
   if (Platform.OS === "web") {
@@ -34,7 +37,7 @@ export default function RootLayout() {
           <meta property="og:title" content={TITLE} />
           <meta property="og:description" content={DESCRIPTION} />
           <meta property="og:type" content="website" />
-          <meta property="og:image" content="/og.png" />
+          <meta property="og:image" content={OG_IMAGE} />
           <meta name="twitter:card" content="summary_large_image" />
         </Head>
         <Slot />
