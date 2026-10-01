@@ -19,3 +19,6 @@ expo-env.d.ts
 # Per-machine agent/session state: churns every run, meaningless on another machine
 .cursor/hooks/state/
 .omc/state/
+
+# Vercel CLI project link
+.vercel
